@@ -1,0 +1,10 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+require 'rspec'
+require 'PID_class.rb'
+
+file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in_shortened.txt" ) do |f|
+  file << f.gets.chomp    # blank lines cause a ParseError exception to be thrown
+end
