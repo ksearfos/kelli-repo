@@ -6,7 +6,7 @@ class String
   def rem( chs )
     tr( chs, "" )
   end
-  
+
   def rem!( chs )
     tr!( chs, "" )
   end
