@@ -1,22 +1,5 @@
 require 'ruby-hl7'
 
-def get_hl7( file )
-  File.open( file ) { |f|
-    f.gets.chop     # blank lines cause ParsingErrors
-  }
-end
-
-class String
-  # removes given characters -- avoids the need to add an empty string every time
-  def rem( chs )
-    tr( chs, "" )
-  end
-  
-  def rem!( chs )
-    tr!( chs, "" )
-  end
-end
-
 class HL7::Message
   
   # overwrites default @segments_by_name variable to work in a more intuitive way :)
