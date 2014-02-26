@@ -10,6 +10,25 @@ end
 
 class HL7::Message
   
+  # access a segment of the message
+  # index:: can be a Range, Fixnum or anything that
+  # responds to to_sym
+  # modified to return only an array - previously would return Segment if there was only one value
+  def []( index )
+    ret = nil
+
+    if index.kind_of?(Range) || index.kind_of?(Fixnum)
+      ret = @segments[ index ]
+    elsif (index.respond_to? :to_sym)
+      ret = @segments_by_name[ index.to_sym ]
+      
+      # the following line was screwing everything up so I am removing it:
+      # ret = ret.first if ret && ret.length == 1
+    end
+
+    ret
+  end
+  
   # overwrites default @segments_by_name variable to work in a more intuitive way :)
   # when this method is run, gives @segments_by_name the values of { name => array of all segment objects }
   # e.g. { :PID => [PID object 1, PID object 2] }
@@ -22,7 +41,7 @@ class HL7::Message
       str = v.to_s
       str_ary = v.to_s.split( ", #{k}" )    # split into individual entries
       str_ary.map!{ |seg| "#{k}|#{seg}" }   # each entry lost its label initially, so put it back
-      
+
       cls = 'HL7::Message::Segment::'
       cls << ( is_hdr ? 'MSH' : k.to_s )    # soemthing like HL7::Message::Segment::PID
       
@@ -51,6 +70,10 @@ class HL7::Message
     puts @segments_by_name.each{ |k,v| puts k.to_s + ": " + v.to_s }
   end
   
+  def children
+    @segments_by_name
+  end
+  
 end  # extension of HL7::Message
 
 #------------------------------------FUNCTIONS---------------------------------#
@@ -58,9 +81,7 @@ end  # extension of HL7::Message
 # nothing special except chops to remove empty lines
 def get_hl7( file )
   puts "Reading #{file}..."
-  File.open( file ) { |f|
-    f.gets.chop     # blank lines cause ParsingErrors
-  }
+  File.open( file ) { |f| f.gets.chop }
 end
 
 # returns array of strings containing hl7 message of individual records
@@ -80,10 +101,11 @@ end
 
 # this one returns HL7::Message objects
 # return is an array of HL7::Messages that have already run create_children
-# can access segments as hl7_by_record(stuff)[index][segment_name].e[component_index]
+# can access segments as hl7_by_record(stuff)[index][segment_name]
 # e.g. hl7_messages_array[2][:PID].e7 returns the sex, as done hl7_messages_array[2][:PID].sex
 def hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
+  
   all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
 end
