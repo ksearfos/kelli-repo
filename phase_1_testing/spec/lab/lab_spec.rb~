@@ -1,0 +1,33 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+require 'rspec'
+require 'hl7_utils'
+
+describe File do
+  before(:all) do
+    file = ""
+    File.open( "../../../manifest_lab_in" ) do |f|
+        s = f.gets
+        #blank lines cause HL7 Parse Error...
+        #and ASCII line endings cause UTF-8 Error...
+        file << s.force_encoding("binary").encode('utf-8', 
+            :invalid => :replace, :undef => :replace).chomp
+    end
+    @msg = HL7::Message.new(file)
+  end
+  
+  it 'has MSH segments with the correct Event format' do
+    @msg[:MSH].each do |s|
+      s.e8.should match /ORU\^R01/
+    end
+  end
+  
+  it 'has PID segments with the correct Patient ID format' do
+    @msg[:PID].each do |s|
+      s.e3.should match /^'*\^/#, "First Patient ID format" + 
+         # "element item in PID segment %s does not" % s.to_s
+      s.e3.should match /.*01\^/
+    end
+  end
+end
