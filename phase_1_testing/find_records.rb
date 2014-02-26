@@ -15,18 +15,7 @@ FILE = "C:/Users/Owner/Documents/manifest_lab_short_unix.txt"
 msg = get_hl7( FILE )
 all_hl7 = hl7_by_record( msg )
 comparer = RecordComparer.new( all_hl7 )
-comparer.find_best
+comparer.analyze
 comparer.summarize
-
-=begin
-highest scoring records
-take it
-cross off any other fields covered in those recs
-next highest scoring--higher priority given to any that contain the most unmatched fields
-pare down to remove duplicates/already checked
-repeat
-
-recs_by_field = { rec => [fields] }
-fields_by_rec = { field => [recs] }
-"ranking" = size of value
-=end
+comparer.show_records
+# puts comparer.recs.size, comparer.matches

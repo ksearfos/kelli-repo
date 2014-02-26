@@ -10,6 +10,18 @@ class String
   def rem!( chs )
     tr!( chs, "" )
   end
+  
+  # returns portion of string before first occurence of ch
+  def before( ch )
+    i = index( ch )
+    self[0...i]
+  end
+  
+  # returns portion of string after first occurence of ch
+  def after( ch )
+    i = index( ch ) + 1
+    self[i..-1]
+  end
 end
 
 class Array
@@ -28,5 +40,10 @@ end
 class Hash
   def add_keys( val, *keys )
     keys.flatten.each{ |k| self[k] = val }
+  end
+  
+  def remove_duplicate_values!
+    clean = self.invert.invert    # inverting keeps only the first key to have a given value
+    self.replace( clean )         # then revert back to keys being keys
   end
 end

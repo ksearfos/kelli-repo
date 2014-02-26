@@ -18,14 +18,12 @@ puts "Looking through records..."
 types = []
 # find all different PV1.18 values (patient types)
 all_hl7.each{ |rec|
-  segs = rec[:OBR]
+  segs = rec[:PID]
   next unless segs
   
-  segs.each{ |seg|
-    e9 = seg.e9
-    if !e9.empty? && e9 != "ORU^R01" then puts seg
-    end
-  }
+  has_e1 = false
+  segs.each{ |pid| has_e1 = true if !pid.e1.empty? }
+  puts record_details( rec ) if has_e1
 }
 
 puts "Completed."

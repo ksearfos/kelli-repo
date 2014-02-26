@@ -131,3 +131,59 @@ end
 def record_id( rec )
   rec[:MSH][0].message_control_id
 end
+
+def record_details( rec )
+  puts "Message ID: " + record_id(rec)
+  puts "Sent at: " + reformat_datetime( rec[:MSH][0].time )
+  puts "Patient ID: " + rec[:PID][0].e3.before( "^" )
+  puts "Patient Name: " + reformat_name( rec[:PID][0].patient_name )
+end
+
+# HL7 puts date into the following format: YYYYMMDD
+# this will spit it back out as MM/DD/YYYY
+def reformat_date( date_str, delim = "/" )
+  yr = date_str[0...4]
+  mon = date_str[4...6]
+  day = date_str[6...8]
+  
+  mon + delim + day + delim + yr
+end
+
+# HL7 puts time into the following format: HHMM (24-hour clock)
+# this will spit it back out as HH:MM AM/PM
+def reformat_time( time_str )
+  hr = time_str[0...2]
+  min = time_str[2...4]
+
+  ampm = "AM"
+  if ( hr.to_i > 12 )
+    am = "PM"
+    hr = hr.to_i - 12
+  end
+  
+  hr + ":" + min + " " + ampm
+end
+
+# HL7 puts time into the following format: YYYYMMDDHHNN (24-hour clock)
+# this will spit it back out as MM/DD/YYYY HH:MM AM/PM
+def reformat_datetime( dt_str )
+  date = dt_str[0...8]
+  time = dt_str[8...12]
+  
+  reformat_date( date ) + " " + reformat_time( time )
+end
+
+# HL7 puts names into the following format: Last^First^MI^Ext
+# this will spit it back out as First MI Last Ext
+def reformat_name( name )
+  name_ary = name.split( "^" )
+  last = name_ary[0]
+  first = name_ary[1]
+  mi = name_ary[2]
+  ext = name_ary[3]
+  
+  mi_str = ( mi && !mi.empty? ? "#{mi} " : "" )
+  ext_str = ( ext && !ext.empty? ? " #{ext}" : "" )
+  
+  first + " " + mi_str + last + ext_str
+end
