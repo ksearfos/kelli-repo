@@ -39,9 +39,11 @@ class HL7::Message
     @segments_by_name.each{ |k,v|
       is_hdr = k.to_s =~ HDR                # is this a header line?
       str = v.to_s
-      str_ary = v.to_s.split( ", #{k}" )    # split into individual entries
-      str_ary.map!{ |seg| "#{k}|#{seg}" }   # each entry lost its label initially, so put it back
-
+      tmp_ary = v.to_s.split( ", #{k}" )    # split into individual entries
+      
+      str_ary = [tmp_ary[0]]
+      tmp_ary[1..-1].each{ |seg| str_ary << "#{k.to_s}#{seg}" }   # each entry except first lost its label initially,
+                                                                  # so put it back
       cls = 'HL7::Message::Segment::'
       cls << ( is_hdr ? 'MSH' : k.to_s )    # soemthing like HL7::Message::Segment::PID
       
@@ -74,6 +76,22 @@ class HL7::Message
     @segments_by_name
   end
   
+  # cheat method to allow you to grab field without having to break it into segments first
+  # takes name of segment + field number as a single string, e.g. "pid8"
+  # returns an array of the value of the segment's field for each contained field--empty if no matches
+  def fetch_field( field )
+    seg = field[0...3]   # first three charcters, the name of the segment - have to do it this way for PV1 etc.
+    f = field[3..-1]     # remaining 1-3 characters, the number of the field
+    
+    seg.upcase!          # segment expected to be an uppercase symbol
+    
+    all = []
+    segs = @segments_by_name[seg.to_sym]
+    return all if segs.nil?
+    
+    segs.each{ |s| all << s.send( "e#{f}" ) }     # e8, e11, etc
+    all
+  end
 end  # extension of HL7::Message
 
 #------------------------------------FUNCTIONS---------------------------------#
@@ -108,4 +126,8 @@ def hl7_by_record( hl7 )
   
   all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
+end
+
+def record_id( rec )
+  rec[:MSH][0].message_control_id
 end
