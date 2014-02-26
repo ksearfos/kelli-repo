@@ -34,4 +34,10 @@ describe File do
       s.e1.should match /^\w{2}$/
     end
   end
+
+  it 'has OBR Control Code containing only letters, numbers, and spaces' do
+    @msg[:OBR].each do |s|
+      s.e3.should match /^[A-Za-z0-9 ]*/
+    end
+  end
 end
