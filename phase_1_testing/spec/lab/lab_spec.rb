@@ -28,4 +28,10 @@ describe File do
       s.e3.should match /\^\w+01$/
     end
   end
+
+  it 'has ORC segments with Control ID of two characters' do
+    @msg[:ORC].each do |s|
+      s.e1.should match /^\w{2}$/
+    end
+  end
 end
