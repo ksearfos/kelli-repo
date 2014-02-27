@@ -114,6 +114,7 @@ module HL7Procs
   # returns true if at least one field matches the given value, false otherwise
   def HL7Procs.is_val?( record, field, value )
     res = record.fetch_field( field )   # could be multiple occurrences of the segment -> multiple values returned
+    res.map!{ |r| r = r.chomp( "]" ) }
     res.include?( value.to_s )
   end
 
