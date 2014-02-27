@@ -5,7 +5,7 @@ HDR = /\d+MSH/            # regex defining header row
 #-------------------------CLASS EXTENSIONS-------------------------#
 
 # need to recognize a header as such
-class HL7::Message::Segment::MSH < HL7::Message::Segment 
+class HL7::Message::Segment::MSH < HL7::Message::Segment
 end
 
 class HL7::Message
@@ -127,9 +127,12 @@ end
 def hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
 
-  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }
+  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
+  
   all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
-  all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
+  
+  #all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
+  all_recs
 end
 
 def record_id( rec )
