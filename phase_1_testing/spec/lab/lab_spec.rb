@@ -170,6 +170,13 @@ describe "Ohio Health HL7" do
     end
   end
 
+  it 'has PIDs with SSN in the correct format' do
+    @msg_list.each do |message|
+      pid = message.children[:PID][0]
+      pid.social_security_num.should match /^\d{9}$/
+    end
+  end
+
   after(:each) do
     puts "\nTest executed!"
   end
