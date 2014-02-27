@@ -2,11 +2,11 @@
 
 require 'rspec'
 require 'require_relative'
+require_relative "../../HL7ProcsMod.rb"
 # require "C:/Users/Owner/Documents/Code/kelli-repo/phase-1-testing/hl7_utils.rb"
-# require_relative "../../HL7ProcMod.rb"
 
 describe HL7Procs do
-  before(:all) do
+before(:all) do
     msg_txt <<END
 0000000954MSH|^~\&|HLAB|RMH|||20140128041144||ORU^R01|201401280411441474|T|2.4
 PID|||04172773^^^ST01||Edwards^Christopher^S||19820528|M|||^^^^^^^|||||||1131830065^^^^STARACC|412414356
@@ -27,7 +27,7 @@ NTE|9||3773 Olentangy River Rd,Columbus,OH 43214
 END
     @msg = HL7::Message.new(msg_txt)
   end
-  
+    
   context "SN_PROC" do
     before(:all) do
       pass_str = "<34"
@@ -35,6 +35,7 @@ END
     end
     
     it 'correctly matches SN type' do
+      puts pass_str
       SN_PROC.call( pass_str ).should be_true
     end
     

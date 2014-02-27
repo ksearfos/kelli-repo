@@ -82,7 +82,7 @@ class HL7::Message
   def fetch_field( field )
     seg = field[0...3]   # first three charcters, the name of the segment - have to do it this way for PV1 etc.
     f = field[3..-1]     # remaining 1-3 characters, the number of the field
-    
+
     seg.upcase!          # segment expected to be an uppercase symbol
     
     all = []
@@ -99,7 +99,7 @@ end  # extension of HL7::Message
 # nothing special except chops to remove empty lines
 def get_hl7( file )
   puts "Reading #{file}..."
-  File.open( file ) { |f| f.gets.chop }
+  File.open( file ) { |f| f.gets.chomp }
 end
 
 # returns array of strings containing hl7 message of individual records
