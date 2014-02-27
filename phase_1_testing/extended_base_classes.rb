@@ -26,9 +26,13 @@ class String
   # returns true if string is numberic, e.g. an integer or a decimal
   # returns false if not
   def is_numeric?
-    return false if self[1] !~ /[-|\d]/   # first character is a digit or negative sign?
-    return false if self[-1] !~ /\d/      # last character is a digit?
-    return self[1..-2] =~ /^\d.\.?\d.$/   # middle is nothing but digits and a possible decimal point
+    strip!
+    return false if self[0] !~ /-|\d/   # first character is a digit or negative sign?
+    return false if self[-1] !~ /\d/    # last character is a digit?
+
+    middle = self[1..-2] 
+    return true if middle.empty?
+    return middle =~ /^\d*\.?\d*$/   # middle is nothing but digits and a possible decimal point
   end
 end
 
