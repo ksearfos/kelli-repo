@@ -17,5 +17,5 @@ all_hl7 = hl7_by_record( msg )
 comparer = RecordComparer.new( all_hl7 )
 comparer.analyze
 comparer.summarize
-comparer.show_records
+# comparer.show_records
 # puts comparer.recs.size, comparer.matches

@@ -86,8 +86,8 @@ class HL7::Message
     seg.upcase!          # segment expected to be an uppercase symbol
     
     all = []
-    segs = @segments_by_name[seg.to_sym]
-    return all if segs.nil?
+    segs = @segments_by_name[seg.to_sym]    # if there is more than one segment of this type,
+    return all if segs.nil?                 #+  there will be more than value here
     
     segs.each{ |s| all << s.send( "e#{f}" ) }     # e8, e11, etc
     all
