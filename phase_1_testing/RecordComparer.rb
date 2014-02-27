@@ -12,7 +12,8 @@ util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
 class RecordComparer
   include HL7Procs
   
-  @@CRITERIA = [ HL7Procs::OBX3, HL7Procs::MSH9 ]
+  @@CRITERIA = [ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SEX_F, SEX_M, SEX_O ]
+  @@CRITERIA_BY_NAME = %w[ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SEX_F, SEX_M, SEX_O ]
   @@TOTAL = @@CRITERIA.size
   @@HOW_MANY = 1      # minimum number of records we want returned, e.g. target size of @recs_to_use
   
@@ -42,8 +43,8 @@ class RecordComparer
 
   def analyze
     num_recs = @records.size
-    if num_recs <= @@TOTAL            # we're going the need all the records
-      @recs_to_use = @records.clone   # weird things happen if you don't clone an instance variable!
+    if num_recs <= @@HOW_MANY           # we're going the need all the records
+      @recs_to_use = @records.clone     # weird things happen if you don't clone an instance variable!
     else
       puts "Searching records..."
       find_me_some_records
@@ -70,7 +71,14 @@ class RecordComparer
   
   def summarize
     puts "We have successfully matched #{how_many_found?} of #{@@TOTAL} criteria."
-    puts "This will require a total of #{@recs_to_use.size} records:"
+    puts "The unmatched criteria are:"
+    i = 0
+    while i < @@TOTAL
+      puts "  " + @@CRITERIA_BY_NAME[i].chomp(',') unless @matches[i]   # !matches actually negates the current value
+      i += 1
+    end
+    
+    puts "\nThis will require a total of #{@recs_to_use.size} records:"
     @recs_to_use.each{ |r| puts "  #{record_id(r)}" }
   end
   
