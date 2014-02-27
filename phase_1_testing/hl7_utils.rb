@@ -187,3 +187,7 @@ def reformat_name( name )
   
   first + " " + mi_str + last + ext_str
 end
+
+def components( field )
+  field.split( "^" )
+end
