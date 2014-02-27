@@ -25,13 +25,24 @@ describe "Ohio Health HL7" do
       message[0].e8.should match /^ORU\^R01$/
     end
   end
+
+  it 'has only one PID per message' do
+    @msg_list.each do |message|
+      message.children[:PID].size.should == 1
+    end
+  end
+
+  it 'has only one PV1 per message' do
+    @msg_list.each do |message|
+      message.children[:PV1].size.should == 1
+    end
+  end
   
   it 'has PID segments with the correct Patient ID format' do
     @msg_list.each do |message|
-      message.children[:PID].each do |pid|
-        pid.patient_id_list.should match /^\d*\^/
-        pid.patient_id_list.should match /\^\w+01$/
-      end
+      pid = message.children[:PID][0]
+      pid.patient_id_list.should match /^\d*\^/
+      pid.patient_id_list.should match /\^\w+01$/
     end
   end
 
@@ -113,10 +124,25 @@ describe "Ohio Health HL7" do
 
   it 'has PIDs with Patient Name in the correct format' do
     @msg_list.each do |message|
-      message.children[:PID].each do |pid|
-        # Lastname^Firstname^I^JR.|SR.|III with initial and JR/SR/III optional
-        pid.patient_name.should match /^\w+\^\w+(\^[A-Z]{1})?(\^((JR|SR)\.|([II|III|IV|V])))?$/
-      end
+      pid = message.children[:PID][0]
+      # Lastname^Firstname^I^JR.|SR.|RomanNumeral
+      pid.patient_name.should match /^\w+\^\w+(\^[A-Z]{1})?(\^((JR|SR)\.|((II|III|IV|V))))?$/
+    end
+  end
+
+  it 'has PIDs with Date of Birth in the correct format' do
+    @msg_list.each do |message|
+    pid = message.children[:PID][0]
+    # YYYYMMDD
+    pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
+    end
+  end
+
+  it 'has PID with Sex in the correct format' do
+    @msg_list.each do |message|
+    pid = message.children[:PID][0]
+    # F|M|O|U|A|N|C
+    pid.admin_sex.should match /^[FMOUANC]$/
     end
   end
 
