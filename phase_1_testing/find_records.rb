@@ -9,8 +9,8 @@ util_path = pts.join( DEL ) + DEL + 'utilities'
 util = Dir.new( util_path )   # all helper functions
 util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
 
-# FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
-FILE = "C:/Users/Owner/Documents/manifest_lab_short_unix.txt"
+FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
+# FILE = "C:/Users/Owner/Documents/manifest_lab_short_unix.txt"
 
 msg = get_hl7( FILE )
 all_hl7 = hl7_by_record( msg )

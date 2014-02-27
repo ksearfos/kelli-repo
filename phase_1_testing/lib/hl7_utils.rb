@@ -126,11 +126,9 @@ end
 # e.g. hl7_messages_array[2][:PID].e7 returns the sex, as done hl7_messages_array[2][:PID].sex
 def hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
-  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
-  all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   
+  all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
-  all_recs
 end
 
 def orig_hl7_by_record( hl7 )
@@ -198,4 +196,8 @@ def reformat_name( name )
   ext_str = ( ext && !ext.empty? ? " #{ext}" : "" )
   
   first + " " + mi_str + last + ext_str
+end
+
+def components( field )
+  field.split( "^" )
 end

@@ -12,7 +12,7 @@ util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
 class RecordComparer
   include HL7Procs
   
-  @@CRITERIA = [ HL7Procs::OBX3, HL7Procs::PID1 ]
+  @@CRITERIA = [ HL7Procs::OBX3, HL7Procs::MSH9 ]
   @@TOTAL = @@CRITERIA.size
   @@HOW_MANY = 1      # minimum number of records we want returned, e.g. target size of @recs_to_use
   
