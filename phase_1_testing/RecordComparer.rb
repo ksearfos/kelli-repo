@@ -12,8 +12,11 @@ util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
 class RecordComparer
   include HL7Procs
   
-  @@CRITERIA = [ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SEX_F, SEX_M, SEX_O ]
-  @@CRITERIA_BY_NAME = %w[ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SEX_F, SEX_M, SEX_O ]
+  @@CRITERIA = HL7Procs::LAB_CRITERIA
+  @@CRITERIA_BY_NAME = %w[ EVENT, T_ID, ID_23, P_ID, ID_24, ATT, REF, TX_TYPE, SN_TYPE, NM_TYPE, OBS_ID, TX_VAL,
+                   NM_VAL, SN_VAL, UNITS, REF_RG, FLAG_H, FLAG_I, FLAG_CH, FLAG_CL, FLAG_L, FLAG_A, FLAG_U,
+                   FLAG_N, FLAG_C, PT_ID, NAME, DOB, SEX_M, SEX_F, SEX_O, VISIT_ID, SSN, ORD_NUM, SER_ID,
+                   ORD_DT, ORD_MD, RES_ST ]
   @@TOTAL = @@CRITERIA.size
   @@HOW_MANY = 1      # minimum number of records we want returned, e.g. target size of @recs_to_use
   
@@ -62,7 +65,7 @@ class RecordComparer
     end
   end
   
-  def show_records
+  def list_records
     puts "We will use the following records:"
     @recs_to_use.each{ |rec|
       puts record_details( rec )
