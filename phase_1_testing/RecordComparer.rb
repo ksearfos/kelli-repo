@@ -13,6 +13,7 @@ util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
 # how_many refers to the minimum number of records we are allowed for output, e.g. find me at least 3 records
 # assume that we only require one record to match a given criterion
 # change scoring to allow for criteria other than just "it's got a value"
+#---
 class RecordComparer
   @@IMPORTANT_FIELDS = [ "msh9", "pid3" ]
   @@IMPT_NUM = @@IMPORTANT_FIELDS.size
