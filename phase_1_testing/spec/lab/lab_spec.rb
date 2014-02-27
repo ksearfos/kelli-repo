@@ -132,17 +132,41 @@ describe "Ohio Health HL7" do
 
   it 'has PIDs with Date of Birth in the correct format' do
     @msg_list.each do |message|
-    pid = message.children[:PID][0]
-    # YYYYMMDD
-    pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
+      pid = message.children[:PID][0]
+      # YYYYMMDD
+      pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
     end
   end
 
-  it 'has PID with Sex in the correct format' do
+  it 'has PIDs with Sex in the correct format' do
     @msg_list.each do |message|
-    pid = message.children[:PID][0]
-    # F|M|O|U|A|N|C
-    pid.admin_sex.should match /^[FMOUANC]$/
+      pid = message.children[:PID][0]
+      # F|M|O|U|A|N|C
+      pid.admin_sex.should match /^[FMOUANC]$/
+    end
+  end
+
+  it 'has PIDs wiht Visit ID in the correct format' do
+     @msg_list.each do |message|
+      pid = message.children[:PID][0]
+      pid.account_number.should match /^[A-Z]?\d+\^/
+      pid.account_number.should match /\^\w+ACC$/
+    end
+  end
+
+  it 'has PV1s wiht Visit ID in the correct format' do
+     @msg_list.each do |message|
+      pv1 = message.children[:PV1][0]
+      pv1.visit_number.should match /^[A-Z]?\d+\^/
+      pv1.visit_number.should match /\^\w+ACC$/
+    end
+  end
+
+  it 'has PID and PV1 Visit IDs that match' do
+    @msg_list.each do |message|
+      pid = message.children[:PID][0]
+      pv1 = message.children[:PV1][0]
+      pid.account_number.should eq pv1.visit_number
     end
   end
 
