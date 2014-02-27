@@ -1,23 +1,10 @@
 module HL7Procs
-  SN_PROC = Lambda.new{ |val| val =~ />\d+|<\d+/ }   # proc vs lambda makes no difference here
-  NM_PROC = Lambda.new{ |val| val.is_numeric? }      #+ so I chose to break things up a bit
-  IMP_PROC = Lambda.new{ |val| val.include?( "IMPRESSION:" ) }
-  ADT_PROC = Lambda.new{ |val| val.include?( "ADDENDUM:" ) }
+
+  SN_PROC = Proc.new{ |val| val =~ />\d+|<\d+/ }   # proc vs lambda makes no difference here
+  NM_PROC = Proc.new{ |val| val.is_numeric? }      #+ so I chose to break things up a bit
+  IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
+  ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   AUTO_FAIL = Proc.new{ |*| return false }     # this one may or may not be given an arg, so must be a proc
-  
-  #-------------Group Procs for Quick Access-------------- #
-  # LAB OUTPUT CRITERIA
-  LAB_CRITERIA = [ EVENT, T_ID, ID_23, P_ID, ID_24, ATT_REF, TX_TYPE, SN_TYPE, NM_TYPE, OBS_ID, TX_VAL,
-                   NM_VAL, SN_VAL, UNITS, REF_RG, FLAG_H, FLAG_I, FLAG_CH, FLAG_CL, FLAG_L, FLAG_A, FLAG_U,
-                   FLAG_N, FLAG_C, PT_ID, NAME, DOB, SEX, VISIT_ID, SSN, ORD_NUM, SER_ID, ORD_DT, ORD_MD, RES_ST ] 
-  
-  # RAD OUTPUT CRITERIA
-  RAD_CRITERIA = [ EVENT, TRANS_ID, T_ID, ID_23, TX_TYPE, SN_TYPE, NM_TYPE, TX_VAL, NM_VAL, SN_VAL, RES_DT, 
-                   PT_ID, NAME, DOB, SEX, VISIT_ID, SSN, ORD_NUM, ORD_DT, ORD_MD, RES_ST, RES_INT, EXAM_DT, 
-                   REASON, RACE, REP_ID_1, PT_CL_E, PT_LOC_ED, EMPTY_32, EMPTY_33, CTY_CD, ADDR_7, LANG,
-                   MAR_ST, GDT_ID, IMP_ID, ADT_ID, IMP_VAL, ADT_VAL, TRANS_DT ] 
-                     
-  # ENCOUNTER OUTPUT CRITERIA
   
   # -------------Define the Procs------------ #
   # MSH
@@ -31,7 +18,7 @@ module HL7Procs
   PT_CL_E = Proc.new{ |rec| is_val?(rec,"pv12","E") }
   PT_LOC_ED = Proc.new{ |rec| is_val?(rec,"pv13","ED") }
   EMPTY_32 = Proc.new{ |rec| !seg_has_val?(rec,"pv13",2) }  
-  EMPTY_32 = Proc.new{ |rec| !seg_has_val?(rec,"pv13",3) }  
+  EMPTY_33 = Proc.new{ |rec| !seg_has_val?(rec,"pv13",3) }  
   ATT_REF = Proc.new{ |rec| att_matches_ref?(rec) }
   
   # OBX
@@ -89,6 +76,20 @@ module HL7Procs
   EXAM_DT = Proc.new{ |rec| has_val?(rec,"obr27") } 
   REASON = Proc.new{ |rec| has_val?(rec,"obr31") }
   RES_INT = Proc.new{ |rec| has_val?(rec,"obr32") }
+  
+  #-------------Group Procs for Quick Access-------------- #
+  # LAB OUTPUT CRITERIA
+  LAB_CRITERIA = [ EVENT, T_ID, ID_23, P_ID, ID_24, ATT_REF, TX_TYPE, SN_TYPE, NM_TYPE, OBS_ID, TX_VAL,
+                   NM_VAL, SN_VAL, UNITS, REF_RG, FLAG_H, FLAG_I, FLAG_CH, FLAG_CL, FLAG_L, FLAG_A, FLAG_U,
+                   FLAG_N, FLAG_C, PT_ID, NAME, DOB, SEX, VISIT_ID, SSN, ORD_NUM, SER_ID, ORD_DT, ORD_MD, RES_ST ] 
+  
+  # RAD OUTPUT CRITERIA
+  RAD_CRITERIA = [ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SN_TYPE, NM_TYPE, TX_VAL, NM_VAL, SN_VAL, RES_DT, 
+                   PT_ID, NAME, DOB, SEX, VISIT_ID, SSN, ORD_NUM, ORD_DT, ORD_MD, RES_ST, RES_INT, EXAM_DT, 
+                   REASON, RACE, REP_ID_1, PT_CL_E, PT_LOC_ED, EMPTY_32, EMPTY_33, CTY_CD, ADDR_7, LANG,
+                   MAR_ST, GDT_ID, IMP_ID, ADT_ID, IMP_VAL, ADT_VAL, TRANS_DT ] 
+                     
+  # ENCOUNTER OUTPUT CRITERIA
   
   # ----------------Actual Methods---------------- #
   # It is ironic that in a module full of procs, we also have methods
