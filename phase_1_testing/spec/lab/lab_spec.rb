@@ -16,6 +16,8 @@ known_units = ["","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG",
                "nmol/L","pH units","pg/mL","seconds","titer",
                "weeks","years"]
 
+abnormal_flags = ["","I","CH","CL","H","L","A","U","N","C"]
+
 def get_obx_of_obr( obr )
   obr.children.select { |s|
           s.is_a? HL7::Message::Segment::OBX }
@@ -121,12 +123,16 @@ describe "Ohio Health HL7" do
                   obx.observation_value.should match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
                 end
 
-                it "has Units in the correct format" do
+                it "has valid Units" do
                   known_units.should include obx.units
                 end
 
                 it "has Reference Range in the correct format" do
                   obx.references_range.should match /^(-?\d+\.?\d*-\d+\.?\d*)?$/
+                end
+
+                it "has a valid Abnormal Flag" do
+                  abnormal_flags.should include obx.abnormal_flags
                 end
 
               end # End obx.value_type if
