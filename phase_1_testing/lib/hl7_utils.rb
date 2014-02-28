@@ -5,7 +5,7 @@ HDR = /\d+MSH/            # regex defining header row
 #-------------------------CLASS EXTENSIONS-------------------------#
 
 # need to recognize a header as such
-class HL7::Message::Segment::MSH < HL7::Message::Segment 
+class HL7::Message::Segment::MSH < HL7::Message::Segment
 end
 
 class HL7::Message
@@ -39,9 +39,11 @@ class HL7::Message
     @segments_by_name.each{ |k,v|
       is_hdr = k.to_s =~ HDR                # is this a header line?
       str = v.to_s
-      str_ary = v.to_s.split( ", #{k}" )    # split into individual entries
-      str_ary.map!{ |seg| "#{k}|#{seg}" }   # each entry lost its label initially, so put it back
-
+      tmp_ary = v.to_s.split( ", #{k}" )    # split into individual entries
+      
+      str_ary = [tmp_ary[0]]
+      tmp_ary[1..-1].each{ |seg| str_ary << "#{k.to_s}#{seg}" }   # each entry except first lost its label initially,
+                                                                  # so put it back
       cls = 'HL7::Message::Segment::'
       cls << ( is_hdr ? 'MSH' : k.to_s )    # soemthing like HL7::Message::Segment::PID
       
@@ -74,6 +76,22 @@ class HL7::Message
     @segments_by_name
   end
   
+  # cheat method to allow you to grab field without having to break it into segments first
+  # takes name of segment + field number as a single string, e.g. "pid8"
+  # returns an array of the value of the segment's field for each contained field--empty if no matches
+  def fetch_field( field )
+    seg = field[0...3]   # first three charcters, the name of the segment - have to do it this way for PV1 etc.
+    f = field[3..-1]     # remaining 1-3 characters, the number of the field
+    
+    seg.upcase!          # segment expected to be an uppercase symbol
+    
+    all = []
+    segs = @segments_by_name[seg.to_sym]
+    return all if segs.nil?
+    
+    segs.each{ |s| all << s.send( "e#{f}" ) }     # e8, e11, etc
+    all
+  end
 end  # extension of HL7::Message
 
 #------------------------------------FUNCTIONS---------------------------------#
@@ -93,7 +111,10 @@ def break_into_records( hl7 )
 
   all_recs = []
   for i in 0...hdrs.size
-    all_recs << hdrs[i] + recs[i].chop      # those pesky endline characters cause a LOT of problems!
+    #puts "\nRecord #{i+1}: \n"
+    #p recs[i].gsub(/\n/, "\r")
+    #print "Header ||::==>> " + hdrs[i].gsub(/\n/, "\r").to_s + recs[i].to_s
+    all_recs << hdrs[i] + recs[i].chomp      # those pesky endline characters cause a LOT of problems!
   end
   
   all_recs
@@ -105,7 +126,76 @@ end
 # e.g. hl7_messages_array[2][:PID].e7 returns the sex, as done hl7_messages_array[2][:PID].sex
 def hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
-  
+  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
   all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
+  
   all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
+  all_recs
+end
+
+def orig_hl7_by_record( hl7 )
+  all_recs = break_into_records(hl7)
+  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
+  all_recs.map!{ |msg| HL7::Message.new( msg ) }   # In HL7 gem format
+  all_recs
+end
+
+def record_id( rec )
+  rec[:MSH][0].message_control_id
+end
+
+def record_details( rec )
+  puts "Message ID: " + record_id(rec)
+  puts "Sent at: " + reformat_datetime( rec[:MSH][0].time )
+  puts "Patient ID: " + rec[:PID][0].e3.before( "^" )
+  puts "Patient Name: " + reformat_name( rec[:PID][0].patient_name )
+end
+
+# HL7 puts date into the following format: YYYYMMDD
+# this will spit it back out as MM/DD/YYYY
+def reformat_date( date_str, delim = "/" )
+  yr = date_str[0...4]
+  mon = date_str[4...6]
+  day = date_str[6...8]
+  
+  mon + delim + day + delim + yr
+end
+
+# HL7 puts time into the following format: HHMM (24-hour clock)
+# this will spit it back out as HH:MM AM/PM
+def reformat_time( time_str )
+  hr = time_str[0...2]
+  min = time_str[2...4]
+
+  ampm = "AM"
+  if ( hr.to_i > 12 )
+    am = "PM"
+    hr = hr.to_i - 12
+  end
+  
+  hr + ":" + min + " " + ampm
+end
+
+# HL7 puts time into the following format: YYYYMMDDHHNN (24-hour clock)
+# this will spit it back out as MM/DD/YYYY HH:MM AM/PM
+def reformat_datetime( dt_str )
+  date = dt_str[0...8]
+  time = dt_str[8...12]
+  
+  reformat_date( date ) + " " + reformat_time( time )
+end
+
+# HL7 puts names into the following format: Last^First^MI^Ext
+# this will spit it back out as First MI Last Ext
+def reformat_name( name )
+  name_ary = name.split( "^" )
+  last = name_ary[0]
+  first = name_ary[1]
+  mi = name_ary[2]
+  ext = name_ary[3]
+  
+  mi_str = ( mi && !mi.empty? ? "#{mi} " : "" )
+  ext_str = ( ext && !ext.empty? ? " #{ext}" : "" )
+  
+  first + " " + mi_str + last + ext_str
 end
