@@ -178,7 +178,7 @@ describe "Ohio Health HL7" do
       #puts "\nTest executed!"
       #puts "\nError found in:
             #{example.example_group.description} while testing it #{example.description}.
-            Message Tested:\n #{message.to_s}" unless example.exception.nil?
+           # Message Tested:\n #{message.to_s}" unless example.exception.nil?
     end
     
   end # End of msg_list.each
