@@ -249,8 +249,6 @@ describe "Ohio Health HL7" do
       end
 
       it "has a one or two digit Patient Type" do
-        puts pv1.patient_type
-        sleep 1
         pv1.patient_type.should match /^\d{1,2}$/
       end
 
