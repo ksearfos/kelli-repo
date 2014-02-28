@@ -244,6 +244,14 @@ describe "Ohio Health HL7" do
         pv1.referring_doctor.should eq pv1.attending_doctor unless pv1.referring_doctor.empty?
       end
 
+      it "does not have a single digit Patient Class" do
+        pv1.patient_class.should_not match /^\d{1}$/
+      end
+
+      it "has a one or two digit Patient Type" do
+        pv1.patient_type.should match /^\d{1-2}$/
+      end
+
     end # End of PV1 Context
 
     after(:each) do
