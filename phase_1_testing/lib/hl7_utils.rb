@@ -99,7 +99,7 @@ end  # extension of HL7::Message
 # nothing special except chops to remove empty lines
 def get_hl7( file )
   puts "Reading #{file}..."
-  File.open( file ) { |f| f.gets.chop }
+  File.open( file ) { |f| f.gets.chop.tr( "\r\n", "\n" ) }
 end
 
 # returns array of strings containing hl7 message of individual records

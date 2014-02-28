@@ -1,6 +1,6 @@
 # last updated 2/28/14 3:34pm
 
-require './extended_base_classes.rb'
+require "#{File.dirname(__FILE__)}/lib/extended_base_classes.rb"
 
 module HL7Procs
 
@@ -101,8 +101,8 @@ module HL7Procs
   RES_ST = Proc.new{ |rec| has_val?(rec,"obr25") } 
   RES_ST_F = Proc.new{ |rec| is_val?(rec,"obr25","F") }
   RES_ST_I = Proc.new{ |rec| is_val?(rec,"obr25","I") }
-  RES_ST_C = Proc.new{ |rec| has_val?(rec,"obr25","C") }
-  RES_ST_P = Proc.new{ |rec| has_val?(rec,"obr25","P") }
+  RES_ST_C = Proc.new{ |rec| is_val?(rec,"obr25","C") }
+  RES_ST_P = Proc.new{ |rec| is_val?(rec,"obr25","P") }
   EXAM_DT = Proc.new{ |rec| has_val?(rec,"obr27") } 
   REASON = Proc.new{ |rec| has_val?(rec,"obr31") }
   RES_INT = Proc.new{ |rec| has_val?(rec,"obr32") }

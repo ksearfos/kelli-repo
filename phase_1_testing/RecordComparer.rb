@@ -1,15 +1,11 @@
 # last updated 2/28/14 3:22pm
 
-require "#{__FILE__}\\..\\hl7_utils.rb"
-require "#{__FILE__}\\..\\HL7ProcsMod.rb"
+require "./HL7ProcsMod.rb"
 
-# require all utility files, stored in [HEAD]/utilities
-DEL = '\\'
-pts = __FILE__.split( '/' )
-pts.pop(2)
-util_path = pts.join( DEL ) + DEL + 'utilities' 
+# require all utility files, stored in phase_1_testing/lib
+util_path = File.dirname( __FILE__ ) + "/lib"
 util = Dir.new( util_path )   # all helper functions
-util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+util.entries.each{ |f| require util_path + "/" + f if f.include?( '.rb' ) }
 
 class RecordComparer
   include HL7Procs
@@ -135,6 +131,7 @@ class RecordComparer
   # modifies @recs_to_use/@criteria_by_record/@matches by calling note_matches()
   def find_most_popular
     rec_to_id = {}                             # { rec1 => pt_id, rec2 => pt_id ... }
+
     @records.each{ |r|
       id = r[:PID][0].e3.before( "^" )         # patient_id
       rec_to_id[r] = id
