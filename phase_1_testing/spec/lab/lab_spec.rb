@@ -117,11 +117,13 @@ describe "Ohio Health HL7" do
 
             it "has an appropriate Value Type" do
               if obx.value_type =~ /^SN$/
-                obx.observation_value.should match /^[-<>]/
+                obx.observation_value.should match /^[-<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
               elsif obx.value_type =~ /^NM$/
-                obx.observation_value.should match /^ ?\d+[\.\+:-]?\d* ?$/
+                obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
               elsif obx.value_type =~ /^TX$/
-                obx.observation_value.should_not match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
+                obx.observation_value.should_not match /^[<>]?[=]? ?-? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif obx.value_type =~ /^TS$/
+                obx.observation_value.should match /^(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d ((0|1)[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]) $/
               else
                 fail
               end
@@ -129,11 +131,6 @@ describe "Ohio Health HL7" do
 
             context "with value type of SN or NM" do
               if obx.value_type =~ /^(SN|NM)$/
-
-                it "has Observation Values in the correct format" do
-                  # Only check numerical observation values
-                  obx.observation_value.should match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
-                end
 
                 it "has valid Units" do
                   known_units.should include obx.units
