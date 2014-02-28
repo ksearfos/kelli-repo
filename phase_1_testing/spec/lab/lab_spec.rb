@@ -132,14 +132,15 @@ describe "Ohio Health HL7" do
               obx.observation_id.should match /\^LA01$/
             end
 
-            it "has an appropriate Value Type" do
-              if obx.value_type =~ /^SN$/
-                obx.observation_value.should match /^[-<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
-              elsif obx.value_type =~ /^NM$/
-                obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
-              elsif obx.value_type =~ /^TX$/
+            value_type = obx.value_type
+            it "has an appropriate Observation Value for Value Type #{value_type}" do
+              if value_type =~ /^SN$/
+                  obx.observation_value.should match /^[-<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif value_type =~ /^NM$/
+                  obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
+              elsif value_type =~ /^TX$/
                 obx.observation_value.should_not match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
-              elsif obx.value_type =~ /^TS$/
+              elsif value_type =~ /^TS$/
                 # MM-dd-yyyy hh:mm
                 obx.observation_value.should match /^(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d ((0|1)[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]) $/
               else
