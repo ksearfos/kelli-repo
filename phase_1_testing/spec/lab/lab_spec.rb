@@ -128,6 +128,10 @@ describe "Ohio Health HL7" do
           # yyyyMMddHHmm
           obr.observation_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
         end
+
+        it "has Results Status Date that is the same as the Observation Date?" do
+          obr.results_status_change_date.should eq obr.observation_date
+        end
    
 # == OBX tests
 
@@ -228,7 +232,12 @@ describe "Ohio Health HL7" do
 
       it "has Visit ID that matches PID Visit ID" do
         pid = message.children[:PID][0]
-        pid.account_number.should eq pv1.visit_number
+        pv1.visit_number.should eq pid.account_number 
+      end
+
+      it "has an Attending Doctor" do
+        puts pv1
+        sleep 1
       end
 
     end # End of PV1 Context
