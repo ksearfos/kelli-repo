@@ -115,6 +115,18 @@ describe "Ohio Health HL7" do
               obx.observation_id.should match /\^LA01$/
             end
 
+            it "has an appropriate Value Type" do
+              if obx.value_type =~ /^SN$/
+                obx.observation_value.should match /^[-<>]/
+              elsif obx.value_type =~ /^NM$/
+                obx.observation_value.should match /^ ?\d+[\.\+:-]?\d* ?$/
+              elsif obx.value_type =~ /^TX$/
+                obx.observation_value.should_not match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
+              else
+                fail
+              end
+            end
+
             context "with value type of SN or NM" do
               if obx.value_type =~ /^(SN|NM)$/
 
