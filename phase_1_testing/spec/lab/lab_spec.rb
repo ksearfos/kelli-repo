@@ -6,7 +6,15 @@ require 'extended_base_classes'
 require 'set'
 
 
-# == Define helper methods for use later
+# == Methods and Objects we will use
+
+known_units = ["","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG",
+               "U","U/L","U/mL","fL","g/dL","h","lbs","log IU/mL",
+               "mIU/mL","mL","mL/min/1.73 m2","mcIU/mL","mcg/dL",
+               "mcg/mL FEU","mg/24 h","mg/L","mg/dL","mg/g crea",
+               "mlU/mL","mm Hg","mm/hr","mmol/L","ng/dL","ng/mL",
+               "nmol/L","pH units","pg/mL","seconds","titer",
+               "weeks","years"]
 
 def get_obx_of_obr( obr )
   obr.children.select { |s|
@@ -113,7 +121,7 @@ describe "Ohio Health HL7" do
             end
 
             it "has Units in the correct format" do
-              #puts obx.units.to_s
+              known_units.should include obx.units.to_s
             end
 
           end # End of obx_children.each
