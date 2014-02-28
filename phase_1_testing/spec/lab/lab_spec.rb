@@ -240,6 +240,10 @@ describe "Ohio Health HL7" do
         pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
       end
 
+      it "has the same Attending and Referring Doctor" do
+        pv1.referring_doctor.should eq pv1.attending_doctor unless pv1.referring_doctor.empty?
+      end
+
     end # End of PV1 Context
 
     after(:each) do
