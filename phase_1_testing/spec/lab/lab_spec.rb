@@ -252,6 +252,10 @@ describe "Ohio Health HL7" do
         pv1.patient_type.should match /^\d{1-2}$/
       end
 
+      it "does not have a VIP Indicator" do
+        pv1.vip_indicator.should be_empty
+      end
+
     end # End of PV1 Context
 
     after(:each) do
