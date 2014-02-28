@@ -23,7 +23,7 @@ class String
     self[i..-1]
   end
   
-  # returns true if string is numberic, e.g. an integer or a decimal
+  # returns true if string is numeric, i.e. an integer or a decimal
   # returns false if not
   def is_numeric?
     strip!

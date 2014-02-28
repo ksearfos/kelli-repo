@@ -7,6 +7,7 @@ module HL7Procs
   TX_PROC = Proc.new{ |val| !val.empty? && !SN_PROC.call(val) && !NM_PROC.call(val) }   # there is something there, and it
   IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }                            #+ isn't NM or SN format
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
+  DOC_SZ_PROC = Proc.new{ |val| val.size > 2 }
   AUTO_FAIL = Proc.new{ |*| return false }     # this one may or may not be given an arg, so must be a proc
   
   # -------------Define the Procs------------ #
@@ -19,11 +20,27 @@ module HL7Procs
   
   # PV1
   PT_CL_E = Proc.new{ |rec| is_val?(rec,"pv12","E") }
+  PT_CL = Proc.new{ |rec| has_val?(rec,"pvi1") }
   PT_LOC_ED = Proc.new{ |rec| is_val?(rec,"pv13","ED") }
+  PT_LOC = Proc.new{ |rec| has_val?(rec,"pv13") }
   EMPTY_32 = Proc.new{ |rec| !seg_has_val?(rec,"pv13",2) }  
   EMPTY_33 = Proc.new{ |rec| !seg_has_val?(rec,"pv13",3) }  
   ATT = Proc.new{ |rec| has_val?(rec,"pv17") }
   REF = Proc.new{ |rec| has_val?(rec,"pv18") }
+  CNS = Proc.new{ |rec| has_val?(rec,"pv19") }
+  ADM = Proc.new{ |rec| has_val?(rec,"pv117") }
+  ATT_SZ = Proc.new{ |rec| matches?(rec,"pv17",DOC_SZ_PROC) }
+  REF_SZ = Proc.new{ |rec| matches?(rec,"pv18",DOC_SZ_PROC) }
+  CNS_SZ = Proc.new{ |rec| matches?(rec,"pv19",DOC_SZ_PROC) }
+  ADM_SZ = Proc.new{ |rec| matches?(rec,"pv117",DOC_SZ_PROC) }
+  ATT_EQ_REF = Proc.new{ |rec| fields_are_same?(rec,"pv17","pv18") }
+  HOSP_SV = Proc.new{ |rec| has_val?(rec,"pv110") }
+  ADM_SC = Proc.new{ |rec| has_val?(rec,"pv114") }
+  PT_TYPE = Proc.new{ |rec| has_val?(rec,"pv118") }
+  FIN_CL = Proc.new{ |rec| has_val?(rec,"pv120") }
+  DCH_DISP = Proc.new{ |rec| has_val?(rec,"pv136") }
+  ADM_DT = Proc.new{ |rec| has_val?(rec,"pv144") }
+  DCH_DT = Proc.new{ |rec| has_val?(rec,"pv145") }
   
   # OBX
   TX_TYPE = Proc.new{ |rec| is_val?(rec,"obx2","TX") }
@@ -63,6 +80,7 @@ module HL7Procs
   CTY_CD = Proc.new{ |rec| has_val?(rec,"pid12") } 
   LANG = Proc.new{ |rec| has_val?(rec,"pid15") }
   MAR_ST = Proc.new{ |rec| has_val?(rec,"pid16") }  
+  REL = Proc.new{ |rec| has_val?(rec,"pid17") } 
   VISIT_ID = Proc.new{ |rec| has_val?(rec,"pid18") || has_val?(rec,"pv119") }  
   SSN = Proc.new{ |rec| has_val?(rec,"pid19") }
    
@@ -79,16 +97,23 @@ module HL7Procs
   ORD_MD = Proc.new{ |rec| has_val?(rec,"obr16") }
   RES_DT = Proc.new{ |rec| has_val?(rec,"obr22") }
   RES_ST = Proc.new{ |rec| has_val?(rec,"obr25") } 
+  RES_ST_F = Proc.new{ |rec| is_val?(rec,"obr25","F") }
+  RES_ST_I = Proc.new{ |rec| is_val?(rec,"obr25","I") }
+  RES_ST_C = Proc.new{ |rec| has_val?(rec,"obr25","C") }
+  RES_ST_P = Proc.new{ |rec| has_val?(rec,"obr25","P") }
   EXAM_DT = Proc.new{ |rec| has_val?(rec,"obr27") } 
   REASON = Proc.new{ |rec| has_val?(rec,"obr31") }
   RES_INT = Proc.new{ |rec| has_val?(rec,"obr32") }
+  
+  # OTHER
+  EVN = Proc.new{ |rec| has_seg?(rec,"evn") }
   
   #-------------Group Procs for Quick Access-------------- #
   # LAB OUTPUT CRITERIA
   LAB_CRITERIA = [ EVENT, T_ID, ID_23, P_ID, ID_24, ATT, REF, TX_TYPE, SN_TYPE, NM_TYPE, OBS_ID, TX_VAL,
                    NM_VAL, SN_VAL, UNITS, REF_RG, FLAG_H, FLAG_I, FLAG_CH, FLAG_CL, FLAG_L, FLAG_A, FLAG_U,
                    FLAG_N, FLAG_C, PT_ID, NAME, DOB, SEX_M, SEX_F, SEX_O, VISIT_ID, SSN, ORD_NUM, SER_ID,
-                   ORD_DT, ORD_MD, RES_ST ] 
+                   ORD_DT, ORD_MD, RES_ST_F, RES_ST_I, RES_ST_C, RES_ST_P, ATT_EQ_REF ] 
   
   # RAD OUTPUT CRITERIA
   RAD_CRITERIA = [ EVENT, SER_ID, T_ID, ID_23, TX_TYPE, SN_TYPE, NM_TYPE, TX_VAL, NM_VAL, SN_VAL, RES_DT, 
@@ -97,11 +122,19 @@ module HL7Procs
                    MAR_ST, GDT_ID, IMP_ID, ADT_ID, IMP_VAL, ADT_VAL, TRANS_DT, RES_INT, EXAM_DT ] 
                      
   # ENCOUNTER OUTPUT CRITERIA
+  ENC_CRITERIA = [ EVENT, PT_ID, VISIT_ID, PT_LOC, ADM_DT, NAME, DOB, SEX_M, SEX_F, SEX_O, SSN, PT_CL, ATT, DCH_DT,
+                   P_ID, T_ID, ID_23, ID_24, RACE, CTY_CD, ADDR_7, LANG, MAR_ST, REL, CNS, ADM, ATT_SZ, REF_SZ,
+                   ADM_SZ, CNS_SZ, ATT_EQ_REF, HOSP_SV, ADM_SC, PT_TYPE, FIN_CL, DCH_DISP, EVN ]
   
   # ----------------Actual Methods---------------- #
   # It is ironic that in a module full of procs, we also have methods
   # but I chose to break some more generic pieces of code into methods
   # for readability
+  
+  def HL7Procs.has_seg?( record, segment )
+    seg = segment.upcase.to_sym
+    !record[seg].nil?
+  end
   
   # does the given field of the record have a value?
   # returns true if at least one matching field has a value, false otherwise
@@ -128,6 +161,27 @@ module HL7Procs
       return true if code.call(r)
     }   
     return false  # if regex doesn't match
+  end
+  
+  # checks if the values of two fields are the same - by default only checks cases where both fields have
+  #+  non-empty values
+  # optionally force checking of empty values - if you want f1 = "abc" and f2 = "" to count as not the same,
+  #+  set check_empty to true
+  def HL7Procs.fields_are_same?( record, f1, f2, check_empty = false )
+    res1 = record.fetch_field( f1 )
+    res2 = record.fetch_field( f2 )
+    return false if res1.size != res2.size    # if there isn't a 1:1 mapping, they clearly aren't the same!
+    
+    for i in (0...res1.size)
+      val1 = res1[i]
+      val2 = res2[i]
+      
+      next if ( !check_empty && ( val1.empty? || val2.empty? ) )    # empty values automatically pass if check_empty = false
+      return false if ( val1.to_s != val2.to_s )       # I am assuming we want "1" and 1 to be considered the same
+    end
+    
+    # if we get here, there were no non-empty fields that didn't contain the same text, so...
+    return true
   end
   
   def HL7Procs.seg_has_val?( record, field, comp )

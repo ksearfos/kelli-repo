@@ -16,4 +16,5 @@ msg = get_hl7( FILE )
 all_hl7 = hl7_by_record( msg )
 
 rec = all_hl7[0]
-puts HL7Procs::ID_24.call(rec)
+puts HL7Procs::ATT_EQ_REF.call(rec)
+# puts HL7Procs::fields_are_same?( rec, "pv17", "pv18" )
