@@ -46,9 +46,7 @@ describe "Ohio Health HL7" do
 
   msg_list.each do |message|
 
-    it "has MSH segments with the correct Event format" do
-      message[0].e8.should match /^ORU\^R01$/
-    end
+# == General message tests
 
     it "has only one PID per message" do
       message.children[:PID].size.should == 1
@@ -56,6 +54,25 @@ describe "Ohio Health HL7" do
 
     it "has only one PV1 per message" do
       message.children[:PV1].size.should == 1
+    end
+
+# == MSH tests
+    # Field names do not work unless converted to HL7::Segment::MSH
+    context "MSH segment" do
+      msh = message[0]
+
+      it "has MSH segments with the correct Event format" do
+        msh.e8.should match /^ORU\^R01$/
+      end
+
+      it "has a valid Message Control ID" do
+        if msh.e3 =~ /MGH/
+          msh.e10.should match /^P$/
+        else
+          msh.e10.should match /^T$/
+        end
+      end
+
     end
 
 # == ORC tests
@@ -121,8 +138,9 @@ describe "Ohio Health HL7" do
               elsif obx.value_type =~ /^NM$/
                 obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
               elsif obx.value_type =~ /^TX$/
-                obx.observation_value.should_not match /^[<>]?[=]? ?-? ?\d+[\.\+\/:-]?\d* ?$/
+                obx.observation_value.should_not match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
               elsif obx.value_type =~ /^TS$/
+                # MM-dd-yyyy hh:mm
                 obx.observation_value.should match /^(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d ((0|1)[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]) $/
               else
                 fail
