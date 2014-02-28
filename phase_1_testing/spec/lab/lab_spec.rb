@@ -113,19 +113,28 @@ describe "Ohio Health HL7" do
               obx.observation_id.should match /\^LA01$/
             end
 
-            it "has Observation Values in the correct format" do
-              # Only check numerical observation values
+            context "with value type of SN or NM" do
               if obx.value_type =~ /^(SN|NM)$/
-                obx.observation_value.should match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
-              end
-            end
 
-            it "has Units in the correct format" do
-              known_units.should include obx.units.to_s
-            end
+                it "has Observation Values in the correct format" do
+                  # Only check numerical observation values
+                  obx.observation_value.should match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
+                end
 
+                it "has Units in the correct format" do
+                  known_units.should include obx.units
+                end
+
+                it "has Reference Range in the correct format" do
+                  obx.references_range.should match /^(-?\d+\.?\d*-\d+\.?\d*)?$/
+                end
+
+              end # End obx.value_type if
+            end # End Values of Type SN or NM Context
+          
           end # End of obx_children.each
         end  # End of OBR context
+
       end # End of message[:OBR].each
     end # End of OBR context
 
