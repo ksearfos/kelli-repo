@@ -73,6 +73,14 @@ describe "Ohio Health HL7" do
         end
       end
 
+      it "has the correct Processing ID" do
+        if msh.e3 =~ /MGH/
+          msh.e11.should match /^2.3$/
+        else
+          msh.e11.should match /^2.4$/
+        end
+      end
+
     end
 
 # == ORC tests
