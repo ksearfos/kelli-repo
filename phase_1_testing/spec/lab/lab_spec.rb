@@ -235,9 +235,9 @@ describe "Ohio Health HL7" do
         pv1.visit_number.should eq pid.account_number 
       end
 
-      it "has an Attending Doctor" do
-        puts pv1
-        sleep 1
+      it "has an Attending Doctor in the correct format" do
+        pv1.attending_doctor.should match /^P?[1-9]\d+\^/
+        pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
       end
 
     end # End of PV1 Context
