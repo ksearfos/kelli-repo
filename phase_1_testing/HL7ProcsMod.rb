@@ -101,8 +101,13 @@ module HL7Procs
   RES_ST = Proc.new{ |rec| has_val?(rec,"obr25") } 
   RES_ST_F = Proc.new{ |rec| is_val?(rec,"obr25","F") }
   RES_ST_I = Proc.new{ |rec| is_val?(rec,"obr25","I") }
+<<<<<<< HEAD
   RES_ST_C = Proc.new{ |rec| is_val?(rec,"obr25","C") }
   RES_ST_P = Proc.new{ |rec| is_val?(rec,"obr25","P") }
+=======
+  RES_ST_C = Proc.new{ |rec| has_val?(rec,"obr25","C") }
+  RES_ST_P = Proc.new{ |rec| has_val?(rec,"obr25","P") }
+>>>>>>> master
   EXAM_DT = Proc.new{ |rec| has_val?(rec,"obr27") } 
   REASON = Proc.new{ |rec| has_val?(rec,"obr31") }
   RES_INT = Proc.new{ |rec| has_val?(rec,"obr32") }
