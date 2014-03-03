@@ -1,3 +1,5 @@
+# last updated 2/28/14 3:35pm
+
 # added the following to class String:
 #    rem() / rem!()   This removes the given character(s) from the string
 #                     Calls tr(), meaning removes all characters given but not sequence
@@ -23,7 +25,7 @@ class String
     self[i..-1]
   end
   
-  # returns true if string is numberic, e.g. an integer or a decimal
+  # returns true if string is numeric, i.e. an integer or a decimal
   # returns false if not
   def is_numeric?
     strip!

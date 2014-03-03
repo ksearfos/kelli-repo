@@ -99,7 +99,7 @@ end  # extension of HL7::Message
 # nothing special except chops to remove empty lines
 def get_hl7( file )
   puts "Reading #{file}..."
-  File.open( file ) { |f| f.gets.chomp }
+  File.open( file ) { |f| f.gets.chop.tr( "\r\n", "\n" ) }
 end
 
 # returns array of strings containing hl7 message of individual records
@@ -142,11 +142,28 @@ def record_id( rec )
   rec[:MSH][0].message_control_id
 end
 
+def important_details( rec, type )
+  case type
+    when :patient_id then rec[:PID][0].e3.before( "^" )
+    when :patient_name then reformat_name( rec[:PID][0].patient_name )
+    when :visit_number then rec[:PV1][0].e19.before( "^" )
+    else record_id( rec )
+  end
+end
+
+def pt_enc_details( rec )
+  { :ID => important_details( rec, :patient_id ),
+    :NAME => important_details( rec, :patient_name ),
+    :VISIT => important_details( rec, :visit_number ) }
+end
+
 def record_details( rec )
   puts "Message ID: " + record_id(rec)
   puts "Sent at: " + reformat_datetime( rec[:MSH][0].time )
-  puts "Patient ID: " + rec[:PID][0].e3.before( "^" )
-  puts "Patient Name: " + reformat_name( rec[:PID][0].patient_name )
+  puts "Patient ID: " + important_details( rec, :patient_id )  #rec[:PID][0].e3.before( "^" )
+  puts "Patient Name: " + important_details( rec, :patient_name )  #reformat_name( rec[:PID][0].patient_name )
+  puts "Visit Number: " + important_details( rec, :visit_number )  #rec[:PV1][0].e19.before( "^" )
+  puts ""
 end
 
 # HL7 puts date into the following format: YYYYMMDD
