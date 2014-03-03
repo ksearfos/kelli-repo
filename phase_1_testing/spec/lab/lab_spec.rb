@@ -1,10 +1,11 @@
 #!/bin/env ruby
-
 $proj_dir = File.expand_path( "../../../", __FILE__ )   # phase_1_testing directory
 require 'rspec'
+require 'rspec/expectations'
 require "#{$proj_dir}/lib/hl7_utils"
 require "#{$proj_dir}/lib/extended_base_classes"
 require 'set'
+require 'logger'
 
 
 # == Methods and Objects we will use
@@ -24,36 +25,61 @@ def get_obx_of_obr( obr )
           s.is_a? HL7::Message::Segment::OBX }
 end
 
-# == Describe the tests
-
-describe "Ohio Health HL7" do
-
 # == Get data to test
 
-  file_to_open = ""
-  raw_hl7 = ""
-  # try to get the file passed to the run script
-  if ENV["FILE"].nil?
-    file_to_open = "#{$proj_dir}/resources/manifest_lab_out_short"
-  else
-    file_to_open = ENV["FILE"]
+raw_hl7 = ""
+# try to get the file passed to the run script
+if ENV["FILE"].nil?
+  @file_to_open = File.join( "#{$proj_dir}","resources","lab_hl7","manifest_lab_out_short" )
+else
+  @file_to_open = ENV["FILE"]
+end
+#blank lines cause HL7 Parse Error...
+File.open( @file_to_open, "rb" ) do |f|
+  #blank lines cause HL7 Parse Error...
+  #and ASCII line endings cause UTF-8 Error..
+  while s = f.gets do
+    t = s.force_encoding("binary").encode("utf-8", 
+        :invalid => :replace, :undef => :replace)
+    raw_hl7 << t.chomp + "\n"
   end
-    #blank lines cause HL7 Parse Error...
-  File.open( file_to_open, "rb" ) do |f|
-    #blank lines cause HL7 Parse Error...
-    #and ASCII line endings cause UTF-8 Error..
-    while s = f.gets do
-      t = s.force_encoding("binary").encode("utf-8", 
-          :invalid => :replace, :undef => :replace)
-      raw_hl7 << t.chomp + "\n"
+end
+
+msg_list = orig_hl7_by_record raw_hl7
+
+# == Set up the logger
+@time = DateTime.now.strftime("%F at %T")
+@logfilename = ( File.basename(@file_to_open) + '_' + @time.gsub('at', '-') ).gsub(' ', '').gsub(':', '-')
+$logger = Logger.new("#{File.join($proj_dir, "log", "lab", @logfilename)}.log")
+
+$logger.formatter = proc do |severity, datetime, progname, msg|
+  "#{severity}: #{msg}\n"
+end
+  
+$logger.info "Automated Testing Log for #{File.basename(@file_to_open)}\n"
+
+$logger.info "Number of records tested: #{msg_list.size}\n"
+
+$test_descriptions = Set.new
+
+# == Configure RSpec
+
+RSpec.configure do |config|
+  config.after(:suite) do
+    $logger.info "#{'*'*80}\nElements Tested For:\n"
+    $test_descriptions.each do |desc|
+      $logger.info desc
     end
   end
-
-  msg_list = orig_hl7_by_record raw_hl7
+end
 
 # == Loop through each message and test the data
 
-  msg_list.each do |message|
+msg_list.each do |message|
+
+# == Describe the tests
+
+  describe "Ohio Health HL7" do
 
 # == General message tests
 
@@ -188,7 +214,7 @@ describe "Ohio Health HL7" do
             end # End Values of Type SN or NM Context
           
           end # End of obx_children.each
-        end  # End of OBR context
+        end  # End of OBX context
 
       end # End of message[:OBR].each
     end # End of OBR context
@@ -196,7 +222,8 @@ describe "Ohio Health HL7" do
 # == PID tests
 
     context "PID segment" do
-      pid = message[:PID][0]
+        
+      pid = message.children[:PID][0]
 
       it "has PID segments with the correct Patient ID format" do
         pid.patient_id_list.should match /^\d*\^/
@@ -268,14 +295,17 @@ describe "Ohio Health HL7" do
     end # End of PV1 Context
 
     after(:each) do
-      #puts "\nTest executed!"
-      #puts "\nError found in:
-            #{example.example_group.description} while testing it #{example.description}.
-           # Message Tested:\n #{message.to_s}" unless example.exception.nil?
+      $test_descriptions.add("#{example.example_group.description} #{example.description}")
+
+      exception_message = example.exception.to_s.split("Diff:")[0] unless example.exception.nil?
+      $logger.error "#{'*'*80}\n    Error found in:
+#{example.example_group.description} while testing it #{example.description}.\n
+    Example Exception:\n#{exception_message}\n
+    Message Tested:\n#{message.to_s}\n#{'*'*80}\n" unless example.exception.nil?
     end
-    
-  end # End of msg_list.each
-end # End of Describe Ohio Health HL7 Message
+      
+  end # End of Describe Ohio Health HL7 Message
+end # End of msg_list.each
 
 
 # == Helper methods 
