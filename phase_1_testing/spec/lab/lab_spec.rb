@@ -1,8 +1,9 @@
 #!/bin/env ruby
 
+$proj_dir = File.expand_path( "../../../", __FILE__ )   # phase_1_testing directory
 require 'rspec'
-require 'hl7_utils'
-require 'extended_base_classes'
+require "#{$proj_dir}/lib/hl7_utils"
+require "#{$proj_dir}/lib/extended_base_classes"
 require 'set'
 
 
@@ -30,7 +31,7 @@ describe "Ohio Health HL7" do
 # == Get data to test
 
   raw_hl7 = ""
-  File.open( "../../resources/manifest_lab_out_short", "rb" ) do |f|
+  File.open( "#{$proj_dir}/resources/manifest_lab_out_short", "rb" ) do |f|
     #blank lines cause HL7 Parse Error...
     #and ASCII line endings cause UTF-8 Error..
     while s = f.gets do
