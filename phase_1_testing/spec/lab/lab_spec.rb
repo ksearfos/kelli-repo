@@ -8,8 +8,6 @@ require 'set'
 
 
 # == Methods and Objects we will use
-puts DateTime.parse('20010203040506').to_s + "HAHA"
-sleep 10
 
 known_units = ["","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG",
                "U","U/L","U/mL","fL","g/dL","h","lbs","log IU/mL",
@@ -32,8 +30,16 @@ describe "Ohio Health HL7" do
 
 # == Get data to test
 
+  file_to_open = ""
   raw_hl7 = ""
-  File.open( "#{$proj_dir}/resources/manifest_lab_out_short", "rb" ) do |f|
+  # try to get the file passed to the run script
+  if ENV["FILE"].nil?
+    file_to_open = "#{$proj_dir}/resources/manifest_lab_out_short"
+  else
+    file_to_open = ENV["FILE"]
+  end
+    #blank lines cause HL7 Parse Error...
+  File.open( file_to_open, "rb" ) do |f|
     #blank lines cause HL7 Parse Error...
     #and ASCII line endings cause UTF-8 Error..
     while s = f.gets do
@@ -239,7 +245,7 @@ describe "Ohio Health HL7" do
       end
 
       it "has an Attending Doctor in the correct format" do
-        pv1.attending_doctor.should match /^P?[1-9]\d+\^/
+        pv1.attending_doctor.should match /^(P?[1-9]\d+|000000)\^/
         pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
       end
 
