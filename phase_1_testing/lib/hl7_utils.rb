@@ -82,12 +82,12 @@ class HL7::Message
   def fetch_field( field )
     seg = field[0...3]   # first three charcters, the name of the segment - have to do it this way for PV1 etc.
     f = field[3..-1]     # remaining 1-3 characters, the number of the field
-    
+
     seg.upcase!          # segment expected to be an uppercase symbol
     
     all = []
-    segs = @segments_by_name[seg.to_sym]
-    return all if segs.nil?
+    segs = @segments_by_name[seg.to_sym]    # if there is more than one segment of this type,
+    return all if segs.nil?                 #+  there will be more than value here
     
     segs.each{ |s| all << s.send( "e#{f}" ) }     # e8, e11, etc
     all
@@ -126,11 +126,9 @@ end
 # e.g. hl7_messages_array[2][:PID].e7 returns the sex, as done hl7_messages_array[2][:PID].sex
 def hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
-  all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
-  all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   
+  all_recs.map!{ |msg| HL7::Message.new( msg ) }   # array of HL7 messages, but not in usable form yet....
   all_recs.each{ |rec| rec.create_children }       # now objects are in preferred form
-  all_recs
 end
 
 def orig_hl7_by_record( hl7 )
@@ -215,4 +213,8 @@ def reformat_name( name )
   ext_str = ( ext && !ext.empty? ? " #{ext}" : "" )
   
   first + " " + mi_str + last + ext_str
+end
+
+def components( field )
+  field.split( "^" )
 end

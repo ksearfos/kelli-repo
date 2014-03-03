@@ -47,9 +47,7 @@ describe "Ohio Health HL7" do
 
   msg_list.each do |message|
 
-    it "has MSH segments with the correct Event format" do
-      message[0].e8.should match /^ORU\^R01$/
-    end
+# == General message tests
 
     it "has only one PID per message" do
       message.children[:PID].size.should == 1
@@ -57,6 +55,33 @@ describe "Ohio Health HL7" do
 
     it "has only one PV1 per message" do
       message.children[:PV1].size.should == 1
+    end
+
+# == MSH tests
+    # Field names do not work unless converted to HL7::Segment::MSH
+    context "MSH segment" do
+      msh = message[0]
+
+      it "has MSH segments with the correct Event format" do
+        msh.e8.should match /^ORU\^R01$/
+      end
+
+      it "has a valid Message Control ID" do
+        if msh.e3 =~ /MGH/
+          msh.e10.should match /^P$/
+        else
+          msh.e10.should match /^T$/
+        end
+      end
+
+      it "has the correct Processing ID" do
+        if msh.e3 =~ /MGH/
+          msh.e11.should match /^2.3$/
+        else
+          msh.e11.should match /^2.4$/
+        end
+      end
+
     end
 
 # == ORC tests
@@ -104,6 +129,10 @@ describe "Ohio Health HL7" do
           # yyyyMMddHHmm
           obr.observation_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
         end
+
+        it "has Results Status Date that is the same as the Observation Date?" do
+          obr.results_status_change_date.should eq obr.observation_date
+        end
    
 # == OBX tests
 
@@ -116,13 +145,17 @@ describe "Ohio Health HL7" do
               obx.observation_id.should match /\^LA01$/
             end
 
-            it "has an appropriate Value Type" do
-              if obx.value_type =~ /^SN$/
-                obx.observation_value.should match /^[-<>]/
-              elsif obx.value_type =~ /^NM$/
-                obx.observation_value.should match /^ ?\d+[\.\+:-]?\d* ?$/
-              elsif obx.value_type =~ /^TX$/
-                obx.observation_value.should_not match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
+            value_type = obx.value_type
+            it "has an appropriate Observation Value for Value Type #{value_type}" do
+              if value_type =~ /^SN$/
+                  obx.observation_value.should match /^[-<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif value_type =~ /^NM$/
+                  obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
+              elsif value_type =~ /^TX$/
+                obx.observation_value.should_not match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif value_type =~ /^TS$/
+                # MM-dd-yyyy hh:mm
+                obx.observation_value.should match /^(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d ((0|1)[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]) $/
               else
                 fail
               end
@@ -130,11 +163,6 @@ describe "Ohio Health HL7" do
 
             context "with value type of SN or NM" do
               if obx.value_type =~ /^(SN|NM)$/
-
-                it "has Observation Values in the correct format" do
-                  # Only check numerical observation values
-                  obx.observation_value.should match /^[<>-]? ?\d+[\.\+:-]?\d* ?$/
-                end
 
                 it "has valid Units" do
                   known_units.should include obx.units
@@ -205,7 +233,28 @@ describe "Ohio Health HL7" do
 
       it "has Visit ID that matches PID Visit ID" do
         pid = message.children[:PID][0]
-        pid.account_number.should eq pv1.visit_number
+        pv1.visit_number.should eq pid.account_number 
+      end
+
+      it "has an Attending Doctor in the correct format" do
+        pv1.attending_doctor.should match /^P?[1-9]\d+\^/
+        pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
+      end
+
+      it "has the same Attending and Referring Doctor" do
+        pv1.referring_doctor.should eq pv1.attending_doctor unless pv1.referring_doctor.empty?
+      end
+
+      it "does not have a single digit Patient Class" do
+        pv1.patient_class.should_not match /^\d{1}$/
+      end
+
+      it "has a one or two digit Patient Type" do
+        pv1.patient_type.should match /^\d{1,2}$/
+      end
+
+      it "does not have a VIP Indicator" do
+        pv1.vip_indicator.should be_empty
       end
 
     end # End of PV1 Context
