@@ -7,6 +7,8 @@ require 'set'
 
 
 # == Methods and Objects we will use
+puts DateTime.parse('20010203040506').to_s + "HAHA"
+sleep 10
 
 known_units = ["","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG",
                "U","U/L","U/mL","fL","g/dL","h","lbs","log IU/mL",
