@@ -1,4 +1,4 @@
-for file in resources/lab_hl7/*
-do
-  FILE=%file% rspec spec/lab/lab_spec.rb
-done
+for /f %%f in ('dir /s/b resources\lab_hl7\*') do (
+set FILE=%%f 
+rspec spec\lab\lab_spec.rb
+)
