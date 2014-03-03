@@ -14,7 +14,7 @@ class RecordComparer
   @@CRITERIA_BY_NAME = %w[ EVENT, T_ID, ID_23, P_ID, ID_24, ATT, REF, TX_TYPE, SN_TYPE, NM_TYPE, OBS_ID, TX_VAL,
                    NM_VAL, SN_VAL, UNITS, REF_RG, FLAG_H, FLAG_I, FLAG_CH, FLAG_CL, FLAG_L, FLAG_A, FLAG_U,
                    FLAG_N, FLAG_C, PT_ID, NAME, DOB, SEX_M, SEX_F, SEX_O, VISIT_ID, SSN, ORD_NUM, SER_ID,
-                   ORD_DT, ORD_MD, RES_ST, ATT_EQ_REF ]
+                   ORD_DT, ORD_MD, RES_ST_F, RES_ST_I, RES_ST_C, RES_ST_P, ATT_EQ_REF ]
   @@TOTAL = @@CRITERIA.size
   @@HOW_MANY = 1      # minimum number of records we want returned, e.g. target size of @recs_to_use
   
@@ -43,12 +43,17 @@ class RecordComparer
     
     num_recs = @records.size
     if num_recs <= @@HOW_MANY           # we're going the need all the records
+      puts "We will use all #{num_recs} records."
       @recs_to_use = @records.clone     # weird things happen if you don't clone an instance variable!
     else     
-      #find person who appears the most, and definitely choose him
-      find_most_popular
+      if @want_success
+        #find person who appears the most, and definitely choose him
+        puts "\nFinding patient appearing in the most messages..."
+        find_most_popular
+      end
       
-      print "Searching records for "
+      sleep 1
+      print "Searching #{num_recs} records for "
       print @want_success ? "positive" : "negative"
       puts " test cases..."
       
@@ -69,7 +74,8 @@ class RecordComparer
     # now @recs_to_use has all the records we want, but some of these may be for the same person/encounter
     # so get rid of those
     pts = @recs_to_use.map{ |rec| rec = pt_enc_details( rec ) }   # pts = [ {info}, {info}, ... ]
-    @people_to_use = pts.uniq!
+    @people_to_use = pts.uniq
+    sleep 2
   end
 
   def list_patients
@@ -85,7 +91,10 @@ class RecordComparer
   end
   
   def summarize( verbose = false )
-    puts "\nWe have successfully matched #{how_many_found?} of #{@@TOTAL} criteria."
+    print "\nWe have found "
+    print @want_success ? "positive" : "negative"
+    puts " matches for #{how_many_found?} criteria."
+    sleep 1
     
     if verbose
       puts "The unmatched criteria are:"
@@ -96,15 +105,16 @@ class RecordComparer
       end
       
       puts ""
+      sleep 1
     end
     
     print "This will require a total of #{@people_to_use.size} patient records"
     puts verbose ? ":" : "."
-    @people_to_use.each{ |pt| puts "  MRN: #{pt[:ID]}" } if verbose
     
-    # print "This will require a total of #{@recs_to_use.size} records"
-    # puts verbose ? ":" : "."
-    # @recs_to_use.each{ |r| puts "  #{record_id(r)}" } if verbose
+    if verbose
+      @people_to_use.each{ |pt| puts "  MRN: #{pt[:ID]}" }
+      sleep 1
+    end
   end
   
   private
