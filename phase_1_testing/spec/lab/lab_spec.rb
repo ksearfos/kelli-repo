@@ -15,11 +15,10 @@ describe "Ohio Health HL7" do
   include HL7
   
   @mh = HL7::MessageHandler.new( $in_file )
-  @msg_list = @mh.records
 
 # == Loop through each message and test the data
 
-  @msg_list.each do |message|
+  @mh.each do |message|
     
     @org = message[:MSH].sending_facility
     
