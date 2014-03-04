@@ -29,6 +29,14 @@ module HL7
       @segments.each_pair{ |seg_type,seg_obj| yield(seg_type,seg_obj) }  
     end
     
+    def method_missing( sym, *args, &block )
+      if Array.method_defined?( sym )
+        @segments.send( sym, *args, block )
+      else
+        super
+      end
+    end
+    
     def header
       @segments[:MSH]
     end
@@ -89,6 +97,17 @@ module HL7
       end
     end
     
+    def segment_before( seg )
+      i = @lines.index( seg )
+      @lines[i-1]
+    end
+    
+    def segment_after( seg )
+      sinel = @lines.clone.reverse   # yeah, super-clever name, I know
+      i = sinel.index( seg )
+      sinel[i-1]    # before seg in reverse array == after the seg in original array
+    end
+    
     private
     
     def break_into_segments    
@@ -103,7 +122,7 @@ module HL7
         # save segment text in @segment_text as arrays, linked to by segment name
         #+  e.g. { :MSH => [header_text], :OBX => [obx_text1, obx_text2, obx_text3] }
         # also save order of original segments as @lines
-        #+  e.g. [:MSH, :PID, :PV1, :OBX, :OBX, :OBX ]
+        #+  e.g. [:MSH, :PID, :PV1, :OBR, :OBR, :OBX, :NTE, :NTE, :NTE ]
         ary = @segment_text[type]                       # might be nil, might be an array
         ary ? @segment_text[type] << body : @segment_text[type] = [body]
         @lines << type                 # what line of the message this field comes in

@@ -15,12 +15,24 @@ module HL7
       break_into_records       # updates @records
     end
     
+    def to_s
+      @message
+    end
+    
     def []( index )
       @records[index]
     end
     
     def each
       @records.each{ |rec| yield(rec) }
+    end
+    
+    def method_missing( sym, *args, &block )
+      if Array.method_defined?( sym )
+        @records.send( sym, *args )
+      else
+        super
+      end
     end
     
     private

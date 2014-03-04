@@ -20,5 +20,7 @@ $field = "Thompson^Richard^L^III"
 
 require "#{proj_dir}/module/HL7"
 
-msg = HL7::MessageHandler.new( FILE )
-puts msg[0][:PID].patient_name.as_name
+mh = HL7::MessageHandler.new( FILE )
+msg = mh.first 
+puts msg.segment_before(:PID)
+puts msg.segment_after(:PID) == :PV1
