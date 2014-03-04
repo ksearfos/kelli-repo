@@ -16,9 +16,9 @@ module HL7
   RESULT_MESSAGE_TYPE = "ORD^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
    
-  MSH_FIELDS = { :sending_application => 3, :sending_facility => 4, :receiving_application => 5,
-                 :receiving_facility => 6, :date_time => 7, :security => 8, :message_type => 9,
-                 :message_control_id => 10, :processing_id => 11, :version => 12 } 
+  MSH_FIELDS = { :sending_application => 2, :sending_facility => 3, :receiving_application => 4,
+                 :receiving_facility => 5, :date_time => 6, :security => 7, :message_type => 8,
+                 :message_control_id => 9, :processing_id => 10, :version => 11 } 
 
   # full list of PID fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-pid-segment              
   PID_FIELDS = { :set_id => 1, :patient_id => 3, :patient_name => 5, :mothers_maiden_name => 6,
@@ -49,6 +49,9 @@ module HL7
                  
   # full list of OBX fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-obx-segment
   OBX_FIELDS = { :set_id => 1, :value_type => 2, :observation_id => 3, :sub_id => 4, :value => 5,
-                 :units => 6, :reference_range => 7, :abnormal_flag => 8, :result_status => 11 }                                                
+                 :units => 6, :reference_range => 7, :abnormal_flag => 8, :result_status => 11 }   
+
+  # I cannot find a full list of NTE fields                 
+  NTE_FIELDS = { :set_id => 1, :value => 3 }                                             
 
 end

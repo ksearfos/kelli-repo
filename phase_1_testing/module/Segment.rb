@@ -1,5 +1,5 @@
-# last updated 3/3/14
-# last tested 3/3/14
+# last updated 3/4/14
+# last tested 3/4/14
 
 module HL7 
 
@@ -12,8 +12,7 @@ module HL7
     attr_accessor :fields, :lines, :full_text, :number_of_lines, :type
     
     def initialize( segment_text, type, is_child = false )
-      @type = type.upcase
-      @fields_by_index = HL7.const_get( "#{@type.to_s}_FIELDS" )
+      @type = type.upcase    
       @full_text = segment_text
       @lines = segment_text.split( SEG_DELIM )    # an array of strings
       @number_of_lines = @lines.size
@@ -27,7 +26,14 @@ module HL7
       end
       
       break_into_fields    # sets @fields, @field_text
+      
+      hash_name = "#{@type.to_s}_FIELDS"
+      @fields_by_index = HL7.const_defined?( hash_name ) ? HL7.const_get( hash_name ) : {}
     end 
+    
+    def to_s
+      @full_text
+    end
     
     def each_line
       yield(self)
@@ -46,10 +52,15 @@ module HL7
     # to get values in all lines, use all_fields() instead
     def field( which )
       if which.is_a?( Integer )   # already an index
-        @fields[which]
-      else
+        @fields[which-1]          # field count starts at 1, but array index starts at 0
+      elsif which.is_a?( String ) || which.is_a?( Symbol )
         i = field_index( which )
-        @fields[i]
+        return nil unless i
+        
+        @fields[i-1]
+      else
+        puts "Cannot find field of type #{which.class}"
+        nil
       end
     end
     
@@ -61,7 +72,7 @@ module HL7
     end
     
     # if use asks for a field directly by name, e.g. as segment.patient_name, it will get routed through here
-    def self.method_missing( sym, *args, &block )
+    def method_missing( sym, *args, &block )
       if @fields_by_index.has_key?( sym.downcase )
         field(sym.downcase)
       else
@@ -72,14 +83,12 @@ module HL7
     # displays readable version of the fields, headed by the index of the field
     # e.g. 1: 12345, 2:, 3: SMITH^JOHN^^JR., 4: 19630506
     def view_fields
-      last = @field_text.size - 1    # last index
+      last = @field_text.size    # last index
       for i in 1..last 
         print "#{i}:#{@field_text[i-1]}"
         print i == last ? "\n" : ", "
       end
     end
-    
-    private
     
     # if user wants to add fields or field names not listed in default hash, use add
     # add[:newfield] = 13 adds :newfield at index 13, and/or aliases whatever field is already at that index
@@ -87,18 +96,27 @@ module HL7
       @fields_by_index[field] = index
     end
     
+    private
+    
     def break_into_fields   
       @field_text = lines.first.split( FIELD_DELIM )
-      @field_text[1..-1].each{ |f|
+      remove_name_field
+      
+      @field_text.each{ |f|
         @fields << ( f.empty? ? nil : HL7::Field.new( f ) )
       }
     end
     
     def field_index( name )
       n = name.downcase.to_sym
-      @fields_by_index[name]
+      @fields_by_index[n]
     end
 
+    def remove_name_field
+        first = @field_text[0]
+        @field_text = @field_text[1..-1] if first == @type.to_s
+    end
+    
   end
 
 end

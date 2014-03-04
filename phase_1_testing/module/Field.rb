@@ -1,5 +1,5 @@
-# last updated 3/3/14
-# last tested 3/3/14
+# last updated 3/4/14
+# last tested 3/4/14
 
 module HL7
     
@@ -11,6 +11,10 @@ module HL7
       @original_text = field_text
       @components = field_text.split( COMP_DELIM )    # an array of strings
     end 
+    
+    def to_s
+      @original_text
+    end
     
     def each
       @components.each{ |comp| yield(comp) }
@@ -66,7 +70,7 @@ module HL7
 
     # HL7 puts time into the following format: YYYYMMDDHHNNSS (24-hour clock), seconds optional
     # this will spit it back out as MM/DD/YYYY HH:MM:SS AM/PM
-    def component_as_datetime( delim = "/" )
+    def as_datetime( delim = "/" )
       date = @original_text[0...8]
       time = @original_text[8..-1]
   
@@ -101,7 +105,6 @@ module HL7
 
     # HH:MM:SS AM/PM
     def make_time( time )
-      time = @components[index]
       hr = time[0...2]
       min = time[2...4]
       sec = time[4...6]
