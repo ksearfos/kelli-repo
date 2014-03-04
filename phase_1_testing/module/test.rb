@@ -1,7 +1,9 @@
 #!/bin/env ruby
 
 proj_dir = File.expand_path( "../..", __FILE__ )
-FILE = "#{proj_dir}/resources/manifest_lab_out_short"
+# FILE = "#{proj_dir}/resources/manifest_lab_out_short"
+# FILE = "C:/Users/Owner/Documents/manifest_lab_out_shortened.txt"
+FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
 $msg = <<END
 0000000599MSH|^~\&|HLAB|RMH|||20140128041144||ORU^R01|201401280411444405|T|2.4
 PID|||00547448^^^ST01||Tanner^Michael||19510325|M|||^^^^^^^|||||||1134733972^^^^STARACC|291442286
@@ -18,6 +20,5 @@ $field = "Thompson^Richard^L^III"
 
 require "#{proj_dir}/module/HL7"
 
-msg = HL7::Message.new( $msg )
-puts msg.important_details(:raisin)
-puts msg.important_details(:patient_name)
+msg = HL7::MessageHandler.new( FILE )
+puts msg[0][:PID].patient_name.as_name

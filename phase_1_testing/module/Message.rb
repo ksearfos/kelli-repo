@@ -92,7 +92,7 @@ module HL7
     private
     
     def break_into_segments    
-      segments = @message.split( SEG_DELIM )   # all segments, including the type found in field 0
+      segments = @message.split( SEG_DELIM )     # all segments, including the type found in field 0
       segments.each{ |seg|
         end_of_type = seg.index( FIELD_DELIM )   # first occurrence of delimiter => end of the type field
         type = seg[0...end_of_type]

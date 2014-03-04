@@ -1,3 +1,6 @@
+# last updated 3/4/14
+# last tested 3/4/14
+
 dir = File.expand_path( "..", __FILE__ )
 require "#{dir}/Field.rb"
 require "#{dir}/Message.rb"
@@ -10,7 +13,7 @@ module HL7
   FIELD_DELIM = "|"      # fields of a segment are separated by this
   COMP_DELIM = "^"       # components in a field are separated by this
   DUP_DELIM = "~"        # duplicate information in a single field is separated by this
-  HDR = /\d+MSH/         # regex defining header row
+  HDR = /\d+MSH|MSH/    # regex defining header row
   
   ORDER_MESSAGE_TYPE = "ORD^O01"
   RESULT_MESSAGE_TYPE = "ORD^R01"

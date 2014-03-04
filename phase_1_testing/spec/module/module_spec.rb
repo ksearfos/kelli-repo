@@ -1,7 +1,8 @@
 #!/bin/env ruby
 
 proj_dir = File.expand_path( "../../..", __FILE__ )
-FILE = "#{proj_dir}/resources/manifest_lab_out_short"
+# FILE = "#{proj_dir}/resources/manifest_lab_out_short"
+FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
 $seg = "PID|||00487630^^^ST01||Thompson^Richard^L||19641230|M|||^^^^^^^|||||||A2057219^^^^STARACC|291668118"
 $field = "Thompson^Richard^L^III"
 

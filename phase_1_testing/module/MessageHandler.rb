@@ -1,3 +1,6 @@
+# last updated 3/4/14
+# last tested 3/4/14
+
 module HL7
   
   class MessageHandler
@@ -26,9 +29,11 @@ module HL7
     # changes coding to end in \n for easier parsing
     def read_message( file )
       puts "Reading #{file}..."
-      @message = File.open( file ) { |f| f.gets.chop }
-      @message.tr!( "\r\n", SEG_DELIM )    # really don't know whether it will have CRLF or CR, but
-      @message.tr!( "\r", SEG_DELIM )      #+ ruby always plays nicely with plain ol' LF        
+      lines = File.open( file ) { |f| f.readlines }
+
+      lines.delete_if{ |l| l !~ /\S/ }    # all whitespace, so get rid of this line
+      lines.each{ |l| l.chomp! }          # get rid of all end-of-line characters, including CR, CRLF, and LF
+      @message = lines.join( "\n" )       # now paste them back together with the end-of-line character we want
     end  
     
     # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects
@@ -44,12 +49,12 @@ module HL7
       hdrs = @message.scan( HDR )      # all headers (will be needed later)
       recs = @message.split( HDR )     # split across headers, yielding individual records
       recs.delete_if{ |r| r.empty? }
-
+      
       all_recs = []
       for i in 0...hdrs.size
         all_recs << hdrs[i] + recs[i].chomp      # those pesky endline characters cause a LOT of problems!
       end
-  
+
       all_recs
     end
     
