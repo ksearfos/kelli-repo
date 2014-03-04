@@ -11,7 +11,7 @@ util = Dir.new( util_path )   # all helper functions
 util.entries.each{ |f| require util_path + "/" + f if f.include?( '.rb' ) }
 
 # FILE = "#{input_path}/manifest_lab_out.txt"
-FILE = "#{input_path}/manifest_lab_short_unix.txt"
+FILE = "#{input_path}/manifest_rad_out.txt"
 OUT_FILE = "#{$proj_dir}/record_results.txt"
 VERBOSE = true
 

@@ -25,6 +25,24 @@ def get_obx_of_obr( obr )
           s.is_a? HL7::Message::Segment::OBX }
 end
 
+def full_description( example )
+  example.metadata[:full_description]
+end
+
+def log_example_exception( example, message )
+  exception_message = example.exception.to_s.split("Diff:")[0]
+
+  $logger.error "#{'*'*80}\n    Error found in:
+#{example.metadata[:full_description]}\n
+    Example Exception:\n#{cap_first( exception_message )}
+    Pattern translation:\n#{cap_first( example.metadata[:pattern] )}\n
+    Message Tested:\n#{message.to_s}\n#{'*'*80}\n"
+end
+
+def cap_first( string )
+  string.slice(0,1).capitalize + string.slice(1..-1)
+end
+
 # == Get data to test
 
 raw_hl7 = ""
@@ -83,11 +101,11 @@ msg_list.each do |message|
 
 # == General message tests
 
-    it "has only one PID per message" do
+    it "has only one PID per message", :pattern => '' do
       message.children[:PID].size.should == 1
     end
 
-    it "has only one PV1 per message" do
+    it "has only one PV1 per message", :pattern => '' do
       message.children[:PV1].size.should == 1
     end
 
@@ -96,11 +114,11 @@ msg_list.each do |message|
     context "MSH segment" do
       msh = message[0]
 
-      it "has MSH segments with the correct Event format" do
+      it "has MSH segments with the correct Event format", :pattern => 'ORU^R01' do
         msh.e8.should match /^ORU\^R01$/
       end
 
-      it "has a valid Message Control ID" do
+      it "has a valid Message Control ID", :pattern => 'P or T' do
         if msh.e3 =~ /MGH/
           msh.e10.should match /^P$/
         else
@@ -108,7 +126,7 @@ msg_list.each do |message|
         end
       end
 
-      it "has the correct Processing ID" do
+      it "has the correct Processing ID", :pattern => '2.3 or 2.4' do
         if msh.e3 =~ /MGH/
           msh.e11.should match /^2.3$/
         else
@@ -120,7 +138,7 @@ msg_list.each do |message|
 
 # == ORC tests
 
-    context "ORC segment" do
+    context "ORC segment", :pattern => 'any two characters' do
       message[:ORC].each do |orc|
 
         it "has Control ID of two characters" do
@@ -135,11 +153,13 @@ msg_list.each do |message|
     context "OBR segment" do
       message[:OBR].each do |obr|
 
-        it "has Control Code containing only letters, numbers, and spaces" do
-          obr.filler_order_number.should match /^[A-Za-z0-9 ]+/
+        it "has Control Code containing only letters, numbers, and spaces", 
+              :pattern => 'one or more characters and/or numbers with spaces allowed' do
+          obr.filler_order_number.should match /^[A-Za-z0-9][A-Za-z0-9 ]*/
         end
 
-        it "has Procedure ID in the correct format" do
+        it "has Procedure ID in the correct format", 
+            :pattern => 'begins with capital letters and numbers and ends with ECAREEAP or OHHOREAP' do
           obr.universal_service_id.should match /^[A-Z0-9]+\^/
           if message[0].e3 =~ /MGH/
             obr.universal_service_id.should match /\^ECAREEAP$/
@@ -149,22 +169,25 @@ msg_list.each do |message|
         end
       
         # Consider adding test for provider title e.g. MD, DO, etc...
-        it "has Ordering Provider in the correct format" do
-          obr.ordering_provider.should match /^[A-Z0-9]+\^[A-Z a-z\-]+\^[A-Z a-z]+\^[A-Z]?\^/
+        it "has Ordering Provider in the correct format", 
+            :pattern => 'an optional capital letter followed by numbers, lastname, firstname, optional middle initial, final field ends with PROV' do
+          obr.ordering_provider.should match /^[A-Z]?[0-9]+\^[A-Z a-z\-]+\^[A-Z a-z]+\^[A-Z]?\^/
           obr.ordering_provider.should match /\^\w+PROV$/
         end
 
         # Make sure all possible status markers are in regex
-        it "has Result Status in the correct format" do
+        it "has Result Status in the correct format", :pattern => 'any single letter in [DFNOSWPXCRUI]' do
           obr.result_status.should match /^[DFNOSWPCXRUI]$/
         end
 
-        it "has Date/Time values in the correct format" do
+        it "has Date/Time values in the correct format", 
+            :pattern => 'a timestamp in yyyyMMddHHmm format' do
           # yyyyMMddHHmm
           obr.observation_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
         end
 
-        it "has Results Status Date that is the same as the Observation Date?" do
+        it "has Results Status Date that is the same as the Observation Date", 
+            :pattern => 'matching dates' do
           obr.results_status_change_date.should eq obr.observation_date
         end
    
@@ -175,16 +198,21 @@ msg_list.each do |message|
           obx_children.each do |obx|
 
             # Consider checking elements 1 and 2 of this segment
-            it "has Component Id in the correct format" do
+            it "has Component Id in the correct format", :pattern => 'LA01' do
               obx.observation_id.should match /\^LA01$/
             end
 
             value_type = obx.value_type
-            it "has an appropriate Observation Value for Value Type #{value_type}" do
+            it "has an appropriate Observation Value for Value Type #{value_type}",
+                :pattern => 'depends on the value type...
+If SN: an optional < or > or <= or >= or =, an optional + or -, number(s), an optional separator (., +, /, :, -), and number(s) following the separator
+If NM: an optional + or -, number(s), an optional decimal point, and numbers following the decimal
+If TX: a string of text that is not obviously an SN or NM
+If TX: a timestamp in MM-dd-yyyy hh:mm format' do
               if value_type =~ /^SN$/
-                  obx.observation_value.should match /^[-<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+                obx.observation_value.should match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
               elsif value_type =~ /^NM$/
-                  obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
+                obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
               elsif value_type =~ /^TX$/
                 obx.observation_value.should_not match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
               elsif value_type =~ /^TS$/
@@ -198,15 +226,16 @@ msg_list.each do |message|
             context "with value type of SN or NM" do
               if obx.value_type =~ /^(SN|NM)$/
 
-                it "has valid Units" do
+                it "has valid Units", :pattern => 'units in #{known_units.to_s}' do
                   known_units.should include obx.units
                 end
 
-                it "has Reference Range in the correct format" do
+                it "has Reference Range in the correct format", 
+                  :pattern => 'a positive or negative number - another number' do
                   obx.references_range.should match /^(-?\d+\.?\d*-\d+\.?\d*)?$/
                 end
 
-                it "has a valid Abnormal Flag" do
+                it "has a valid Abnormal Flag", :pattern => 'a flag in #{abnormal_flags.to_s}' do
                   abnormal_flags.should include obx.abnormal_flags
                 end
 
@@ -225,32 +254,34 @@ msg_list.each do |message|
         
       pid = message.children[:PID][0]
 
-      it "has PID segments with the correct Patient ID format" do
+      it "has PID segments with the correct Patient ID format", :pattern => 'begins with digits and ends with characters followed by "01"' do
         pid.patient_id_list.should match /^\d*\^/
         pid.patient_id_list.should match /\^\w+01$/
       end
 
-      it "has Patient Name in the correct format" do
+      it "has Patient Name in the correct format", 
+          :pattern => 'lastname, firstname, optional initial, JR. or SR. or Roman Numeral' do
         # Lastname^Firstname^I^JR.|SR.|RomanNumeral
         pid.patient_name.should match /^\w+([- ]{1}\w+)*\^\w+(\^|\^[A-Z])?(\^((JR|SR)\.|((II|III|IV|V))))?$/
       end
 
-      it "has Date of Birth in the correct format" do
+      it "has Date of Birth in the correct format", :pattern => 'year month day (yyyyMMdd)' do
         # yyyyMMdd
         pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
       end
 
-      it "has Sex in the correct format" do
+      it "has Sex in the correct format", :pattern => 'one of [FMOUANC]' do
         # F|M|O|U|A|N|C
         pid.admin_sex.should match /^[FMOUANC]$/
       end
 
-      it "has Visit ID in the correct format" do
+      it "has Visit ID in the correct format", 
+          :pattern => 'begins with an optional capital letter followed by numbers and ends with characters followed by "ACC"' do
         pid.account_number.should match /^[A-Z]?\d+\^/
         pid.account_number.should match /\^\w+ACC$/
       end
 
-      it "has SSN in the correct format" do
+      it "has SSN in the correct format", :pattern => 'a social security number without dashes' do
         pid.social_security_num.should match /^\d{9}$/
       end
 
@@ -261,47 +292,45 @@ msg_list.each do |message|
     context "PV1 segment" do
        pv1 = message.children[:PV1][0]
 
-      it "has Visit ID in the correct format" do
+      it "has Visit ID in the correct format", 
+          :pattern => 'an optional capital letter followed by digits, ending with characters followed by "ACC"' do
         pv1.visit_number.should match /^[A-Z]?\d+\^/
         pv1.visit_number.should match /\^\w+ACC$/
       end
 
-      it "has Visit ID that matches PID Visit ID" do
+      it "has Visit ID that matches PID Visit ID", 
+          :pattern => 'Visit ID and PID Visit ID fields should match' do
         pid = message.children[:PID][0]
         pv1.visit_number.should eq pid.account_number 
       end
 
-      it "has an Attending Doctor in the correct format" do
+      it "has an Attending Doctor in the correct format", 
+          :pattern => 'begins with an optional P followed by digits (or 000000 if there is no doctor assigned), ends with STARPROV or MGHPROV or MHMPROV' do
         pv1.attending_doctor.should match /^(P?[1-9]\d+|000000)\^/
         pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
       end
 
-      it "has the same Attending and Referring Doctor" do
+      it "has the same Attending and Referring Doctor", :pattern => 'fields should match unless Referring Doctor field is empty' do
         pv1.referring_doctor.should eq pv1.attending_doctor unless pv1.referring_doctor.empty?
       end
 
-      it "does not have a single digit Patient Class" do
+      it "does not have a single digit Patient Class", :pattern => 'a single digit' do
         pv1.patient_class.should_not match /^\d{1}$/
       end
 
-      it "has a one or two digit Patient Type" do
+      it "has a one or two digit Patient Type", :pattern => 'one or two digits' do
         pv1.patient_type.should match /^\d{1,2}$/
       end
 
-      it "does not have a VIP Indicator" do
+      it "does not have a VIP Indicator", :pattern => 'this field should be empty' do
         pv1.vip_indicator.should be_empty
       end
 
     end # End of PV1 Context
 
     after(:each) do
-      $test_descriptions.add("#{example.example_group.description} #{example.description}")
-
-      exception_message = example.exception.to_s.split("Diff:")[0] unless example.exception.nil?
-      $logger.error "#{'*'*80}\n    Error found in:
-#{example.example_group.description} while testing it #{example.description}.\n
-    Example Exception:\n#{exception_message}\n
-    Message Tested:\n#{message.to_s}\n#{'*'*80}\n" unless example.exception.nil?
+      $test_descriptions.add( full_description( example ) )
+      log_example_exception( example, message ) unless example.exception.nil?
     end
       
   end # End of Describe Ohio Health HL7 Message
