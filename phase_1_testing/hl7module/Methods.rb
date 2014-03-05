@@ -33,7 +33,7 @@
 # LAST TESTED: 3/4/14
 #
 #------------------------------------------
-module HL7                          
+module HL7Test                          
 
 # ---------------------------- Methods to add formatting ---------------------------- #
 
@@ -138,7 +138,7 @@ module HL7
     deg_str = ( deg && !deg.empty? ? ", #{deg}" : "" )  # starts with comma
   
     # PFX FIRST MI LAST SFX, DEG
-    pfx_str + first + mi_str + " " + last + ext_str
+    pfx_str + first + mi_str + " " + last + sfx_str
   end
 
 # ---------------------------- Methods to verify formatting ---------------------------- #
@@ -218,7 +218,7 @@ module HL7
   # EXAMPLE:
   #  HL7.is_hour?( "00" ) => true
   #  HL7.is_hour?( "25" ) => false     
-  def HL7::is_hour?( val )
+  def self.is_hour?( val )
     return false if hr !~ /^\d{2}$/    # 2 digits, and only 2 digits?
     
     hr = val.to_i
@@ -273,7 +273,7 @@ module HL7
   # EXAMPLE:
   #  HL7.is_datetime?( "200412031108" ) => true
   #  HL7.is_datetime?( "1314" ) => false    
-  def HL7::is_datetime?( val )
+  def self.is_datetime?( val )
     date = val[0...8]
     time = val[8..-1]
     
@@ -331,6 +331,8 @@ module HL7
   #  HL7.is_numeric?( " - 1.34 " ) => true
   #  HL7.is_numeric?( "<26" ) => false     
   def self.is_numeric?( str )
+    return false if !str || str.empty?
+     
     str.strip!
     str.tr!( " ", "" )                    # remove spaces
     return false if str[0] !~ /-|\+|\d/   # first character is a digit or positive/negative sign?
@@ -352,6 +354,8 @@ module HL7
   #  HL7.is_struct_num?( " <= -1.34 " ) => true
   #  HL7.is_struct_num?( "26" ) => false   
   def self.is_struct_num?( str )
+    return false if !str || str.empty?
+    
     # first character(s), if not digits, are -, <, >, <=, >=
     allowed_beg = [ "-", "<", ">", "<=", ">=" ]
     str.strip!
@@ -359,7 +363,7 @@ module HL7
        
     num_i = str.index( /\d/ )       # first digit
     beg = str[0...num_i]            # portion of string up to first digit
-    rest = str[num_1..-1]           # portion of string beginning with first digit
+    rest = str[num_i..-1]           # portion of string beginning with first digit
     sep = rest.match( /\D+/ )[0]    # separator, if there is one - does not have to be a period
     nums = rest.split( sep )        # numeric portions of string
     
@@ -380,6 +384,7 @@ module HL7
   #  HL7.is_num_range?( " -1.34 - 85 " ) => true
   #  HL7.is_numeric?( "26" ) => false   
   def self.is_num_range?( str )
+    return false if !str || str.empty?
     str.strip!
     str.tr!( " ", "" )    
     
@@ -404,7 +409,7 @@ module HL7
   #  HL7.is_numeric?( "26" ) => false    
   def self.is_text?( str )
     # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
-    !( str.empty? || is_struct_numeric?(str) || is_numeric?(str) || is_timestamp?(str) )
+    str && !( str.empty? || is_struct_num?(str) || is_numeric?(str) || is_timestamp?(str) )
   end
   
   # NAME: has_correct_format?

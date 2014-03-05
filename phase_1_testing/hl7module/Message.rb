@@ -1,7 +1,7 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7
+module HL7Test
    
   class Message  
     attr_accessor :segments, :lines, :message, :id
@@ -31,7 +31,7 @@ module HL7
     
     def method_missing( sym, *args, &block )
       if Array.method_defined?( sym )
-        @segments.send( sym, *args, block )
+        @segments.send( sym, *args )
       else
         super
       end
@@ -87,9 +87,9 @@ module HL7
     # simple "translation" for most commonly referenced message pieces
     def important_details( type )
       case type
-        when :patient_id then @segments[:PID][3].first_component
+        when :patient_id then @segments[:PID][3].first
         when :patient_name then @segments[:PID][5].as_name
-        when :visit_number then @segments[:PV1][19].first_component
+        when :visit_number then @segments[:PV1][19].first
         when :message_header then header
         when :message_id then @id
         else
@@ -128,13 +128,13 @@ module HL7
         ary ? @segment_text[type] << body : @segment_text[type] = [body]
         @lines << type                 # what line of the message this field comes in
       }
-      
+
       # now convert segment text into segment object and add to @segments
       #+  e.g. { :MSH => mshObj, :PID => pidObj, :OBX => obxObj }
       # let objects track multiple occurrences -- 7 obx segments is still 1 OBX object
       @segment_text.each{ |type,text|
         line = text.join( SEG_DELIM )
-        @segments[type] = HL7::Segment.new( line, type )  
+        @segments[type] = Segment.new( line, type )  
       }
     end
   end

@@ -1,14 +1,14 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7 
+module HL7Test 
 
   # has value of first segment in record of this type
   # if there are others, those are saved as Segment objects in @child_lines
   # e.g. if there are 3 OBX segments,
   #   self = Segment( obx1 )
   #   self.child_lines = [ Segment(obx2), Segment(obx3) ]
-  class HL7::Segment  
+  class Segment  
     attr_accessor :fields, :lines, :full_text, :number_of_lines, :type
     
     def initialize( segment_text, type, is_child = false )
@@ -22,13 +22,13 @@ module HL7
       @child_lines = []         # array of all other lines of this same segment type, as Segment objects
       
       for i in 1...@number_of_lines    # ignore first line, e.g. won't run if there's only one line
-        @child_lines << HL7::Segment.new( @lines[i], type, true )
+        @child_lines << Segment.new( @lines[i], type, true )
       end
       
       break_into_fields    # sets @fields, @field_text
       
       hash_name = "#{@type.to_s}_FIELDS"
-      @fields_by_index = HL7.const_defined?( hash_name ) ? HL7.const_get( hash_name ) : {}
+      @fields_by_index = HL7Test.const_defined?( hash_name ) ? HL7Test.const_get( hash_name ) : {}
     end 
     
     def to_s
@@ -103,7 +103,7 @@ module HL7
       remove_name_field
       
       @field_text.each{ |f|
-        @fields << ( f.empty? ? nil : HL7::Field.new( f ) )
+        @fields << ( f.empty? ? nil : Field.new( f ) )
       }
     end
     

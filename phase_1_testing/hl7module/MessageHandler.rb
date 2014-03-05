@@ -1,7 +1,7 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7
+module HL7Test
   
   class MessageHandler
     @@lim_default = 0       # makes it easier to update this way
@@ -62,23 +62,12 @@ module HL7
       @message = ary.join( "\n" )   # now glue the pieces back together
     end
     
-    # reads in a HL7 message as a text file from the given filepath and stores it in @message
-    # changes coding to end in \n for easier parsing
-    def old_read_message( file )
-      puts "Reading #{file}..."
-      lines = File.open( file ) { |f| f.readlines }
-
-      lines.delete_if{ |l| l !~ /\S/ }    # all whitespace, so get rid of this line
-      lines.each{ |l| l.chomp! }          # get rid of all end-of-line characters, including CR, CRLF, and LF
-      @message = lines.join( "\n" )       # now paste them back together with the end-of-line character we want
-    end  
-    
     # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects
     # can access segments as @records[index][segment_name]
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
     def break_into_records
       all_recs = records_by_text
-      @records = all_recs.map{ |msg| HL7::Message.new( msg ) }
+      @records = all_recs.map{ |msg| Message.new( msg ) }
     end
         
     # returns array of strings containing hl7 message of individual records, based on @message

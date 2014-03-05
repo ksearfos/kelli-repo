@@ -1,10 +1,11 @@
-require './Methods.rb'
-require './MessageHandler.rb'
-require './Message.rb'
-require './Segment.rb'
-require './Field.rb'
+dir = File.dirname(__FILE__)
+require "#{dir}/Methods.rb"
+require "#{dir}/MessageHandler.rb"
+require "#{dir}/Message.rb"
+require "#{dir}/Segment.rb"
+require "#{dir}/Field.rb"
 
-module HL7
+module HL7Test
   
   SEG_DELIM = "\n"            # split into segments across lines, currently
   FIELD_DELIM = "|"           # fields of a segment are separated by this
@@ -12,7 +13,7 @@ module HL7
   DUP_DELIM = "~"             # duplicate information in a single field is separated by this
   HDR = /\d+MSH|MSH/          # regex defining header row
   SSN = /^\d{9}$/             # regex defining social security number, which is just 9 digits, no dashes
-  ID_FORMAT = /^[A-Z]?]d+$/   # regex defining a medical ID
+  ID_FORMAT = /^[A-Z]?d+$/   # regex defining a medical ID
   
   # a list of all possible message types can be found at http://www.interfaceware.com/hl7-standard/hl7-messages.html
   ORDER_MESSAGE_TYPE = "ORD^O01"
