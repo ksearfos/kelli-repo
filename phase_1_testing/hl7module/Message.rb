@@ -1,7 +1,7 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7
+module NewHL7
    
   class Message  
     attr_accessor :segments, :lines, :message, :id

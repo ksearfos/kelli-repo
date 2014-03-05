@@ -1,7 +1,7 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7
+module NewHL7
   
   class MessageHandler
     @@lim_default = 0       # makes it easier to update this way

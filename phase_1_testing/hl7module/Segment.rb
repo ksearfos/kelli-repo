@@ -1,7 +1,7 @@
 # last updated 3/4/14
 # last tested 3/4/14
 
-module HL7 
+module NewHL7 
 
   # has value of first segment in record of this type
   # if there are others, those are saved as Segment objects in @child_lines

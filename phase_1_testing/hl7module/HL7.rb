@@ -4,7 +4,7 @@ require './Message.rb'
 require './Segment.rb'
 require './Field.rb'
 
-module HL7
+module NewHL7
   
   SEG_DELIM = "\n"            # split into segments across lines, currently
   FIELD_DELIM = "|"           # fields of a segment are separated by this
