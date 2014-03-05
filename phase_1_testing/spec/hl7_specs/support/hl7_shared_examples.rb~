@@ -1,0 +1,27 @@
+shared_examples "PID segment" do |pid|
+
+  it "has Patient Name in the correct format", 
+    :pattern => 'lastname, firstname, optional initial, JR. or SR. or Roman Numeral' do
+    # Lastname^Firstname^I^JR.|SR.|RomanNumeral
+    pid.patient_name.should match /^\w+([- ]{1}\w+)*\^\w+(\^|\^[A-Z])?(\^((JR|SR)\.|((II|III|IV|V))))?$/
+  end
+
+  it "has PID segments with the correct Patient ID format", :pattern => 'begins with digits and ends with characters followed by "01"' do
+    pid.patient_id_list.should match /^\d*\^/
+    pid.patient_id_list.should match /\^\w+01$/
+  end
+
+  it "has Date of Birth in the correct format", :pattern => 'year month day (yyyyMMdd)' do
+    # yyyyMMdd
+    pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
+  end
+
+  it "has Sex in the correct format", :pattern => 'one of [FMOUANC]' do
+    # F|M|O|U|A|N|C
+    pid.admin_sex.should match /^[FMOUANC]$/
+  end
+
+  it "has SSN in the correct format", :pattern => 'a social security number without dashes' do
+    pid.social_security_num.should match /^\d{9}$/
+  end
+end
