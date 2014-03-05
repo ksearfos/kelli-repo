@@ -135,7 +135,6 @@ def orig_hl7_by_record( hl7 )
   all_recs = break_into_records(hl7)
   all_recs.map!{ |msg| msg.gsub!(/\n/, "\r") }  # HL7 gem likes carriage return
   all_recs.map!{ |msg| HL7::Message.new( msg ) }   # In HL7 gem format
-  all_recs
 end
 
 def record_id( rec )
