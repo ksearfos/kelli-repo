@@ -8,7 +8,7 @@ require "#{@@proj_dir}/lib/extended_base_classes"
 
 # == Describe the tests
 
-def test_lab_message( message )
+def test_message( message )
 
   describe "Ohio Health Lab HL7" do
   

@@ -1,5 +1,6 @@
-require 'hl7_utils'
-require_relative 'hl7_specs/support/hl7_shared_examples'
+require 'require_relative'
+require_relative '../module/HL7'
+require_relative './hl7_specs/support/hl7_shared_examples'
 require 'logger'
 require 'set'
 
@@ -58,22 +59,10 @@ end
 # == Get data to test
 
 def get_test_data( filename )
-  raw_hl7 = ""
-  # try to get the file passed to the run script
-  if filename.nil?
+  if filename.nil? # check that a filename was passed in
     raise "Could not load test data; filename was nil."
   end
-  #blank lines cause HL7 Parse Error...
-  File.open( filename, "rb" ) do |f|
-    #blank lines cause HL7 Parse Error...
-    #and ASCII line endings cause UTF-8 Error..
-    while s = f.gets do
-      t = s.encode("utf-8", 
-            :invalid => :replace, :undef => :replace)
-      raw_hl7 << t.gsub(/\r\n?/, "\n").chomp + "\n"
-    end
-  end
-  orig_hl7_by_record raw_hl7
+  HL7::MessageHandler.new filename
 end
 
 # == Set up the logger
@@ -111,10 +100,10 @@ def run_hl7_tests( msg_list )
   while records_left > 0
     if records_left >= 1000
       start_record = msg_list.size - records_left
-      msg_list[start_record...1000].each { |message| test_lab_message( message ) }
+      msg_list[start_record...1000].each { |message| test_message( message ) }
     else
       start_record = msg_list.size - records_left
-      msg_list[start_record..-1].each { |message| test_lab_message( message ) }
+      msg_list[start_record..-1].each { |message| test_message( message ) }
     end
     records_left -= 1000
   end

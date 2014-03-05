@@ -3,12 +3,11 @@
 require 'rspec'
 require 'rspec/expectations'
 require 'spec_helper'
-require "#{@@proj_dir}/lib/hl7_utils"
 require "#{@@proj_dir}/lib/extended_base_classes"
 
 # == Describe the tests
 
-def test_rad_message( message )
+def test_message( message )
 
   describe "Ohio Health Lab HL7" do
   
@@ -25,8 +24,9 @@ def test_rad_message( message )
 
 # == ORC tests
 
-    context "ORC segment", :pattern => 'any two characters' do
-      message.children[:ORC].each do |orc|
+    context "ORC segment", 
+    :pattern => 'any two characters' do
+      message[:ORC].each do |orc|
 
         it "has a Date/Time of Transaction in the correct format",
         :pattern => "a timestamp in yyyyMMddHHmm format" do
@@ -105,7 +105,7 @@ def test_rad_message( message )
 
     context "PID segment" do
 
-      pid = message.children[:PID][0]
+      pid = message[:PID][0]
       include_examples "PID segment", pid 
 
       it "has a valid race",
@@ -136,8 +136,8 @@ def test_rad_message( message )
 # == PV1 tests
 
     context "PV1 segment" do
-      pv1 = message.children[:PV1][0]
-      include_examples "PV1 segment", pv1, message.children[:PID][0]
+      pv1 = message[:PV1][0]
+      include_examples "PV1 segment", pv1, message[:PID][0]
 
       it "has a valid Assigned Location",
       :pattern => "Either assigned location field 3 is 'ED' or empty" do
