@@ -43,19 +43,21 @@ module HL7
     def read_message( file, limit = @@lim_default )
       valid_limit = ( limit > 0 && limit != @@lim_default )   # is there a real limit specified?
       chars = ""                                              #+  user could say limit = -1 but that isn't helpful
+      do_break = false
       
       puts "Reading #{file}..."
       File.open( file, "r" ).each_char do |ch|
         if ch == "\r" then chars << "\n"     # convert to useful character
         else chars << ch
         end
-        
-        break if ( valid_limit && chars.scan(/MSH/).size > limit )  # there is a limit, and we have reached it
+
+        do_break = valid_limit && chars.scan(/MSH/).size > limit    # if we have a limit, and we have reached it,
+        break if do_break                                           #+ stop reading file
       end
       
       chars.squeeze!( "\n" )        # only need one line break at a time
       ary = chars.split( "\n" )
-      ary.pop                       # remove last line, e.g. the header line of the unwanted record
+      ary.pop if do_break                   # remove last line ONLY IF it's the header of an unwanted record
       ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty                   
       @message = ary.join( "\n" )   # now glue the pieces back together
     end

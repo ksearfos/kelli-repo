@@ -144,7 +144,7 @@ class RecordComparer
     rec_to_id = {}                             # { rec1 => pt_id, rec2 => pt_id ... }
 
     @records.each{ |r|
-      id = r[:PID][0].e3.before( "^" )         # patient_id
+      id = r[:PID].patient_id.first            # first component, if there is more than one
       rec_to_id[r] = id
     }
     

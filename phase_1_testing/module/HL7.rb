@@ -154,7 +154,7 @@ module HL7
     return middle =~ /^\d*\.?\d*$/        # middle is nothing but digits and a possible decimal point
   end
   
-  def HL7::is_std_numeric?( str )
+  def HL7::is_struct_numeric?( str )
     # first character, if not a digit, is -, <, >, <=, >=
     allowed_beg = [ "-", "<", ">", "<=", ">=" ]
     str.strip!
@@ -175,5 +175,14 @@ module HL7
     return false if ary.size != 2   # if not, it isn't a range
               
     is_numeric?( ary[0] ) && is_numeric?( ary[1] )
+  end
+  
+  def is_timestamp?( str )
+    correct_timestamp_format?( str )
+  end
+  
+  def is_text?( str )
+    # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
+    !( str.empty? || is_struct_numeric?(str) || is_numeric?(str) || is_timestamp?(str) )
   end
 end

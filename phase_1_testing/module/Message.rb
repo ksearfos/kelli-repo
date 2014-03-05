@@ -74,12 +74,13 @@ module HL7
     #+  e.g. for PID|12345|||, fetch_field("pid1") => [ "12345" ]
     #+  and for OBX|1|20131223|
     #+          OBX|2|20131211|, fetch_field("obx2") => [ "20131223", "20131211" ]
+    # if segment doesn't exist, returns an empty array
     def fetch_field( field )
       seg = field[0...3]   # first three charcters, the name of the segment - have to do it this way for PV1 etc.
       f = field[3..-1]     # remaining 1-3 characters, the number of the field
 
       seg_obj = @segments[seg.upcase.to_sym]  # segment expected to be an uppercase symbol
-      return nil if seg_obj.nil?
+      return [] if seg_obj.nil?
       seg_obj.all_fields( f.to_i )
     end
 

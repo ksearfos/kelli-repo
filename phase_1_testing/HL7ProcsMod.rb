@@ -4,10 +4,9 @@ require "#{File.dirname(__FILE__)}/lib/extended_base_classes.rb"
 
 module HL7Procs
 
-  SN_PROC = Proc.new{ |val| val =~ />\d+|<\d+/ }   # proc vs lambda makes no difference here
-  NM_PROC = Proc.new{ |val| val.is_numeric? }      #+ so I chose to break things up a bit
-  TX_PROC = Proc.new{ |val| !val.empty? && !SN_PROC.call(val) && !NM_PROC.call(val) }   # there is something there, and it
-  IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }                            #+ isn't NM or SN format
+  extend HL7
+  
+  IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   DOC_SZ_PROC = Proc.new{ |val| val.size > 2 }
   AUTO_FAIL = Proc.new{ |*| return false }     # this one may or may not be given an arg, so must be a proc
@@ -54,9 +53,9 @@ module HL7Procs
   ADT_ID = Proc.new{ |rec| is_val?(rec,"obx3","&ADT") }
   IMP_VAL = Proc.new{ |rec| matches?(rec,"obx5",IMP_PROC) }
   ADT_VAL = Proc.new{ |rec| matches?(rec,"obx5",ADT_PROC) }
-  SN_VAL = Proc.new{ |rec| matches?(rec,"obx5",SN_PROC) }
-  NM_VAL = Proc.new{ |rec| matches?(rec,"obx5",NM_PROC) }
-  TX_VAL = Proc.new{ |rec| matches?(rec,"obx5",TX_PROC) }
+  SN_VAL = Proc.new{ |rec| HL7::is_struct_numeric?( rec[:OBX].value ) }
+  NM_VAL = Proc.new{ |rec| HL7::is_numeric?( rec[:OBX].value ) }
+  TX_VAL = Proc.new{ |rec| HL7::is_text?( rec[:OBX].value ) }
   UNITS = Proc.new{ |rec| has_val?(rec,"obx6") }
   REF_RG = Proc.new{ |rec| has_val?(rec,"obx7") }
   FLAG_H = Proc.new{ |rec| is_val?(rec,"obx8","H") }  
@@ -87,7 +86,7 @@ module HL7Procs
   SSN = Proc.new{ |rec| has_val?(rec,"pid19") }
    
   # ORC
-  ORC_EXISTS = Proc.new{ |rec| !rec[:ORC].nil? }
+  ORC_EXISTS = Proc.new{ |rec| rec[:ORC] }  # if there is no ORC, then rec[:ORC] == nil, which is always false
   ORD_ID = Proc.new{ |rec| has_val?(rec,"orc1") }
   TRANS_DT = Proc.new{ |rec| has_val?(rec,"orc9" ) }
   
@@ -108,7 +107,7 @@ module HL7Procs
   RES_INT = Proc.new{ |rec| has_val?(rec,"obr32") }
   
   # OTHER
-  EVN = Proc.new{ |rec| has_seg?(rec,"evn") }
+  EVN = Proc.new{ |rec| rec[:EVN] }
   
   #-------------Group Procs for Quick Access-------------- #
   # LAB OUTPUT CRITERIA
@@ -129,27 +128,18 @@ module HL7Procs
                    ADM_SZ, CNS_SZ, ATT_EQ_REF, HOSP_SV, ADM_SC, PT_TYPE, FIN_CL, DCH_DISP, EVN ]
   
   # ----------------Actual Methods---------------- #
-  # It is ironic that in a module full of procs, we also have methods
-  # but I chose to break some more generic pieces of code into methods
-  # for readability
-  
-  def HL7Procs.has_seg?( record, segment )
-    seg = segment.upcase.to_sym
-    !record[seg].nil?
-  end
   
   # does the given field of the record have a value?
   # returns true if at least one matching field has a value, false otherwise
   def HL7Procs.has_val?( record, field )
-    res = record.fetch_field( field )   # could be multiple occurrences of the segment -> multiple values returned
+    res = record.fetch_field( field )   # always returns an array
     res.has_value?
   end
   
   # is the value of the given field in the record the value we desire?
   # returns true if at least one field matches the given value, false otherwise
   def HL7Procs.is_val?( record, field, value )
-    res = record.fetch_field( field )   # could be multiple occurrences of the segment -> multiple values returned
-    res.map!{ |r| r = r.chomp( "]" ) }
+    res = record.fetch_field( field )
     res.include?( value.to_s )
   end
 
@@ -157,12 +147,12 @@ module HL7Procs
   # does the value of the given field in the record make the given code return true?
   # returns true if at least one field passes, false otherwise
   def HL7Procs.matches?( record, field, code )
-    res = record.fetch_field( field )   # could be multiple occurrences of the segment -> multiple values returned
-    res.each{ |r|
-      next if r.nil?
-      return true if code.call(r)
+    res = record.fetch_field( field )
+    res.each{ |val|
+      next if val.nil?
+      return true if code.call(val)
     }   
-    return false  # if regex doesn't match
+    return false  # no non-nil, or code never returned true
   end
   
   # checks if the values of two fields are the same - by default only checks cases where both fields have
@@ -178,7 +168,7 @@ module HL7Procs
       val1 = res1[i]
       val2 = res2[i]
       
-      next if ( !check_empty && ( val1.empty? || val2.empty? ) )    # empty values automatically pass if check_empty = false
+      next if ( !check_empty && ( val1.empty? || val2.empty? ) )  # empty values automatically pass if check_empty = false
       return false if ( val1.to_s != val2.to_s )       # I am assuming we want "1" and 1 to be considered the same
     end
     
@@ -189,20 +179,17 @@ module HL7Procs
   def HL7Procs.seg_has_val?( record, field, comp )
     fs = record.fetch_field( field )
     fs.each{ |f|
-      c = components( f )[comp-1]
+      c = f[comp]
       next if c.nil?
       return true if !c.empty?   # component indices start at 1 in the message, so comp8 has index 7
     }
     return false       # no match in any of the fields
   end
   
-  # at least one field in the record has a segment of given index (idx) that matches the desired value
+  # at least one field in the record has a segment that matches the desired value
   def HL7Procs.seg_is_val?( record, field, comp, val )
     fs = record.fetch_field( field )
-    fs.each{ |f|
-      comps = components( f )
-      return true if ( comps[comp-1] == val )    # component indices start at 1 in the message, so comp8 has index 7
-    }
+    fs.each{ |f| return true if ( f[comp] == val ) }
     return false       # no match in any of the fields
   end
   

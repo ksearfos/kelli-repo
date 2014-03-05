@@ -20,8 +20,5 @@ $field = "Thompson^Richard^L^III"
 
 require "#{proj_dir}/module/HL7"
 
-mh = HL7::MessageHandler.new( FILE, 1 )
-puts mh.message
-puts mh.records.size
-puts mh.message.split("\n")[0]
-puts mh.message.split("\n")[-1]
+mh = HL7::MessageHandler.new( FILE, 90 )
+puts mh.records.first
