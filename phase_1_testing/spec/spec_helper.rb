@@ -28,6 +28,11 @@ def get_obx_of_obr( obr )
           s.is_a? HL7::Message::Segment::OBX }
 end
 
+def get_orc_for_obr( obr )
+  obr.children.select { |s|
+          s.is_a? HL7::Message::Segment::ORC }
+end
+
 def full_description( example )
   example.metadata[:full_description]
 end

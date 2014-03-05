@@ -135,8 +135,6 @@ def test_lab_message( message )
     end
 
   end # End of Describe Ohio Health HL7 Message
-  #GC.start # Force GC for large data sets
-  true
 end
 
 # == Set up and run the tests

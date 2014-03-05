@@ -73,6 +73,12 @@ shared_examples "OBR segment" do |obr, message|
   :pattern => 'matching dates' do
     obr.results_status_change_date.should eq obr.observation_date
   end
+
+  it "has Visit ID in the correct format", 
+  :pattern => 'begins with an optional capital letter followed by numbers and ends with characters followed by "ACC"' do
+    pid.account_number.should match /^[A-Z]?\d+\^/
+    pid.account_number.should match /\^\w+ACC$/
+  end
 end
 
 # == OBX tests
