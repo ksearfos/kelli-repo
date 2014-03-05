@@ -1,10 +1,12 @@
 # last updated 2/28/14 3:34pm
 
-require "#{File.dirname(__FILE__)}/lib/extended_base_classes.rb"
+proj_dir = File.expand_path( "..", __FILE__ )
+require "#{proj_dir}/lib/extended_base_classes.rb"
+require "#{proj_dir}/hl7module/HL7.rb"
 
 module HL7Procs
 
-  extend HL7
+  extend HL7Test
   
   IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
@@ -53,9 +55,22 @@ module HL7Procs
   ADT_ID = Proc.new{ |rec| is_val?(rec,"obx3","&ADT") }
   IMP_VAL = Proc.new{ |rec| matches?(rec,"obx5",IMP_PROC) }
   ADT_VAL = Proc.new{ |rec| matches?(rec,"obx5",ADT_PROC) }
-  SN_VAL = Proc.new{ |rec| HL7::is_struct_numeric?( rec[:OBX].value ) }
-  NM_VAL = Proc.new{ |rec| HL7::is_numeric?( rec[:OBX].value ) }
-  TX_VAL = Proc.new{ |rec| HL7::is_text?( rec[:OBX].value ) }
+  SN_VAL = Proc.new{ |rec| 
+    has_val?(rec,"obx2") &&
+    HL7Test.is_struct_num?( rec[:OBX].value.to_s )
+  }
+  NM_VAL = Proc.new{ |rec| 
+    has_val?(rec,"obx2") &&
+    HL7Test.is_numeric?( rec[:OBX].value.to_s )
+  }
+  TX_VAL = Proc.new{ |rec| 
+    has_val?(rec,"obx2") &&
+    HL7Test.is_text?( rec[:OBX].value.to_s )
+  }
+  TS_VAL = Proc.new{ |rec| 
+    has_val?(rec,"obx2") &&
+    HL7Test.is_timestamp?( rec[:OBX].value.to_s )
+  }
   UNITS = Proc.new{ |rec| has_val?(rec,"obx6") }
   REF_RG = Proc.new{ |rec| has_val?(rec,"obx7") }
   FLAG_H = Proc.new{ |rec| is_val?(rec,"obx8","H") }  
@@ -167,6 +182,10 @@ module HL7Procs
     for i in (0...res1.size)
       val1 = res1[i]
       val2 = res2[i]
+      
+      # if an array is empty, an index returns nil - but nil won't register as empty!
+      val1 ||= ""
+      val2 ||= ""
       
       next if ( !check_empty && ( val1.empty? || val2.empty? ) )  # empty values automatically pass if check_empty = false
       return false if ( val1.to_s != val2.to_s )       # I am assuming we want "1" and 1 to be considered the same

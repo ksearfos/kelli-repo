@@ -74,7 +74,7 @@ class RecordComparer
     
     # now @recs_to_use has all the records we want, but some of these may be for the same person/encounter
     # so get rid of those
-    pts = @recs_to_use.map{ |rec| rec = pt_enc_details( rec ) }   # pts = [ {info}, {info}, ... ]
+    pts = @recs_to_use.map{ |rec| rec.encounter_details }   # pts = [ {info}, {info}, ... ]
     @people_to_use = pts.uniq
     sleep 2
   end

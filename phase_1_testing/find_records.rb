@@ -7,19 +7,18 @@ $proj_dir = File.expand_path( "..", __FILE__ )    # phase_1_testing directory
 util_path = $proj_dir + "/lib"
 input_path = $proj_dir + "/resources"
 
-util = Dir.new( util_path )   # all helper functions
-util.entries.each{ |f| require util_path + "/" + f if f.include?( '.rb' ) }
+require "#{util_path}/extended_base_classes.rb"
 
 # FILE = "#{input_path}/manifest_lab_out.txt"
 FILE = "#{input_path}/manifest_lab_short_unix.txt"
 OUT_FILE = "#{$proj_dir}/record_results.txt"
 VERBOSE = true
 
-msg = get_hl7( FILE )
-all_hl7 = hl7_by_record( msg )
+mh = HL7Test::MessageHandler.new( FILE )
+recs = mh.records.clone
 
-pos_comparer = RecordComparer.new( all_hl7 )           # finds all positive test cases
-neg_comparer = RecordComparer.new( all_hl7, false )    # finds all negative test cases, e.g. cases where criterion are not met
+pos_comparer = RecordComparer.new( recs )           # finds all positive test cases
+neg_comparer = RecordComparer.new( recs, false )    # finds all negative test cases, e.g. cases where criterion are not met
 pos_comparer.analyze
 neg_comparer.analyze
 pos_comparer.summarize( VERBOSE )
