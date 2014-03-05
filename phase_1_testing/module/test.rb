@@ -1,9 +1,9 @@
 #!/bin/env ruby
 
 proj_dir = File.expand_path( "../..", __FILE__ )
-# FILE = "#{proj_dir}/resources/manifest_lab_out_short"
+FILE = "#{proj_dir}/resources/manifest_lab_short_unix.txt"
 # FILE = "C:/Users/Owner/Documents/manifest_lab_out_shortened.txt"
-FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
+# FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
 $msg = <<END
 0000000599MSH|^~\&|HLAB|RMH|||20140128041144||ORU^R01|201401280411444405|T|2.4
 PID|||00547448^^^ST01||Tanner^Michael||19510325|M|||^^^^^^^|||||||1134733972^^^^STARACC|291442286
@@ -20,7 +20,8 @@ $field = "Thompson^Richard^L^III"
 
 require "#{proj_dir}/module/HL7"
 
-mh = HL7::MessageHandler.new( FILE )
-msg = mh.first 
-puts msg.segment_before(:PID)
-puts msg.segment_after(:PID) == :PV1
+mh = HL7::MessageHandler.new( FILE, 1 )
+puts mh.message
+puts mh.records.size
+puts mh.message.split("\n")[0]
+puts mh.message.split("\n")[-1]

@@ -4,15 +4,16 @@
 module HL7
   
   class MessageHandler
-  
+    @@lim_default = 0       # makes it easier to update this way
+    
     attr_reader :message, :records
     
-    def initialize( file )
+    def initialize( file, limit = @@lim_default )
       @message = ""
       @records = []
       
-      read_message( file )     # updates @message
-      break_into_records       # updates @records
+      read_message( file, limit )    # updates @message
+      break_into_records             # updates @records
     end
     
     def to_s
@@ -39,7 +40,29 @@ module HL7
     
     # reads in a HL7 message as a text file from the given filepath and stores it in @message
     # changes coding to end in \n for easier parsing
-    def read_message( file )
+    def read_message( file, limit = @@lim_default )
+      valid_limit = ( limit > 0 && limit != @@lim_default )   # is there a real limit specified?
+      chars = ""                                              #+  user could say limit = -1 but that isn't helpful
+      
+      puts "Reading #{file}..."
+      File.open( file, "r" ).each_char do |ch|
+        if ch == "\r" then chars << "\n"     # convert to useful character
+        else chars << ch
+        end
+        
+        break if ( valid_limit && chars.scan(/MSH/).size > limit )  # there is a limit, and we have reached it
+      end
+      
+      chars.squeeze!( "\n" )        # only need one line break at a time
+      ary = chars.split( "\n" )
+      ary.pop                       # remove last line, e.g. the header line of the unwanted record
+      ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty                   
+      @message = ary.join( "\n" )   # now glue the pieces back together
+    end
+    
+    # reads in a HL7 message as a text file from the given filepath and stores it in @message
+    # changes coding to end in \n for easier parsing
+    def old_read_message( file )
       puts "Reading #{file}..."
       lines = File.open( file ) { |f| f.readlines }
 

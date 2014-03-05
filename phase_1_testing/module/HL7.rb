@@ -49,7 +49,7 @@ module HL7
                  :hospital_service => 10, :admit_source => 14, :admitting_doctor => 17, :patient_type => 18,
                  :visit_number => 19, :financial_class => 20, :diet_type => 38, :bed_status => 40,
                  :admit_date_time => 44, :discharge_date_time => 45, :current_balance => 46,
-                 :total_charges => 47, :total_payments => 49, :visit_indicator => 51}
+                 :total_charges => 47, :total_payments => 49, :visit_indicator => 51 }
                  
   # full list of OBR fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-obr-segment
   OBR_FIELDS = { :set_id => 1, :place_order_number => 2, :filler_order_number => 3, :control_code => 3,
@@ -146,15 +146,15 @@ module HL7
   def HL7::is_numeric?( str )
     str.strip!
     str.tr!( " ", "" )                    # remove spaces
-    return false if str[0] !~ /-|+|\d/   # first character is a digit or positive/negative sign?
-    return false if str[-1] !~ /\d/      # last character is a digit?
+    return false if str[0] !~ /-|\+|\d/   # first character is a digit or positive/negative sign?
+    return false if str[-1] !~ /\d/       # last character is a digit?
 
     middle = str[1..-2] 
     return true if middle.empty?
-    return middle =~ /^\d*\.?\d*$/       # middle is nothing but digits and a possible decimal point
+    return middle =~ /^\d*\.?\d*$/        # middle is nothing but digits and a possible decimal point
   end
   
-  HL7::is_std_numeric?( str )
+  def HL7::is_std_numeric?( str )
     # first character, if not a digit, is -, <, >, <=, >=
     allowed_beg = [ "-", "<", ">", "<=", ">=" ]
     str.strip!
@@ -168,7 +168,7 @@ module HL7
     allowed_beg.include?( beg ) && ( sep ? nums.size == 2 : nums.size == 1 )
   end
   
-  HL7::is_num_range?( str )
+  def HL7::is_num_range?( str )
     str.strip!
     str.tr!( " ", "" )    
     ary = str.split( "-" )
