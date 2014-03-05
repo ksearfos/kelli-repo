@@ -1,20 +1,18 @@
-# last updated 3/4/14
-# last tested 3/4/14
-
-dir = File.expand_path( "..", __FILE__ )
-require "#{dir}/Field.rb"
-require "#{dir}/Message.rb"
-require "#{dir}/MessageHandler.rb"
-require "#{dir}/Segment.rb"
+require './Methods.rb'
+require './MessageHandler.rb'
+require './Message.rb'
+require './Segment.rb'
+require './Field.rb'
 
 module HL7
   
-  SEG_DELIM = "\n"       # split into segments across lines, currently
-  FIELD_DELIM = "|"      # fields of a segment are separated by this
-  COMP_DELIM = "^"       # components in a field are separated by this
-  DUP_DELIM = "~"        # duplicate information in a single field is separated by this
-  HDR = /\d+MSH|MSH/     # regex defining header row
-  SSN = /^\d{9}$/        # regex defining social security number, which is just 9 digits, no -
+  SEG_DELIM = "\n"            # split into segments across lines, currently
+  FIELD_DELIM = "|"           # fields of a segment are separated by this
+  COMP_DELIM = "^"            # components in a field are separated by this
+  DUP_DELIM = "~"             # duplicate information in a single field is separated by this
+  HDR = /\d+MSH|MSH/          # regex defining header row
+  SSN = /^\d{9}$/             # regex defining social security number, which is just 9 digits, no dashes
+  ID_FORMAT = /^[A-Z]?]d+$/   # regex defining a medical ID
   
   ORDER_MESSAGE_TYPE = "ORD^O01"
   RESULT_MESSAGE_TYPE = "ORD^R01"
@@ -69,6 +67,7 @@ module HL7
   # I cannot find a full list of NTE fields                 
   NTE_FIELDS = { :set_id => 1, :value => 3 }                                             
 
+  
   def HL7::correct_id_format( val )
     val =~ /^[A-Z0-9]$/
   end
