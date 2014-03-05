@@ -14,6 +14,7 @@ module HL7
   SSN = /^\d{9}$/             # regex defining social security number, which is just 9 digits, no dashes
   ID_FORMAT = /^[A-Z]?]d+$/   # regex defining a medical ID
   
+  # a list of all possible message types can be found at http://www.interfaceware.com/hl7-standard/hl7-messages.html
   ORDER_MESSAGE_TYPE = "ORD^O01"
   RESULT_MESSAGE_TYPE = "ORD^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
@@ -67,121 +68,4 @@ module HL7
   # I cannot find a full list of NTE fields                 
   NTE_FIELDS = { :set_id => 1, :value => 3 }                                             
 
-  
-  def HL7::correct_id_format( val )
-    val =~ /^[A-Z0-9]$/
-  end
-  
-  def HL7::correct_name_format( val )
-    val =~ /^[A-Za-z]$/
-  end
-  
-  def HL7::is_extension?( val )
-    return true if val.empty?
-    val =~ /^[XVI]$/ ||       # roman numeral, e.g. III for The 3rd
-    val =~ /^[A-Z]{2}[.]?/    # Jr., MD, etc.       
-  end
-  
-  def HL7::is_year?( val )
-    yr = val.to_s
-    ( yr[0...2] == "19" || yr[0...2] == "20" ) && yr[2...4] =~ /\d{2}/
-  end
-  
-  def HL7::is_month?( val )
-    mo = val.to_i
-    mo.between?( 1, 12 )
-  end
-  
-  def HL7::is_day?( val )
-    day = val.to_i
-    day.between?( 1, 31 )
-  end
-  
-  def HL7::is_hour?( val )
-    hr = val.to_i
-    hr.between?( 0, 23 )   # don't know if it's military time or not
-  end
-  
-  # note this can be used for seconds too, since the format is the same
-  def HL7::is_minute?( val )
-    min = val.to_i
-    min.between?( 0, 59 )
-  end
-  
-  def HL7::correct_timestamp_format?( val )
-    # MM-DD-YYYY HH:MM
-    dt = val.split( " " )           # => [date,time]
-    date = dt.first.split( "-" )    # => [MM,DD,YYYY]
-    time = dt.last.split( ":" )     # => [HH,MM]
-
-    is_month?( date[0] ) && is_day?( date[1] ) && is_year?( date[2] ) && is_hour?( time[0] ) && is_minute?( time[1] )
-  end
-  
-  def HL7::is_a_name?( field )
-    if correct_id_format( field.first )        # ID
-      correct_name_format( field[1] ) &&
-      correct_name_format( field[2] )
-    elsif correct_name_format( field.first )    # last name
-      correct_name_format( field[1] )
-    else
-      false
-    end
-  end
-  
-  def HL7::is_a_datetime?( val )
-    yr = val[0...4]
-    mo = val[4...6]
-    day = val[6...8]
-    hr = val[8...10]
-    min = val[10...12]
-    sec = val[12...14]
-    
-    ( yr && is_year?(yr) ) && ( mo && is_month?(mo) ) && ( day && is_day?(day) ) &&
-    ( !hr || is_hour?(hr) ) && ( !min || is_min?(min) ) && ( !sec || is_minute?(sec) )
-  end
-  
-  # returns true if string is numeric, i.e. an integer or a decimal
-  # returns false if not
-  def HL7::is_numeric?( str )
-    str.strip!
-    str.tr!( " ", "" )                    # remove spaces
-    return false if str[0] !~ /-|\+|\d/   # first character is a digit or positive/negative sign?
-    return false if str[-1] !~ /\d/       # last character is a digit?
-
-    middle = str[1..-2] 
-    return true if middle.empty?
-    return middle =~ /^\d*\.?\d*$/        # middle is nothing but digits and a possible decimal point
-  end
-  
-  def HL7::is_struct_numeric?( str )
-    # first character, if not a digit, is -, <, >, <=, >=
-    allowed_beg = [ "-", "<", ">", "<=", ">=" ]
-    str.strip!
-    str.tr!( " ", "" )
-    num_i = str.index( /\d/ )
-    beg = str[0...num_i]            # portion of string up to first digit
-    rest = str[num_1..-1]           # portion of string beginning with first digit
-    sep = rest.match( /\D+/ )[0]    # separator
-    nums = rest.split( sep )        # numeric portions of string
-    
-    allowed_beg.include?( beg ) && ( sep ? nums.size == 2 : nums.size == 1 )
-  end
-  
-  def HL7::is_num_range?( str )
-    str.strip!
-    str.tr!( " ", "" )    
-    ary = str.split( "-" )
-    return false if ary.size != 2   # if not, it isn't a range
-              
-    is_numeric?( ary[0] ) && is_numeric?( ary[1] )
-  end
-  
-  def is_timestamp?( str )
-    correct_timestamp_format?( str )
-  end
-  
-  def is_text?( str )
-    # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
-    !( str.empty? || is_struct_numeric?(str) || is_numeric?(str) || is_timestamp?(str) )
-  end
 end
