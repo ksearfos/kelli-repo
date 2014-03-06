@@ -20,6 +20,7 @@ def test_message( message )
     context "MSH segment" do
       msh = message[0]    
       include_examples "MSH segment", msh
+      include_examples "Lab/Rad MSH segment", msh
 
       it "has the correct Processing ID",
       :pattern => "the Processing ID must be 2.3" do
@@ -104,30 +105,8 @@ def test_message( message )
     context "PID segment" do
 
       pid = message[:PID][0]
-      include_examples "PID segment", pid 
-
-      it "has a valid race",
-      :pattern => "a human race" do
-        pid.race.should match /^(\d{4}-\d{1})?$/
-      end
-
-      it "has a Country Code that matches the Address",
-      :pattern => "" do
-        if not pid.country_code.empty?
-          country = pid.address[/\^\w{2}\^/]
-          pid.country_code.should eq country
-        end
-      end
-
-      it "has a valid Language",
-      :pattern => "a three character language code" do
-        pid.primary_language.should match /^([a-zA-Z]{3})?$/
-      end
-
-      it "has a valid Marital Status",
-      :pattern => "a single character" do
-        pid.marital_status.should match /^[A-Z]?$/
-      end
+      include_examples "PID segment", pid
+      includ_examples "Rad/ADT PID segment", pid
 
     end # End of PID Context
 

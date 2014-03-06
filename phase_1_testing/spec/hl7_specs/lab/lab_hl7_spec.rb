@@ -21,15 +21,9 @@ def test_message( message )
     context "MSH segment" do
       msh = message[0]    
       include_examples "MSH segment", msh
+      include_examples "Lab/Rad MSH segment", msh
+      include_examples "Lab/ADT MSH segment", msh
 
-      it "has the correct Processing ID",
-      :pattern => 'if MGH 2.3, otherwise 2.4' do
-        if msh.e3 =~ /MGH/
-          msh.e11.should match /^2.3$/
-        else
-          msh.e11.should match /^2.4$/
-        end
-      end
     end
 
 # == ORC tests
@@ -138,6 +132,7 @@ If TX: a timestamp in MM-dd-yyyy hh:mm format' do
     context "PV1 segment" do
       pv1 = message.children[:PV1][0]
       include_examples "PV1 segment", pv1, message.children[:PID][0]
+      include_examples "Lab/ADT PV1 segment", pv1
 
       it "has Visit ID in the correct format", 
           :pattern => 'an optional capital letter followed by digits, ending with characters followed by "ACC"' do
@@ -149,10 +144,6 @@ If TX: a timestamp in MM-dd-yyyy hh:mm format' do
           :pattern => 'begins with an optional P followed by digits (or 000000 if there is no doctor assigned), ends with STARPROV or MGHPROV or MHMPROV' do
         pv1.attending_doctor.should match /^(P?[1-9]\d+|000000)\^/
         pv1.attending_doctor.should match /\^(STAR|MGH|MHM)PROV$/
-      end
-
-      it "has the same Attending and Referring Doctor", :pattern => 'fields should match unless Referring Doctor field is empty' do
-        pv1.referring_doctor.should eq pv1.attending_doctor unless pv1.referring_doctor.empty?
       end
 
       it "does not have a single digit Patient Class", :pattern => 'a single digit' do
