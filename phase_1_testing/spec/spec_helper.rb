@@ -10,6 +10,8 @@ $proj_dir = File.expand_path( "../../", __FILE__ )
 
 $test_descriptions = Set.new
 
+$flagged_messages = Hash.new
+
 def known_units
   ["","%","%/L","% of total Hb","/hpf","/lpf","/mcL",
    "cells/mcL","copies/mL","IU/mL","K/mcL","log copies/mL",
@@ -34,6 +36,21 @@ def full_description( example )
   example.metadata[:full_description]
 end
 
+def get_patient_info( message )
+  message_time = DateTime.parse(message[0].e6)
+  
+  pid = message[:PID][0]
+  patient_dob = Date.parse(pid.patient_dob)
+
+  "#{'='*30} Patient Information #{'='*30}\n
+  Patient Name          : #{pid.patient_name}
+  Patient ID            : #{pid.patient_id}
+  Patient Account Number: #{pid.account_number}
+  Patient Date of Birth : #{patient_dob.to_s}
+  Encounter Date/Time   : #{message_time.to_s}
+\n#{'='*87}\n"
+end
+
 def log_example_exception( example, message )
   exception_message = ""
   if example.exception.to_s[/Diff:/]
@@ -42,11 +59,19 @@ def log_example_exception( example, message )
     exception_message = example.exception.to_s
   end
 
-  $logger.error "#{'*'*80}\n    Error found in:
-#{example.metadata[:full_description]}\n
+  error_message = "#{'*'*80}\n
+    Error found in:\n#{example.metadata[:full_description]}\n
     Example Exception:\n#{cap_first( exception_message )}
     Pattern translation:\n#{cap_first( example.metadata[:pattern] )}\n
-    Message Tested:\n#{message.to_s}\n#{'*'*80}\n"
+\n#{'*'*87}\n"
+
+  if $flagged_messages.has_key? message[0]
+    $flagged_messages[message[0]] =
+      $flagged_messages.fetch(message[0]) << error_message
+  else
+    patient_info = get_patient_info( message )
+    $flagged_messages[message[0]] = [patient_info, error_message] 
+  end
 end
 
 def cap_first( string )
@@ -84,7 +109,7 @@ end
 
 # == Set up the logger
 
-def make_logger( filename, record_size )
+def make_logger( filename, record_count )
   time = DateTime.now.strftime("%F at %T")
   logfilename = ( File.basename(filename) + '_' + time.gsub('at', '-') ).gsub(' ', '').gsub(':', '-')
   $logger = Logger.new("#{File.join($proj_dir, "log", logfilename)}.log")
@@ -95,16 +120,23 @@ def make_logger( filename, record_size )
   
   $logger.info "Automated Testing Log for #{File.basename(filename)}\n"
 
-  $logger.info "Number of records tested: #{record_size}\n"
+  $logger.info "Number of records tested: #{record_count}\n"
 end
 
 # == Configure RSpec
 
 RSpec.configure do |config|
   config.after(:suite) do
+    $logger.info "Number of records with potential errors: #{$flagged_messages.size}\n"
     $logger.info "#{'*'*80}\nElements Tested For:\n"
     $test_descriptions.each do |desc|
       $logger.info desc
+    end
+    $logger.info "*"*80 + "\n"
+    $flagged_messages.values.each do |message_errs|
+      message_errs.each do |err_data|
+        $logger.error err_data
+      end
     end
   end
 end
