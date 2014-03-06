@@ -63,8 +63,8 @@ module HL7Test
   # e.g. if there are 3 OBX segments,
   #   self = Segment( obx1 )
   #   self.child_segs = [ Segment(obx2), Segment(obx3) ]  
-  class Segment     
-    attr_accessor :fields, :lines, :original_text, :number_of_lines, :type
+  class SegmentGroup     
+    attr_accessor :lines, :original_text, :size
     
     # NAME: new
     # DESC: creates a new HL7::Segment object from its original text
@@ -76,9 +76,8 @@ module HL7Test
     # EXAMPLE:
     #  HL7::Field.new( "PID|a|b|c", "PID" ) => new PID Segment with text "a|b|c" and fields ["a","b","c"]
     def initialize( segment_text, type )
-      lines = segment_text.split( SEG_DELIM )    # an array of strings
-      
-      @type = type.upcase.to_sym    
+      @lines = segment_text.split( SEG_DELIM )    # an array of strings
+         
       @original_text = lines.first
       @size = lines.size
       # @number_of_lines = @lines.size
@@ -87,10 +86,10 @@ module HL7Test
       # the remaining instance variables are not accessible outside the class
       # @field_text = []          # text of all fields in first line, e.g. [ "1",,"SMITH^JOHN^^JR.",,"12345" ]
       # @child = is_child
-      @children = []         # array of all other Segments of this same segment type
+      @segments = []         # array of all Segments of this same segment type
       
-      for i in 1...@size    # ignore first line, e.g. won't run if there's only one line
-        @children << Segment.new( lines[i], @type )
+      for i in 0...@size    # ignore first line, e.g. won't run if there's only one line
+        @children << TypedSegment.new( lines[i], type )
       end
       
       break_into_fields    # sets @fields, @field_text
@@ -206,14 +205,14 @@ module HL7Test
     #  *args - all arguments passed to the method call
     #  [code block] - optional code block passed to the method call
     # RETURNS: depends on handling
-    #     ==>  first checks @fields_by_index for a key by that name, and calls field(key)
+    #     ==>  first checks @@fields_by_index for a key by that name, and calls field(key)
     #     ==>  then gives up and throws an Exception
     # EXAMPLE:
     #  segment.patient_name => "SMITH^JOHN" (calls field(:patient_name) )
-    #  segment.5 => throws NoMethodError (5 is a value in @fields_by_index, NOT a key)
+    #  segment.5 => throws NoMethodError (5 is a value in @@fields_by_index, NOT a key)
     #  segment.fake_method => throws NoMethodError
     def method_missing( sym, *args, &block )
-      if @fields_by_index.has_key?( sym.downcase )
+      if @@fields_by_index.has_key?( sym.downcase )
         field(sym.downcase)
       else
         super     # don't want it downcased here!
@@ -263,7 +262,7 @@ module HL7Test
     
     def field_index( name )
       n = name.downcase.to_sym
-      @fields_by_index[n]
+      @@fields_by_index[n]
     end
 
     def remove_name_field

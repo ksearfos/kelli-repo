@@ -4,6 +4,7 @@ require "#{dir}/MessageHandler.rb"
 require "#{dir}/Message.rb"
 require "#{dir}/Segment.rb"
 require "#{dir}/Field.rb"
+require "#{dir}/SegmentEigenclass.rb"
 
 module HL7Test
   
