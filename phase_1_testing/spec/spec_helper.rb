@@ -1,5 +1,5 @@
 require 'require_relative'
-require_relative '../module/HL7'
+require 'hl7_utils'
 require_relative './hl7_specs/support/hl7_shared_examples'
 require 'logger'
 require 'set'
@@ -11,13 +11,14 @@ $proj_dir = File.expand_path( "../../", __FILE__ )
 $test_descriptions = Set.new
 
 def known_units
-  ["","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG",
-   "U","U/L","U/mL","fL","g/dL","h","lbs","log IU/mL",
-   "mIU/mL","mL","mL/min/1.73 m2","mcIU/mL","mcg/dL",
-   "mcg/mL FEU","mg/24 h","mg/L","mg/dL","mg/g crea",
-   "mlU/mL","mm Hg","mm/hr","mmol/L","ng/dL","ng/mL",
-   "nmol/L","pH units","pg/mL","seconds","titer",
-   "weeks","years"]
+  ["","%","%/L","% of total Hb","/hpf","/lpf","/mcL",
+   "cells/mcL","copies/mL","IU/mL","K/mcL","log copies/mL",
+   "M/mcL","PG","U","U/L","U/mL","fL","g","g/dL","g/24 hr",
+   "h","hours","lbs","log IU/mL","mIU/mL","mL","mL/min/1.73 m2",
+   "mcIU/mL","mcg/dL","mcg/mL FEU","mg/24 h","mg/L","mg/dL",
+   "mg/g crea","mlU/mL","mm Hg","mm/hr","mmol/L","mOsm/kg",
+   "ng/dL","ng/mL","nmol/L","pH units","pg/mL","ratio","seconds",
+   "titer","weeks","years"]
 end
 
 def abnormal_flags
@@ -29,17 +30,17 @@ def get_obx_of_obr( obr )
           s.is_a? HL7::Message::Segment::OBX }
 end
 
-def get_orc_for_obr( obr )
-  obr.children.select { |s|
-          s.is_a? HL7::Message::Segment::ORC }
-end
-
 def full_description( example )
   example.metadata[:full_description]
 end
 
 def log_example_exception( example, message )
-  exception_message = example.exception.to_s.split("Diff:")[0]
+  exception_message = ""
+  if example.exception.to_s[/Diff:/]
+    exception_message = example.exception.to_s.split("Diff:")[0]
+  else
+    exception_message = example.exception.to_s
+  end
 
   $logger.error "#{'*'*80}\n    Error found in:
 #{example.metadata[:full_description]}\n
@@ -49,7 +50,11 @@ def log_example_exception( example, message )
 end
 
 def cap_first( string )
-  string.slice(0,1).capitalize + string.slice(1..-1)
+  if string.size > 1
+    string.slice(0,1).capitalize + string.slice(1..-1)
+  else
+    string.capitalize
+  end
 end
 
 def add_description( description )
@@ -57,12 +62,24 @@ def add_description( description )
 end
 
 # == Get data to test
+def clean_file( filename )
+  raw_data = ""
+  File.open( filename, "rb" ) do |f|
+    while s = f.gets do
+      s.gsub!(/\r\n?/, "\n")
+      s.gsub!(/\n\n/, "\n")
+      raw_data << s.chomp
+    end
+  end
+  raw_data
+end
 
 def get_test_data( filename )
   if filename.nil? # check that a filename was passed in
     raise "Could not load test data; filename was nil."
   end
-  HL7::MessageHandler.new filename
+  raw_hl7 = clean_file filename
+  orig_hl7_by_record raw_hl7
 end
 
 # == Set up the logger
@@ -70,7 +87,7 @@ end
 def make_logger( filename, record_size )
   time = DateTime.now.strftime("%F at %T")
   logfilename = ( File.basename(filename) + '_' + time.gsub('at', '-') ).gsub(' ', '').gsub(':', '-')
-  $logger = Logger.new("#{File.join($proj_dir, "log", "lab", logfilename)}.log")
+  $logger = Logger.new("#{File.join($proj_dir, "log", logfilename)}.log")
 
   $logger.formatter = proc do |severity, datetime, progname, msg|
     "#{severity}: #{msg}\n"

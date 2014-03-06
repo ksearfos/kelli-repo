@@ -1,6 +1,6 @@
 require 'ruby-hl7'
 
-HDR = /\d+MSH/            # regex defining header row
+HDR = /\d+MSH|MSH/            # regex defining header row
 
 #-------------------------CLASS EXTENSIONS-------------------------#
 
@@ -111,9 +111,6 @@ def break_into_records( hl7 )
 
   all_recs = []
   for i in 0...hdrs.size
-    #puts "\nRecord #{i+1}: \n"
-    #p recs[i].gsub(/\n/, "\r")
-    #print "Header ||::==>> " + hdrs[i].gsub(/\n/, "\r").to_s + recs[i].to_s
     all_recs << hdrs[i] + recs[i].chomp      # those pesky endline characters cause a LOT of problems!
   end
   

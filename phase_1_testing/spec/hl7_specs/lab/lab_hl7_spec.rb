@@ -21,6 +21,15 @@ def test_message( message )
     context "MSH segment" do
       msh = message[0]    
       include_examples "MSH segment", msh
+
+      it "has the correct Processing ID",
+      :pattern => 'if MGH 2.3, otherwise 2.4' do
+        if msh.e3 =~ /MGH/
+          msh.e11.should match /^2.3$/
+        else
+          msh.e11.should match /^2.4$/
+        end
+      end
     end
 
 # == ORC tests
@@ -40,17 +49,48 @@ def test_message( message )
     context "OBR segment" do
       message[:OBR].each do |obr|
         include_examples "OBR segment", obr, message
+
+         it "has Procedure ID in the correct format", 
+  :pattern => 'begins with capital letters and numbers and ends with ECAREEAP or OHHOREAP' do
+          obr.universal_service_id.should match /^[A-Z0-9]+\^/
+          if message[0].e3 =~ /MGH/
+            obr.universal_service_id.should match /\^ECAREEAP$/
+          else
+            obr.universal_service_id.should match /\^OHHOREAP$/
+          end
+        end
    
 # == OBX tests
 
         context "-- OBX child" do
           obx_children = get_obx_of_obr( obr )
           obx_children.each do |obx|
-            include_examples "OBX child", obx, obx.value_type
+            value_type = obx.value_type
+            include_examples "OBX child", obx, value_type
 
             # Consider checking elements 1 and 2 of this segment
             it "has Component Id in the correct format", :pattern => 'LA01' do
               obx.observation_id.should match /\^LA01$/
+            end
+
+            it "has an appropriate Observation Value for Value Type #{value_type}",
+            :pattern => 'depends on the value type...
+If SN: an optional < or > or <= or >= or =, an optional + or -, number(s), an optional separator (., +, /, :, -), and number(s) following the separator
+If NM: an optional + or -, number(s), an optional decimal point, and numbers following the decimal
+If TX: a string of text that is not obviously an SN or NM
+If TX: a timestamp in MM-dd-yyyy hh:mm format' do
+              if value_type =~ /^SN$/
+                obx.observation_value.should match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif value_type =~ /^NM$/
+                obx.observation_value.should match /^ ?[\+-]? ?\d+\.?\d* ?$/
+              elsif value_type =~ /^TX$/
+                obx.observation_value.should_not match /^[<>]?[=]? ?[\+-]? ?\d+[\.\+\/:-]?\d* ?$/
+              elsif value_type =~ /^TS$/
+                # MM-dd-yyyy hh:mm
+                obx.observation_value.should match /^(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-(19|20)\d\d ((0|1)[0-9]|2[0-3]):(0[0-9]|[1-5][0-9]) $/
+              else
+                fail
+              end
             end
 
             context "with value type of SN or NM" do

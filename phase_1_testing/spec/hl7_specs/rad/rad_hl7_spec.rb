@@ -9,7 +9,7 @@ require "#{@@proj_dir}/lib/extended_base_classes"
 
 def test_message( message )
 
-  describe "Ohio Health Lab HL7" do
+  describe "Ohio Health Rad HL7" do
   
 # == General message tests
 
@@ -20,6 +20,11 @@ def test_message( message )
     context "MSH segment" do
       msh = message[0]    
       include_examples "MSH segment", msh
+
+      it "has the correct Processing ID",
+      :pattern => "the Processing ID must be 2.3" do
+        msh.e11.should match /^2.3$/
+      end
     end
 
 # == ORC tests
@@ -44,13 +49,15 @@ def test_message( message )
 
         it "has Principal Result Interpreter in the correct format",
         :pattern => "field 8 (something)PROV, field 12 is empty" do
-          obr.principal_result_interpreter.should match /\w+PROV/
-          obr.principal_result_interpreter.should match /\^$/
+          obr.principal_result_interpreter.should_not be_nil
+          obr_pri_fields = obr.principal_result_interpreter.split "^", -1
+          obr_pri_fields[8].should match /\w+PROV/
+          obr_pri_fields[12].should be_empty
         end
 
         it "has End Exam Date/Time in the correct format", 
         :pattern => 'a timestamp in yyyyMMddHHmm format' do
-          obr.quantity_timing.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
+          obr.results_status_change_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
         end
 
         it "has a Reason For Study",
@@ -65,9 +72,8 @@ def test_message( message )
 
         it "has a corresponding ORC segment",
         :pattern => "" do
-          orc = get_orc_for_obx( obr )
-          orc.size.should eq 1
-          orc[0].entered_by.should eq obr.observation_date
+          orc = message[:ORC][0]
+          orc.date_time_of_transaction.should eq obr.observation_date
         end
    
 # == OBX tests
@@ -77,22 +83,14 @@ def test_message( message )
           obx_children.each do |obx|
             include_examples "OBX child", obx, obx.value_type
 
-            it "has a valid Observation ID",
-            :pattern => "Observation ID contains TX and either &GDT or &IMP or &ADT" do
-              obx.observation_id.should match /\^TX\^/
-              obx.observation_id.should match /\^(&GDT|&IMP|&ADT)/
+            it "has a valid Value Type",
+            :pattern => "Value Type of Rad OBX must be TX" do
+              obx.value_type.should match /^TX$/
             end
 
-            it "has a logical Observation Value given the Observation ID",
-            :pattern => "If Observation ID contains &IMP, then Observation Value starts with IMPRESSION\nIf Observation ID contains &ADT, then Observation Value starts with ADDENDUM" do
-              if obx.observation_id =~ /&IMP/
-                obx.observation_value.should start_with "IMPRESSION"
-              elsif obx.observation_id =~ /&ADT/
-                obx.observation_value.should start_with "ADDENDUM"
-              else
-                obx.observation_value.should_not start_with "IMPRESSION"
-                obx.observation_value.shuld_not start_with "ADDENDUM"
-              end
+            it "has a valid Observation ID",
+            :pattern => "Observation ID can be &GDT or &IMP or &ADT" do
+              obx.observation_id.should match /^(&GDT|&IMP|&ADT)$/
             end
           
           end # End of obx_children.each
@@ -110,7 +108,7 @@ def test_message( message )
 
       it "has a valid race",
       :pattern => "a human race" do
-        pid.race.should match /^\d{4}-\d{1}$/
+        pid.race.should match /^(\d{4}-\d{1})?$/
       end
 
       it "has a Country Code that matches the Address",
@@ -123,12 +121,12 @@ def test_message( message )
 
       it "has a valid Language",
       :pattern => "a three character language code" do
-        pid.primary_language.should match /\w{3}/
+        pid.primary_language.should match /^([a-zA-Z]{3})?$/
       end
 
       it "has a valid Marital Status",
       :pattern => "a single character" do
-        pid.marital_status.should match /^\w{1}$/
+        pid.marital_status.should match /^[A-Z]?$/
       end
 
     end # End of PID Context
@@ -140,11 +138,10 @@ def test_message( message )
       include_examples "PV1 segment", pv1, message[:PID][0]
 
       it "has a valid Assigned Location",
-      :pattern => "Either assigned location field 3 is 'ED' or empty" do
-        set_id_fields = pv1.set_it.split "^"
-        assigned_location_fields = pv1.assigned_location.split "^"
-        if set_id_fields[1] == "E"
-          assigned_location_fields[2].should eq "ED"
+      :pattern => "Either assigned location is 'ED' or empty" do
+        assigned_location_fields = pv1.assigned_location.split "^", 3
+        if pv1.patient_class[0] == "E"
+          assigned_location_fields[0].should eq "ED"
         else
           assigned_location_fields[1].should be_empty
           assigned_location_fields[2].should be_empty
@@ -154,16 +151,16 @@ def test_message( message )
       it "has matching provider types",
       :pattern => "The provider type should be consistent" do
         attending_doctor_fields = pv1.attending_doctor.split "^"
-        provider_type = attending_doctor_fields[7]
-        attending_doctor_fields[11].should eq provider_type
+        provider_type = attending_doctor_fields[8]
+        attending_doctor_fields[12].should eq provider_type
         pv1.referring_doctor[/#{provider_type}/].should_not be_empty
         pv1.consulting_doctor[/#{provider_type}/].should_not be_empty
         pv1.admitting_doctor[/#{provider_type}/].should_not be_empty
       end
 
       it "has a valid Patient Class",
-      :pattern => "a single digit" do
-        pv1.patient_class.should match /^\d{1}$/
+      :pattern => "a word" do
+        pv1.patient_class.should match /^\w+$/
       end
 
       it "does not have a Patient Type",
