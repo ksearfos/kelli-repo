@@ -15,8 +15,8 @@ OUT_FILE = "#{$proj_dir}/record_results.txt"
 VERBOSE = true
 
 mh = HL7Test::MessageHandler.new( FILE )
-recs = mh.records.clone
-
+mh[0][:NTE].view
+exit 0
 pos_comparer = RecordComparer.new( recs )           # finds all positive test cases
 neg_comparer = RecordComparer.new( recs, false )    # finds all negative test cases, e.g. cases where criterion are not met
 pos_comparer.analyze

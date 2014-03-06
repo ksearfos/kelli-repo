@@ -1,5 +1,48 @@
-# last updated 3/4/14
-# last tested 3/4/14
+#------------------------------------------
+#
+# MODULE: HL7
+#
+# CLASS: HL7::Segment
+#
+# DESC: Defines a segment in a HL7 message
+#       A segment is essentially a single line of text, headed with a type (3 capital letters, e.g. 'PID')
+#         and separated into fields with pipes (|)
+#       The segment class keeps track of the full text of the segment minus the type, an array of its fields,
+#         and any "child" segments described as segments of the same type. A single segment object will exist
+#         for each line in the message, but the Message itself will only link to the first segment of any
+#         given type--subsequent lines will be treated as children and manipulated through the parent segment
+#       For example, if there are 4 OBX segments in one message: MESSAGE => OBX1 => OBX2, OBX3, OBX4
+#       A segment will generally contain multiple fields
+#
+# EXAMPLE: PID => "|12345||SMITH^JOHN||19631017|M|||" / [,"12345",,"SMITH^JOHN",,"19631017","M",,]
+# 
+# CLASS VARIABLES: none; uses HL7::SEG_DELIM and HL7::FIELD_DELIM
+#
+# READ-ONLY INSTANCE VARIABLES:
+#    @original_text [String]: stores the text originally found in the field, e.g. "SMITH^JOHN^W"
+#    @components [Array]: stores each component in the field, e.g. [ "SMITH", "JOHN", "W" ]
+#
+# CLASS METHODS: none
+#
+# INSTANCE METHODS:
+#    new(field_text): creates new Field object based off of given text
+#    to_s: returns String form of Field
+#    [](index): returns component at given index - count starts at 1
+#    each(&block): loops through each component, executing given code
+#    method_missing: tries to call method for @components, then for @original_text; then throws exception
+#    view: prints component to stdout in readable form, headed by component index
+#    as_date: prints value of Field formatted as a date
+#    as_time: prints value of Field formatted as a time
+#    as_datetime: prints value of Field formatted as a date + a time
+#    as_name: prints value of Field formatted as a name
+#
+# CREATED BY: Kelli Searfos
+#
+# LAST UPDATED: 3/5/14 11:09 AM
+#
+# LAST TESTED: 3/4/14
+#
+#------------------------------------------
 
 module HL7Test
    

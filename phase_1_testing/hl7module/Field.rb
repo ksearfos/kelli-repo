@@ -12,7 +12,7 @@
 #
 # EXAMPLE: Attending doctor => "12345^Smith^John^^^MD" / ["12345","Smith","John",,,"MD"]
 # 
-# CLASS VARIABLES: none
+# CLASS VARIABLES: none; uses HL7::FIELD_DELIM and HL7::COMP_DELIM
 #
 # READ-ONLY INSTANCE VARIABLES:
 #    @original_text [String]: stores the text originally found in the field, e.g. "SMITH^JOHN^W"
@@ -97,7 +97,10 @@ module HL7Test
     #  sym [Symbol] - symbol representing the name of the method called
     #  *args - all arguments passed to the method call
     #  [code block] - optional code block passed to the method call
-    # RETURNS: depends on handling; generally throws an Exception if method is not found
+    # RETURNS: depends on handling
+    #     ==>  first checks @components for a matching method
+    #     ==>  second checks @original_text for a matching method
+    #     ==>  then gives up and throws an Exception
     # EXAMPLE:
     #  field.size => 3 (calls @components.size)
     #  field.gsub( "*", "^" ) => "a*b*c" (calls @original_text.gsub)
