@@ -6,7 +6,6 @@
 #   be class-level variables; but they are obviously different for different segments
 # now, I could create a static class for each segment type, but that is incredibly annoying and requires maintenance
 # instead, I will create them at runtime, and we will only have 1 eigenclass for each segment type in the message we are reading
-# remind me to add something to messagehandler to count/create those.....
 module HL7Test
   
   class Segment     
@@ -61,5 +60,5 @@ module HL7Test
         
     klass
   end
-
+        
 end

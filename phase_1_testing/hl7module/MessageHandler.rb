@@ -83,7 +83,7 @@ module HL7Test
 
       all_recs
     end
-    
+
   end
 
 end
