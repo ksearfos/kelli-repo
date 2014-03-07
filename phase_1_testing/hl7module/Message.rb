@@ -177,7 +177,9 @@ module HL7Test
       # let objects track multiple occurrences -- 7 obx segments is still 1 OBX object
       @segment_text.each{ |type,text|
         line = text.join( SEG_DELIM )
-        @segments[type] = Segment.new( line, type )  
+        #@segments[type] = Segment.new( line, type )
+        cl = HL7Test.const_defined?(type) ? HL7Test.const_get(type) : HL7Test.new_typed_segment(type)
+        @segments[type] = cl.new( line )  
       }
     end
   end

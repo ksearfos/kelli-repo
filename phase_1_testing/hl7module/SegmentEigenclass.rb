@@ -10,9 +10,24 @@
 module HL7Test
   
   class Segment     
-
+    
+    def self.is_eigenclass?
+      self.instance_variable_defined?( :@type )
+    end
+    
+    # instance-level accessors for the two added variables, @type and @field_index_maps
+    def type
+      self.class.type
+    end
+    
+    def field_index_maps
+      self.class.field_index_maps
+    end
+    
+    # eigenclass stuff
+    # used by child classes like Pid and Obx
     class << self
-      # everything in here is a class-level variable/method
+      # everything in here is a class-level variable/method, despite the fact that there's only one @
       attr_reader :type, :field_index_maps
       
       # setter
@@ -25,21 +40,26 @@ module HL7Test
         @field_index_maps = hash
       end
       
-      # writer
       def add( field, index )
         field_index_maps[field] = index
       end
-    end
-#============================    
-end
+    end    
+    
+  end
 
-def self.new_typed_segment(type)
-  klass = Object.const_set(type.to_s.capitalize, Class.new(SegmentEigenclass))
-  klass.type = type.upcase
+  # out of the Segment class, back to the module
+  def self.new_typed_segment(type)
+    # create new class
+    t = type.upcase
+    klass = Object.const_set( t.to_s, Class.new(Segment) )   # => new class called TYPE
+    klass.type = t
   
-  hash_name = "#{type.to_s}_FIELDS"
-  klass.field_index_maps = HL7Test.const_defined?( hash_name ) ? HL7Test.const_get( hash_name ) : {}
-  klass
-end
+    # populate class variables @type, @field_index_maps
+    # despite the names, they are class-level variables
+    hash_name = "#{t}_FIELDS"
+    klass.field_index_maps = HL7Test.const_defined?( hash_name ) ? HL7Test.const_get( hash_name ) : {}
+        
+    klass
+  end
 
 end

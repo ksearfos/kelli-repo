@@ -2,7 +2,7 @@ dir = File.dirname(__FILE__)
 require "#{dir}/Methods.rb"
 require "#{dir}/MessageHandler.rb"
 require "#{dir}/Message.rb"
-require "#{dir}/Segment.rb"
+require "#{dir}/Segment2.rb"
 require "#{dir}/Field.rb"
 require "#{dir}/SegmentEigenclass.rb"
 

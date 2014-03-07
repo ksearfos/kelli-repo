@@ -8,17 +8,16 @@ FILE = "#{proj_dir}/resources/manifest_lab_short_unix.txt"
 # FILE = "C:/Users/Owner/Documents/manifest_lab_out_shortened.txt"
 # FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
 
-cl1 = HL7Test::SegmentEigenclass.new
+msg = <<END
+ORC|RE
+OBX|1|NM|WBC^WBC^LA01|1|9.46|K/mcL|4.50-11.00||||F
+OBX|2|NM|RBC^RBC^LA01|1|3.71|M/mcL|4.50-5.90|L|||F
+END
 
-HL7Test.new_typed_segment( :PID )
-HL7Test.new_typed_segment( :PV1 )
-pid = Pid.new
-pv1 = Pv1.new
-pv2 = Pv1.new
-puts Pv1.field_index_maps, "--"
-Pv1.add(:apple,4)
-puts pv1.type, pv2.type
-puts pv1.field_index_maps, pv2.field_index_maps
-pv2.add(:banana,5)
-puts pv1.field_index_maps, pv2.field_index_maps
-puts HL7Test::SegmentEigenclass.type ? "yes" : "no"
+include HL7Test
+
+mh = MessageHandler.new( FILE )
+rec = mh.records[0]
+rec.view_segments
+nte = rec[:NTE]
+nte.view
