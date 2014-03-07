@@ -69,11 +69,6 @@ shared_examples "OBR segment" do |obr, message|
     obr.observation_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
   end
 
-  it "has Results Status Date that is the same as the Observation Date", 
-  :pattern => 'matching dates' do
-    obr.results_status_change_date.should eq obr.observation_date
-  end
-
 end
 
 # == OBX tests
@@ -107,7 +102,7 @@ shared_examples "PID segment" do |pid|
   it "has Date of Birth in the correct format",
   :pattern => 'year month day (yyyyMMdd)' do
     # yyyyMMdd
-    pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/
+    pid.patient_dob.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])/
   end
 
   it "has Sex in the correct format", :pattern => 'one of [FMOUANC]' do
@@ -123,7 +118,7 @@ end
 shared_examples "Rad/ADT PID segment" do |pid|
   it "has a valid race",
   :pattern => "a human race" do
-    pid.race.should match /^(\d{4}-\d{1})?$/
+    pid.race.should match /^(\d{1})?$/
   end
 
   it "has a Country Code that matches the Address",

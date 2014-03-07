@@ -53,6 +53,11 @@ def test_message( message )
             obr.universal_service_id.should match /\^OHHOREAP$/
           end
         end
+
+        it "has Results Status Date that is the same as the Observation Date", 
+        :pattern => 'matching dates' do
+          obr.results_status_change_date.should eq obr.observation_date
+        end
    
 # == OBX tests
 

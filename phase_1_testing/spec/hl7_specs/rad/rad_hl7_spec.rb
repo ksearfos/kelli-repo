@@ -56,14 +56,14 @@ def test_message( message )
           obr_pri_fields[12].should be_empty
         end
 
+        it "has Observation Date/Time in the correct format", 
+        :pattern => 'a timestamp in yyyyMMddHHmm format' do
+          obr.observation_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
+        end
+
         it "has End Exam Date/Time in the correct format", 
         :pattern => 'a timestamp in yyyyMMddHHmm format' do
           obr.results_status_change_date.should match /^(19|20)\d\d(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])((0|1)[0-9]|2[0-3])(0[0-9]|[1-5][0-9])$/
-        end
-
-        it "has a Reason For Study",
-        :pattern => "" do
-          obr.reason_for_study.should_not be_empty
         end
 
         it "has the correct Set ID",
@@ -142,9 +142,14 @@ def test_message( message )
         pv1.patient_class.should match /^\w+$/
       end
 
-      it "does not have a Patient Type",
+      it "does not have a VIP Indicator",
       :pattern => "" do
-        pv1.patient_type.should be_empty
+        pv1.vip_indicator.should be_empty
+      end
+
+      it "has a Patient Type",
+      :pattern => "" do
+        pv1.patient_type.should_not be_empty
       end
 
     end # End of PV1 Context
