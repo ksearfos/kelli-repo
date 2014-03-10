@@ -22,6 +22,10 @@ module HL7
     def each
       @records.each{ |rec| yield(rec) }
     end
+
+    def size
+      @records.size
+    end
     
     private
     
