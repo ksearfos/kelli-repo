@@ -55,11 +55,11 @@ module HL7Test
         break if do_break                                           #+ stop reading file
       end
       
-      chars.squeeze!( "\n" )        # only need one line break at a time
+      chars.squeeze!( "\n" )                # only need one line break at a time
       ary = chars.split( "\n" )
       ary.pop if do_break                   # remove last line ONLY IF it's the header of an unwanted record
       ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty                   
-      @message = ary.join( "\n" )   # now glue the pieces back together
+      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end
     
     # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects

@@ -25,7 +25,9 @@
 #    to_s: returns String form of Field
 #    [](index): returns component at given index - count starts at 1
 #    each(&block): loops through each component, executing given code
-#    method_missing: tries to call method for @components, then for @original_text; then throws exception
+#    method_missing: tries to call method on @components (Array)
+#                    then tries to call method on @original_text (String)
+#                    then gives up and throws exception
 #    view: prints component to stdout in readable form, headed by component index
 #    as_date: prints value of Field formatted as a date
 #    as_time: prints value of Field formatted as a time

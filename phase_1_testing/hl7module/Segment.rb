@@ -31,7 +31,7 @@
 #             ====>  this is always the first such value, e.g. { [:text] = @lines[0], [:fields] = @fields[0] }
 #
 # CLASS METHODS: 
-#    self.is_eigenclass?: returns false is calling class is Segment; true if it's one of the typed derivatives like PID
+#    self.is_eigenclass?: returns false if calling class is Segment; true if it's one of the typed derivatives like PID
 #             ====>  SegmentEigenclass.rb defines several class methods of the Segment derivatives
 #
 # INSTANCE METHODS:
@@ -63,11 +63,6 @@
 
 module HL7Test 
 
-  # has value of first segment in record of this type
-  # if there are others, those are saved as Segment objects in @child_segs
-  # e.g. if there are 3 OBX segments,
-  #   self = Segment( obx1 )
-  #   self.child_segs = [ Segment(obx2), Segment(obx3) ]  
   class Segment    
    
     attr_reader :lines, :original_text, :size, :fields
