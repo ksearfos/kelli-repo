@@ -47,7 +47,7 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/5/14 11:09 AM
+# LAST UPDATED: 3/10/14 11:09 AM
 #
 # LAST TESTED: 3/4/14
 #
@@ -310,7 +310,6 @@ module HL7Test
       text.each{ |type,body|
         line = body.join( SEG_DELIM )
         cl = HL7.const_get( type )
-        # cl = HL7Test.const_defined?(type) ? HL7Test.const_get(type) : HL7Test.new_typed_segment(type)
         @segments[type] = cl.new( line )  
       }
     end

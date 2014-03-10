@@ -7,14 +7,20 @@ require "#{dir}/Field.rb"
 require "#{dir}/SegmentEigenclass.rb"
 
 module HL7Test
+  @separators = { :field => FIELD_DEF, :comp => COMP_DEF, :subcomp => SUB_DEF, :subsub => SS_DEF, :sub_subsub => SSS_DEF }
+  class << self
+    attr_accessor :separators
+  end
   
   SEG_DELIM = "\n"            # split into segments across lines, currently
-  FIELD_DELIM = "|"           # fields of a segment are separated by this
-  COMP_DELIM = "^"            # components in a field are separated by this
-  DUP_DELIM = "~"             # duplicate information in a single field is separated by this
+  FIELD_DEF = "|"             # fields of a segment are separated by this by default
+  COMP_DEF = "^"              # components in a field are separated by this by default
+  SUB_DEF = "~"               # subcomponents of a field are separated by this by default
+  SS_DEF = "\\"               # sub-subcomponents are separated by this by default (a single backslash)
+  SSS_DEF = "&"               # sub-sub-subcomponents, if they are ever actually used, are separated by this by default
   HDR = /\d+MSH|MSH/          # regex defining header row
   SSN = /^\d{9}$/             # regex defining social security number, which is just 9 digits, no dashes
-  ID_FORMAT = /^[A-Z]?d+$/   # regex defining a medical ID
+  ID_FORMAT = /^[A-Z]?d+$/    # regex defining a medical ID
   
   # a list of all possible message types can be found at http://www.interfaceware.com/hl7-standard/hl7-messages.html
   ORDER_MESSAGE_TYPE = "ORD^O01"
