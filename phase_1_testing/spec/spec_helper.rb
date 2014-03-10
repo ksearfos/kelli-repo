@@ -37,17 +37,18 @@ def full_description( example )
 end
 
 def get_patient_info( message )
-  message_time = DateTime.parse(message[0].e6)
-  
   pid = message[:PID][0]
+  patient_mrn = pid.patient_id_list.split("^")[0]
+  patient_acct_num = pid.account_number.split("^")[0]
   patient_dob = Date.parse(pid.patient_dob)
+  encounter_date = DateTime.parse(message[:OBR][0].observation_date)
 
   "#{'='*30} Patient Information #{'='*30}\n
-  Patient Name          : #{pid.patient_name}
-  Patient ID            : #{pid.patient_id}
-  Patient Account Number: #{pid.account_number}
-  Patient Date of Birth : #{patient_dob.to_s}
-  Encounter Date/Time   : #{message_time.to_s}
+  Name               : #{pid.patient_name}
+  MRN                : #{patient_mrn}
+  Account Number     : #{patient_acct_num}
+  Date of Birth      : #{patient_dob.strftime('%m/%d/%Y')}
+  Encounter Date/Time: #{encounter_date.strftime('%m/%d/%Y, %r')}
 \n#{'='*87}\n"
 end
 
