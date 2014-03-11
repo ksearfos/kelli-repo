@@ -17,7 +17,11 @@
 #
 # EXAMPLE: MessageHandler => "MSH|...MSH|...MSH|..." / [ Message1, Message2, Message 3 ]
 #
-# CLASS VARIABLES: none; uses HL7::SEG_DELIM and modifies HL7.separators
+# CLASS VARIABLES: uses HL7::SEG_DELIM and modifies HL7.separators
+#    @@lim_default [Integer]: default limit to the number of records to read in, False (no limit) as written
+#                      ====>  if @@lim_default evaluates to False and no other limit is specified, will read in all records
+#                      ====>  can ignore @@lim_default by passing a second argument to new()
+#    @@eol [String]: defines the end-of-line character we want to use, "\n" as written
 #
 # READ-ONLY INSTANCE VARIABLES:
 #    @message [String]: stores entire message text
@@ -46,32 +50,78 @@
 module HL7Test
   
   class MessageHandler
-    @@lim_default = 0       # makes it easier to update this way
+    @@lim_default = false    # limit will be an integer, but this is ruby so let's take advantage of dynamic typing!
+    @@eol = "\n"             # the end of line character we are using
     
     attr_reader :message, :records, :segment_types
-    
+
+    # NAME: new
+    # DESC: creates a new HL7::MessageHandler object from a text file
+    # ARGS: 1-2
+    #  file [String] - complete path to the source file
+    #  limit [Integer] - highest number of records to read in from the source file - by default there is no limit
+    # RETURNS:
+    #  [HL7::MessageHandler] newly-created MessageHandler
+    # EXAMPLE:
+    #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
     def initialize( file, limit = @@lim_default )
       @message = ""
       @records = []
       @segment_types = [:MSH]
       
-      read_message( file, limit )    # updates @message, @segment_types
-      get_separators                 # updates @separators
+      read_message( file, limit )    # updates @message
+      prepare                        # updates @segment_types, @separators -- prepare to create Message/Segment objects
       break_into_records             # updates @records
     end
-    
+
+    # NAME: to_s
+    # DESC: returns the message handler as a String object - basically the text of the file
+    # ARGS: none 
+    # RETURNS:
+    #  [String] the message handler source in textual form
+    # EXAMPLE:
+    #  message_handler.to_s => "MSH|...MSH|...MSH|..."     
     def to_s
       @message
     end
-    
+
+    # NAME: []
+    # DESC: returns record (Message object) at given index
+    # ARGS: 1
+    #  index [Integer] - the index of the record we want
+    # RETURNS:
+    #  [Message] an individual Message/record
+    # EXAMPLE:
+    #  message_handler[2] => Message3    
     def []( index )
       @records[index]
     end
-    
+
+    # NAME: each
+    # DESC: performs actions for each record
+    # ARGS: 1
+    #  [code block] - the code to execute on each component
+    # RETURNS: nothing, unless specified in the code block
+    # EXAMPLE:
+    #  message_handler.each{ |rec| print rec.id + " & " } => 12345 & 12458 & 12045 
     def each
       @records.each{ |rec| yield(rec) }
     end
-    
+
+    # NAME: method_missing
+    # DESC: handles methods not defined for the class
+    # ARGS: 1+
+    #  sym [Symbol] - symbol representing the name of the method called
+    #  *args - all arguments passed to the method call
+    #  [code block] - optional code block passed to the method call
+    # RETURNS: depends on handling
+    #     ==>  first checks @records for a matching method
+    #     ==>  second checks @message for a matching method
+    #     ==>  then gives up and throws an Exception
+    # EXAMPLE:
+    #  message_handler.size => 3 (calls @records.size)
+    #  message_handler.gsub( "*", "|" ) => "MSH*...MSH*...MSH*..."  (calls @message.gsub)
+    #  message_handler.fake_method => throws NoMethodError    
     def method_missing( sym, *args, &block )
       if Array.method_defined?( sym )
         @records.send( sym, *args )
@@ -87,34 +137,47 @@ module HL7Test
     # reads in a HL7 message as a text file from the given filepath and stores it in @message
     # changes coding to end in \n for easier parsing
     def read_message( file, limit = @@lim_default )
-      valid_limit = ( limit > 0 && limit != @@lim_default )   # is there a real limit specified?
-      chars = ""                                              #+  user could say limit = -1 but that isn't helpful
+      valid_limit = ( limit && limit > 0 )     # is there a real limit specified?
+      chars = ""                               #+  user could say limit = -1 but that isn't helpful
       do_break = false
       
       puts "Reading #{file}..."
       File.open( file, "r" ).each_char do |ch|
-        if ch == "\r" then chars << "\n"     # convert to useful character
+        if ch == "\r" then chars << @@eol   # convert to useful character
         else chars << ch
         end
 
-        do_break = valid_limit && chars.scan(/MSH/).size > limit    # if we have a limit, and we have reached it,
+        do_break = valid_limit && chars.scan(HDR).size > limit    # if we have a limit, and we have reached it,
         break if do_break                                           #+ stop reading file
       end
       
-      chars.squeeze!( "\n" )                # only need one line break at a time
-      ary = chars.split( "\n" )
+      chars.squeeze!( @@eol )               # only need one line break at a time
+      ary = chars.split( @@eol )
       ary.pop if do_break                   # remove last line ONLY IF it's the header of an unwanted record
       ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty
-      #############doesn't work as written, need to reference HL7.separators[:field] but not defined yet
+      
+      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
+    end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
+
+    def prepare
+      get_separators
+      define_segments
+    end
+    
+    def define_segments
+      fld = HL7.separators[:field]
+      ary = @message.split( SEG_DELIM )
       ary.each{ |line|
-        type = line.split(FIELD_DELIM).first     # first field of each line, i.e. the segment type
-        @segment_types << type.upcase.to_sym unless type.include?( "MSH" )
+        type = line.split( fld ).first     # first field of each line, i.e. the segment type
+        @segment_types << type.upcase.to_sym unless type =~ HDR
       }
       
-      @segment_types.uniq!                  # a list of all segment types included in this message       
-      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
+      @segment_types.uniq!                 # a list of all segment types included in this message 
+      @segment_types.each{ |type|
+        HL7Test.new_typed_segment( type )
+      }
     end
-
+    
     def get_separators
       eol = @message.index( SEG_DELIM )
       line = @message[0...eol]         # looks something like: MSH|^~\&|info|info|info
@@ -132,10 +195,6 @@ module HL7Test
     # can access segments as @records[index][segment_name]
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
     def break_into_records
-      @segment_types.each{ |type|
-        HL7Test.new_typed_segment( type )
-      }
-      
       all_recs = records_by_text
       @records = all_recs.map{ |msg| Message.new( msg ) }
     end
