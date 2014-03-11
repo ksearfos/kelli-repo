@@ -22,8 +22,8 @@
 #    is_numeric?(val) - determines whether value given is numeric, by HL7 formatting standards
 #    is_timestamp?(val) - determines whether value given is a timestamp, by HL7 formatting standards
 #    is_struct_num?(val) - determines whether value given is a structured numeric, by HL7 formatting standards
-#    is_timestamp?(val) - determines whether value given is (unformatted) text, by HL7 formatting standards
-#    is_timestamp?(val) - determines whether value given is a numeric range, by HL7 formatting standards
+#    is_text?(val) - determines whether value given is (unformatted) text, by HL7 formatting standards
+#    is_num_range?(val) - determines whether value given is a numeric range, by HL7 formatting standards
 #    has_correct_format?(value,format) - determines whether the value given is of the format specified
 #
 # CREATED BY: Kelli Searfos
@@ -219,7 +219,7 @@ module HL7Test
   #  HL7.is_hour?( "00" ) => true
   #  HL7.is_hour?( "25" ) => false     
   def self.is_hour?( val )
-    return false if hr !~ /^\d{2}$/    # 2 digits, and only 2 digits?
+    return false if val !~ /^\d{2}$/    # 2 digits, and only 2 digits?
     
     hr = val.to_i
     hr.between?( 0, 23 )   # don't know if it's military time or not
@@ -316,8 +316,8 @@ module HL7Test
     hr = val[0...2]
     min = val[2...4]
     sec = val[4...6]
-    
-    is_hour?(hr) && is_min_sec?(min) && ( !sec || is_min_sec?(sec) )   # seconds value is optional, remember
+
+    is_hour?(hr) && is_min_sec?(min) && ( sec.empty? || is_min_sec?(sec) )   # seconds value is optional, remember
   end    
 
   # NAME: is_numeric?
@@ -382,7 +382,7 @@ module HL7Test
   #  [Boolean] true if the value is a range, false otherwise
   # EXAMPLE:
   #  HL7.is_num_range?( " -1.34 - 85 " ) => true
-  #  HL7.is_numeric?( "26" ) => false   
+  #  HL7.is_num_range?( "26" ) => false   
   def self.is_num_range?( str )
     return false if !str || str.empty?
     str.strip!
