@@ -1,4 +1,4 @@
-# last run: 3/12/14 8:48 AM
+# last run: 3/12/14 13:07
 # outcome: success
 
 require 'spec_helper.rb'
@@ -59,7 +59,8 @@ describe "HL7" do
     end # context
     
     it "allows quick viewing of components" do
-      @field.view.should be_true  
+      put = capture_stdout{ @field.view }
+      put.should_not be_empty  
     end
     
     context "format" do

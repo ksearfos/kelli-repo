@@ -102,7 +102,8 @@ describe "HL7" do
     end # context
     
     it "allows quick viewing of fields" do
-      @segment.view.should be_true  
+      put = capture_stdout{ @segment.view }
+      put.should_not be_empty
     end
 
   end
