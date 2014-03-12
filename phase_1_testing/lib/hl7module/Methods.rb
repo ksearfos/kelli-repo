@@ -26,7 +26,7 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/12/14 8:47 AM
+# LAST UPDATED: 3/12/14 13:06
 #
 # LAST TESTED: 3/12/14
 #
@@ -74,14 +74,14 @@ module HL7Test
     
     if military
       str = "#{hr}:#{min}" 
-      str << ":#{sec}" if sec
+      str << ":#{sec}" unless sec.empty?
     else
       hr = hr.to_i     # removes leading 0 and makes math easy
       ampm = ( hr > 12 ? "PM" : "AM" )
       hr = ( hr > 12 ? (hr-12).to_s : hr.to_s )   # turn it back into a string, with the right value
         
       str = "#{hr}:#{min}"
-      str << ":#{sec}" if sec
+      str << ":#{sec}" unless sec.empty?
       str << " #{ampm}"
     end
       

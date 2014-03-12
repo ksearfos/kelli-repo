@@ -23,6 +23,7 @@
 #    @segments [Hash]: stores each segment as a Segment object linked to by type, e.g. { :MSH=>Seg1, :PID=>Seg2, ... }
 #               ====>  will actually be objects of one of the Segment child classes
 #    @id [String]: stores the message ID, also known as the message control ID or MSH.9
+#    @type [Symbol]: either :lab, :rad, or :adt, depending on the value of MSH.2
 #
 # CLASS METHODS: none
 #
@@ -38,25 +39,24 @@
 #                    then gives up and throws exception
 #    header: returns the message header, e.g. the MSH segment object
 #    view_details: prints summary of important message information, such as message ID and patient name
-#    encounter_details(section): returns details about the encounter referenced in this message, or just one section of the details
 #    view_segments: displays readable version of the segments, headed by the type of the segment
-#    important_details(type): allows quick access to the most commonly referenced message pieces
 #    fetch_field(field): returns the value of the segment and field specified -- fetch_field("abc1") ==> self[:ABC][1]
+#                 ====>  always returns array for elegant handling of multi-line segments
 #    segment_before(seg): returns name/type of the segment occurring directly before the one specified
 #    segment_after(seg): returns the name/type of the segment occurring directly after the one specified
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/10/14 11:09 AM
+# LAST UPDATED: 3/12/14 13:20
 #
-# LAST TESTED: 3/4/14
+# LAST TESTED: 3/12/14
 #
 #------------------------------------------
 
 module HL7Test
    
   class Message  
-    attr_accessor :segments, :lines, :original_text, :id
+    attr_accessor :segments, :lines, :original_text, :id, :type
 
     # NAME: new
     # DESC: creates a new HL7::Message object from its original text
@@ -74,6 +74,7 @@ module HL7Test
       break_into_segments    # sets @lines, @segments
       
       @id = header.message_control_id
+      set_message_type
     end  
 
     # NAME: to_s
@@ -128,20 +129,20 @@ module HL7Test
     #  *args - all arguments passed to the method call
     #  [code block] - optional code block passed to the method call
     # RETURNS: depends on handling
-    #     ==>  first checks @segments for a matching method
-    #     ==>  second checks @segments.values for a matching method
+    #     ==>  first checks @segments.values for a matching method
+    #     ==>  second checks @segments for a matching method
     #     ==>  third checks @original_text for a matching method
     #     ==>  then gives up and throws an Exception
     # EXAMPLE:
-    #  message.size => 3 (calls @segments.size)
-    #  message.index(PIDobject) => 1 (calls @segments.values.index)
+    #  message.shuffle => [ PIDObj, OBXObj, PV1Obj, MSHObj ] (calls @segments.values.shuffle)
+    #  message.invert => { MSHobj=>:MSH, PIDObj=>:PID, PV1Obj=:PV1 } (calls @segments.invert)
     #  message.gsub( "*", "\n|^" ) => "MSH*a*b*c*PID*a*b*c*PV1*a*b*c" (calls @original_text.gsub)
     #  message.fake_method => throws NoMethodError    
     def method_missing( sym, *args, &block )
-      if Hash.method_defined?( sym )
-        @segments.send( sym, *args )
-      elsif Array.method_defined?( sym )
+      if Array.method_defined?( sym )
         @segments.values.send( sym, *args )
+      elsif Hash.method_defined?( sym )
+        @segments.send( sym, *args )
       elsif String.method_defined?( sym )
         @original_text.send( sym, *args )
       else
@@ -167,34 +168,24 @@ module HL7Test
     # EXAMPLE:
     #  message.view_details => Message ID: 12345
     #                          Sent at: 05/15/2013 11:45 AM
-    #                          Patient ID: 12345
     #                          Patient Name: John W Smith
+    #                          Account #: 123456789
     #                          Visit Number: 12345
     def view_details
       puts "Message ID: " + @id
+      puts "Message type: " + @type.to_s.capitalize
       puts "Sent at: " + header.date_time.as_datetime
-      puts "Patient ID: " + important_details( :patient_id )
-      puts "Patient Name: " + important_details( :patient_name )
-      puts "Visit Number: " + important_details( :visit_number )
-      puts ""
-    end
-
-    # NAME: encounter_details
-    # DESC: collects crucial information about the visit described in the message
-    # ARGS: 0-1
-    #  section [Symbol] - identifier of the specific type of details desired (optional) 
-    # RETURNS:
-    #  [Hash or String] full details, in a hash linking to the detail type (if no section specified), or
-    #                   just the specific section desired, as a string -- returns full details (Hash) by default
-    # EXAMPLE:
-    #  message.encounter_details() => { :ID => "12345", :NAME => "SMITH^JOHN", :VISIT => "01834" }
-    #  message.encounter_details(:ID) => "12345"
-    def encounter_details( section = "" )
-      me = { :ID => important_details( :patient_id ),
-             :NAME => important_details( :patient_name ),
-             :VISIT => important_details( :visit_number ) }
-             
-      ( section.empty? ? me : me[section.to_sym] )
+      puts "Patient Name: " + @segments[:PID].patient_name
+      puts "Account #: " + @segments[:PID].account_number.first
+      
+      if @type != :adt
+        procedure = @segments[:OBR].procedure_id.first
+        time = @segments[:OBR][7].as_datetime
+        puts "Procedure: " + procedure
+        puts "Collected at: " + time
+      else
+        puts "Visit Number: " + @segments[:PV1].visit_number
+      end
     end
 
     # NAME: view_segments
@@ -232,30 +223,6 @@ module HL7Test
       seg_obj.all_fields( f.to_i )
     end
 
-    # NAME: important_details
-    # DESC: grabs specified info from collection of the most commonly referenced message pieces
-    # ARGS: 1
-    #  type [Symbol] - the type of information desired
-    # RETURNS:
-    #  [String] the value requested -- if type is not recognized, returns nil and outputs message to stdout
-    #       ==> recognizes :patient_id, :patient_name, :visit_number, :message_header, :message_id
-    #       ==> this was created to quickly reference to important data without having to know the segment type/field ID
-    # EXAMPLE:
-    #  message.important_details(:patient_name) => "John W Smith"
-    #  message.important_details(:favorite_color) => nil; stdout shows 'I don't know where to look to find the favorite_color.'
-    def important_details( type )
-      case type
-        when :patient_id then @segments[:PID][3].first
-        when :patient_name then @segments[:PID][5].as_name
-        when :visit_number then @segments[:PV1][19].first
-        when :message_header then header
-        when :message_id then @id
-        else
-          puts "I don't know where to look in the message to find the #{type}."
-          return nil
-      end
-    end
-
     # NAME: segment_before
     # DESC: identifies type of segment occurring in the message directly before (all lines of) the specified type
     # ARGS: 1
@@ -289,7 +256,7 @@ module HL7Test
       segs = @original_text.split( SEG_DELIM )    # all segments, including the type found in field 0
       text = {}
       segs.each{ |seg|
-        end_of_type = seg.index( FIELD_DELIM )    # first occurrence of delimiter => end of the type field
+        end_of_type = seg.index( HL7Test.separators[:field] )   # first occurrence of delimiter => end of the type field
         type = seg[0...end_of_type]
         body = seg[end_of_type+1..-1]
         is_hdr = ( type =~ HDR )                  # is this a header line?        
@@ -309,9 +276,21 @@ module HL7Test
       # let objects track multiple occurrences -- 7 obx segments is still 1 OBX object
       text.each{ |type,body|
         line = body.join( SEG_DELIM )
-        cl = HL7.const_get( type )
+        cl = HL7Test.typed_segment( type )
         @segments[type] = cl.new( line )  
       }
+    end
+    
+    def set_message_type
+      type = header[2].to_s
+
+      if type.include?( "LAB" )
+        @type = :lab
+      elsif type.include?( "RAD" )
+        @type = :rad
+      else
+        @type = :adt
+      end
     end
   end
 end

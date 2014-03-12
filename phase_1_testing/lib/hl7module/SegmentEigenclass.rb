@@ -32,11 +32,11 @@
 #    field_index_maps: returns value of @field_index_maps for this object - will be nil of object instantiates Segment directly
 #
 # MODULE METHODS:
-#    new_typed_segment(type): creates new child class of Segment called TYPE
+#    typed_segment(type): returns segment child class called TYPE; creates one first, if necessary
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/10/14 9:38 AM
+# LAST UPDATED: 3/12/14 12:53 PM
 #
 # LAST TESTED: 3/12/14
 #
@@ -112,9 +112,11 @@ module HL7Test
   #  [Class] new Class, a child of Segment
   # EXAMPLE:
   #  HL7.new_typed_class(:MSH) ==> class named MSH with @type=:MSH and @field_index_maps=MSH_FIELDS
-  def self.new_typed_segment(type)
+  def self.typed_segment(type)
     # create new class
     t = type.upcase
+    return HL7Test.const_get(t) if HL7Test.const_defined?(t)
+    
     klass = Object.const_set( t.to_s, Class.new(Segment) )   # => new class called TYPE
     klass.type = t.to_sym
   
