@@ -36,9 +36,9 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/5/14 11:09 AM
+# LAST UPDATED: 3/11/14 3:00 PM
 #
-# LAST TESTED: 3/4/14
+# LAST TESTED: 3/12/14
 #
 #------------------------------------------
 module HL7Test

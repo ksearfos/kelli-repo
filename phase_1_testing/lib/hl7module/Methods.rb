@@ -20,17 +20,15 @@
 #    is_time?(val) - determines whether value given represents a valid time, by HL7 formatting standards
 #    is_datetime?(val) - determines whether value given represents a valid date + time, by HL7 formatting standards
 #    is_numeric?(val) - determines whether value given is numeric, by HL7 formatting standards
-#    is_timestamp?(val) - determines whether value given is a timestamp, by HL7 formatting standards
 #    is_struct_num?(val) - determines whether value given is a structured numeric, by HL7 formatting standards
 #    is_text?(val) - determines whether value given is (unformatted) text, by HL7 formatting standards
-#    is_num_range?(val) - determines whether value given is a numeric range, by HL7 formatting standards
 #    has_correct_format?(value,format) - determines whether the value given is of the format specified
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/5/14 1:55 PM
+# LAST UPDATED: 3/12/14 8:47 AM
 #
-# LAST TESTED: 3/4/14
+# LAST TESTED: 3/12/14
 #
 #------------------------------------------
 module HL7Test                          
@@ -243,26 +241,6 @@ module HL7Test
     min.between?( 0, 59 )
   end
 
-  # NAME: is_timestamp?
-  # DESC: determines whether the value given is a properly-formatted timestamp
-  #       a timestamp has the form MM-DD-YYYY HH:MM
-  # ARGS: 1
-  #   val [String] - value to be checked
-  # RETURNS:
-  #  [Boolean] true if the value looks like a timestamp, false otherwise
-  # EXAMPLE:
-  #  HL7.is_timestamp( "05-13-1987 14:22" ) => true
-  #  HL7.is_timestamp?( "13 May 2012 at 8:04 PM" ) => false   
-  def self.is_timestamp?( val )
-    return false if val !~ /^\d{2}-\d{2}-\d{4} \d{2}:\d{2}$/
-    
-    dt = val.split( " " )           # => [date,time]
-    date = dt.first.split( "-" )    # => [MM,DD,YYYY]
-    time = dt.last.split( ":" )     # => [HH,MM]
-
-    is_month?( date[0] ) && is_day?( date[1] ) && is_year?( date[2] ) && is_hour?( time[0] ) && is_minute?( time[1] )
-  end
-
   # NAME: is_datetime?
   # DESC: determines whether the value given is a properly-formatted datetime
   #       see make_datetime() for details
@@ -331,10 +309,10 @@ module HL7Test
   #  HL7.is_numeric?( " - 1.34 " ) => true
   #  HL7.is_numeric?( "<26" ) => false     
   def self.is_numeric?( str )
-    return false if !str || str.empty?
-     
     str.strip!
     str.tr!( " ", "" )                    # remove spaces
+    return false if str.empty?
+     
     return false if str[0] !~ /-|\+|\d/   # first character is a digit or positive/negative sign?
     return false if str[-1] !~ /\d/       # last character is a digit?
 
@@ -345,7 +323,8 @@ module HL7Test
 
   # NAME: is_struct_num?
   # DESC: determines whether the value given is a structured numeric
-  #       a HL7 structured numeric is <>= followed by a numeric, and it might be space-padded
+  #       a HL7 structured numeric is an inequality, a ratio, an interval , or a categorical result
+  #       that is, <3.4, 4:5 or 4/5, 4.5 - 10.0, 2+
   # ARGS: 1
   #   val [String] - value to be checked
   # RETURNS:
@@ -354,52 +333,50 @@ module HL7Test
   #  HL7.is_struct_num?( " <= -1.34 " ) => true
   #  HL7.is_struct_num?( "26" ) => false   
   def self.is_struct_num?( str )
-    return false if !str || str.empty?
-    
-    # first character(s), if not digits, are -, <, >, <=, >=
-    allowed_beg = [ "-", "<", ">", "<=", ">=" ]
     str.strip!
     str.tr!( " ", "" )              # remove spaces 
-       
-    num_i = str.index( /\d/ )       # first digit
-    beg = str[0...num_i]            # portion of string up to first digit
-    rest = str[num_i..-1]           # portion of string beginning with first digit
-    sep = rest.match( /\D+/ )[0]    # separator, if there is one - does not have to be a period
-    nums = rest.split( sep )        # numeric portions of string
+    return false if str.empty?
+    return false if is_numeric?( str )
     
-    nums.each{ |n| return false unless is_numeric?(n) }
-    
-    # the number pieces are, in fact, numbers, so...
-    allowed_beg.include?( beg ) && ( sep ? nums.size == 2 : nums.size == 1 )
-  end
-
-  # NAME: is_num_range?
-  # DESC: determines whether the value given is a numeric range
-  #       a HL7 range is two numerics with a dash in-between, and it might be space-padded
-  # ARGS: 1
-  #   val [String] - value to be checked
-  # RETURNS:
-  #  [Boolean] true if the value is a range, false otherwise
-  # EXAMPLE:
-  #  HL7.is_num_range?( " -1.34 - 85 " ) => true
-  #  HL7.is_num_range?( "26" ) => false   
-  def self.is_num_range?( str )
-    return false if !str || str.empty?
+    # first character(s), if not digits, are <>, <, >, <=, >=
+    allowed_beg = [ "<>", "<", ">", "<=", ">=", "" ]
+    seps = /[\/\-+:]/   # period is allowed too, but will be found with is_numeric?
     str.strip!
-    str.tr!( " ", "" )    
+    str.tr!( " ", "" )               # remove spaces 
     
-    neg = str[0] == '-'
-    str = str[1..-1] if neg          # starts with a dash, so remove that to not confuse things...
-    ary = str.split( "-" )           #+ because now we are splitting across a dash!
-    return false if ary.size != 2    # if there aren't two pieces, there's a problem
-              
-    first = ( neg ? '-' + ary[0] : ary[0] )        # stick the negative sign back on, if there was one          
-    is_numeric?( first ) && is_numeric?( ary[1] )  # we have two pieces, but are they numeric pieces?
+    # first, does it begin with an allowed character (or nothing)?   
+    num_i = str.index( /-?\d/ )      # beginning of numeric
+    return false unless num_i        # if there is no match for a - or digit, this isn't a structured numeric
+    beg = str[0...num_i]             # portion of string before numeric
+    return false unless allowed_beg.include?( beg )
+    
+    # next, find the separator
+    num_i += 1 if str[num_i] == '-'  # leaving a negative number will screw up the regex match
+    rest = str[num_i..-1]            # portion of string beginning with numeric
+    m = rest.match( /[\/\-+:]/ )
+    sep = m ? m[0] : ""              # separator, if there is one
+    
+    # is everything else numeric?
+    if sep.empty?
+      return false unless is_numeric?( rest )
+    else
+      nums = rest.split( sep )       # numeric portions of string
+      if sep == '+'
+        return false unless nums.size == 1 && is_numeric?( nums[0] )
+      else
+        return false unless nums.size == 2
+        nums.each{ |n| return false unless is_numeric?( n ) }
+      end
+    end
+    
+    # if we are here, str is not a numeric, there is a valid beginning piece and a valid
+    #+ separator, and the rest is numeric, so...
+    true
   end
-
+  
   # NAME: is_text
   # DESC: determines whether the value given is proper text
-  #       a HL7 text is really any String that isn't a numeric, structured numeric, or timestamp 
+  #       a HL7 text is really any String that isn't a numeric or structured numeric
   # ARGS: 1
   #   val [String] - value to be checked
   # RETURNS:
@@ -409,7 +386,8 @@ module HL7Test
   #  HL7.is_numeric?( "26" ) => false    
   def self.is_text?( str )
     # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
-    str && !( str.empty? || is_struct_num?(str) || is_numeric?(str) || is_timestamp?(str) )
+    is_other = ( is_numeric?(str) || is_struct_num?(str) )
+    str && !( str.empty? || is_other )
   end
   
   # NAME: has_correct_format?
@@ -428,10 +406,9 @@ module HL7Test
   # ==> HL7.has_correct_format?( record[:OBX].value, record[:OBX].value_type )
   def self.has_correct_format?( value, format )
     case format
-    when 'NM' || "numeric" then is_numeric?( value )
-    when 'SN' || "structured numeric" then is_struct_num?( value )
-    when 'TS' || "timestamp" then is_timestamp?( value )
-    when 'TX' || "text" then is_text?( value )
+    when 'NM',"numeric" then is_numeric?( value )
+    when 'SN',"structured numeric" then is_struct_num?( value )
+    when 'TX',"text" then is_text?( value )
     else false    # not a valid type, so how could we match it?
     end
   end  

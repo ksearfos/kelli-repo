@@ -1,3 +1,6 @@
+# last run: 3/12/14 8:48 AM
+# outcome: success
+
 require 'spec_helper.rb'
 
 describe "HL7" do

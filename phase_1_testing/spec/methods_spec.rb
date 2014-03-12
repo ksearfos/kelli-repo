@@ -1,3 +1,6 @@
+# last run: 3/12/14 8:47 AM
+# outcome: success
+
 require "spec_helper.rb"
 
 describe "HL7 module" do
@@ -259,21 +262,7 @@ describe "HL7 module" do
         end
       end #range
     end
-  
-    describe "is_timestamp?" do
-      context "a well-formatted date and time" do
-        it "is a timestamp" do
-          HL7Test.is_timestamp?("05-13-1987 14:22").should be_true
-        end
-      end #well-formatted
-      
-      context "freetext" do
-        it "is not a timestamp" do
-          HL7Test.is_timestamp?("13 May 2012 at 8:04 PM").should_not be_true
-        end
-      end #freetext
-    end    
-
+ 
     describe "is_struct_num?" do
       context "an integer" do
         it "is not a structured numeric" do
@@ -290,20 +279,36 @@ describe "HL7 module" do
         end
       end #decimal
       
-      context "a range or proportion" do
-        it "is not a structure numeric" do
-          HL7Test.is_struct_num?("1-10").should_not be_true
-          HL7Test.is_struct_num?("23/98").should_not be_true
+      context "a ratio" do
+        it "is a structure numeric" do
+          HL7Test.is_struct_num?("1/10").should be_true
+          HL7Test.is_struct_num?("23:98").should be_true
+          HL7Test.is_struct_num?("2.3 / 98").should be_true
+          HL7Test.is_struct_num?("-3/8").should be_true
         end
       end #range
       
-      context "a comparative value" do
+      context "an inequality" do
         it "is a structure numeric" do
-          HL7Test.is_struct_num?("<110").should be_true
-          HL7Test.is_struct_num?(">=23/98").should be_true
-          HL7Test.is_struct_num?("> -5.68").should be_true
+          HL7Test.is_struct_num?(">-110").should be_true
+          HL7Test.is_struct_num?("<=23/98").should be_true
+          HL7Test.is_struct_num?("<> 5.68").should be_true
         end
       end #comparative
+      
+      context "an interval" do
+        it "is a structured numeric" do
+          HL7Test.is_struct_num?("1 - 10").should be_true
+          HL7Test.is_struct_num?("-1.5 - 10.0").should be_true
+        end
+      end #interval
+      
+      context "a categorical" do
+        it "is a structure numeric" do
+          HL7Test.is_struct_num?("3+").should be_true
+          HL7Test.is_struct_num?("-2.5+").should be_true
+        end
+      end #categorical
     end
     
     describe "is_text?" do
@@ -317,22 +322,10 @@ describe "HL7 module" do
       context "a structure_numeric" do
         it "is not text" do
           HL7Test.is_text?("< 2.6").should_not be_true
-          HL7Test.is_text?(">= -5/9 ").should_not be_true
+          HL7Test.is_text?("5 - 9").should_not be_true
+          HL7Test.is_text?("5+").should_not be_true
         end
       end #structured numeric
-
-      context "a timestamp" do
-        it "is not text" do
-          HL7Test.is_text?("05-13-1987 14:22").should_not be_true
-        end
-      end #timestamp
-            
-      context "a range or proportion" do
-        it "is text" do
-          HL7Test.is_text?("1-10").should be_true
-          HL7Test.is_text?("23/98").should be_true
-        end
-      end #range
       
       context "gibberish" do
         it "is text" do
@@ -342,71 +335,40 @@ describe "HL7 module" do
       end #gibberish
     end    
 
-    describe "is_num_range?" do
-      context "two numerics separated by a dash" do
-        it "is a range" do
-          HL7Test.is_num_range?(" -1.34 - 85 " ).should be_true
-          HL7Test.is_num_range?("2-4" ).should be_true
-        end
-      end #numerics with a dash
-      
-      context "a proportion" do
-        it "is not a range" do
-          HL7Test.is_num_range?("13.09/184").should_not be_true
-        end
-      end #proportion
-      
-      context "an integer" do
-        it "in not a range" do
-          HL7Test.is_num_range?("25").should_not be_true
-        end
-      end #integer
-    end    
-
     describe "has_correct_format?" do
       context "TX" do
         it "has the correct format if the value is text" do
-          HL7Test.has_correct_format?("TX","pizza").should be_true
+          HL7Test.has_correct_format?("pizza","TX").should be_true
         end
         
         it "has the incorrect format if the value is not text" do
-          HL7Test.has_correct_format?("TX","<85").should_not be_true
+          HL7Test.has_correct_format?("<85","TX").should_not be_true
         end
       end #TX
       
-      context "TS" do
-        it "has the correct format if the value is a timestamp" do
-          HL7Test.has_correct_format?("TS","05-13-1987 14:22").should be_true
-        end
-        
-        it "has the incorrect format if the value is not a timestamp" do
-          HL7Test.has_correct_format?("TS","<85").should_not be_true
-        end
-      end #TS
-      
       context "NM" do
         it "has the correct format if the value is numeric" do
-          HL7Test.has_correct_format?("NM","-4").should be_true
+          HL7Test.has_correct_format?("-4","NM").should be_true
         end
         
         it "has the incorrect format if the value is not numeric" do
-          HL7Test.has_correct_format?("NM","eighty-five").should_not be_true
+          HL7Test.has_correct_format?("eighty-five","NM").should_not be_true
         end
       end #NM
       
       context "SN" do
         it "has the correct format if the value is a structured numeric" do
-          HL7Test.has_correct_format?("SN","<=1.56").should be_true
+          HL7Test.has_correct_format?("<=1.56","SN").should be_true
         end
         
         it "has the incorrect format if the value is not a structured numeric" do
-          HL7Test.has_correct_format?("SN","85").should_not be_true
+          HL7Test.has_correct_format?("85","SN").should_not be_true
         end
       end #SN
       
       context "any other format" do
         it "never has the correct format" do
-          HL7Test.has_correct_format?("letter","B").should_not be_true
+          HL7Test.has_correct_format?("B","letter").should_not be_true
         end
       end #letter
     end     
