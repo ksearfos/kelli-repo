@@ -8,25 +8,18 @@
 #         for treating the file text as a HL7 message.
 #       Performs minor reformatting to insure there are no blank lines, and all line breaks are done with \n and not \r
 #       The message handler class takes a filepath where HL7 data is stored, reads from it, and standardizes the format of
-#         the text. It then breaks the text into individual records and initiales Message objects from those. It will also
-#         keep track of each of those Messages and the value separators used by the message. Lastly, it will create new
-#         Segment child classes for each type of segment that appears in the message (which are used when initializing
-#         Messages).
+#         the text. It then breaks the text into individual records and initializes Message objects from those. It will also
+#         keep track of each of those Messages and the value separators used by the message.
 #       It is assumed that the file is in a valid text format and uses either the Windows-style line endings (\r and \r\n)
 #         or the Unix style (\n). It also assumes the file is UTF-8 encoded.
 #
 # EXAMPLE: MessageHandler => "MSH|...MSH|...MSH|..." / [ Message1, Message2, Message 3 ]
 #
-# CLASS VARIABLES: uses HL7::SEG_DELIM and modifies HL7.separators
-#    @@lim_default [Integer]: default limit to the number of records to read in, False (no limit) as written
-#                      ====>  if @@lim_default evaluates to False and no other limit is specified, will read in all records
-#                      ====>  can ignore @@lim_default by passing a second argument to new()
-#    @@eol [String]: defines the end-of-line character we want to use, "\n" as written
+# CLASS VARIABLES: none; uses HL7::SEG_DELIM and modifies HL7.separators
 #
 # READ-ONLY INSTANCE VARIABLES:
 #    @message [String]: stores entire message text
 #    @records [Array]: stores individual records as Message objects
-#    @segment_types [Array]: stores list of the types of segments found in the message
 #
 # CLASS METHODS: none
 #
@@ -41,19 +34,17 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/10/14 11:09 AM
+# LAST UPDATED: 3/12/14 14:08
 #
-# LAST TESTED: 3/4/14
+# LAST TESTED: 3/12/14
 #
 #------------------------------------------
 
 module HL7Test
   
   class MessageHandler
-    @@lim_default = false    # limit will be an integer, but this is ruby so let's take advantage of dynamic typing!
-    @@eol = "\n"             # the end of line character we are using
-    
-    attr_reader :message, :records, :segment_types
+
+    attr_reader :message, :records
 
     # NAME: new
     # DESC: creates a new HL7::MessageHandler object from a text file
@@ -64,14 +55,13 @@ module HL7Test
     #  [HL7::MessageHandler] newly-created MessageHandler
     # EXAMPLE:
     #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
-    def initialize( file, limit = @@lim_default )
+    def initialize( file )
       @message = ""
       @records = []
-      @segment_types = [:MSH]
       
-      read_message( file, limit )    # updates @message
-      prepare                        # updates @segment_types, @separators -- prepare to create Message/Segment objects
-      break_into_records             # updates @records
+      read_message( file )    # updates @message
+      get_separators          # updates HL7Test::@separators
+      break_into_records      # updates @records
     end
 
     # NAME: to_s
@@ -132,51 +122,36 @@ module HL7Test
       end
     end
     
-    private
+    def view_separators
+      HL7Test.separators.each{ |type,val| puts type.to_s + ": " + val }
+    end
+
+    def separators
+      HL7Test.separators.values
+    end
     
+    private
+
+    @@eol = "\n"             # the end of line character we are using
+        
     # reads in a HL7 message as a text file from the given filepath and stores it in @message
     # changes coding to end in \n for easier parsing
-    def read_message( file, limit = @@lim_default )
-      valid_limit = ( limit && limit > 0 )     # is there a real limit specified?
-      chars = ""                               #+  user could say limit = -1 but that isn't helpful
-      do_break = false
-      
+    def read_message( file )
+      chars = ""
+     
       puts "Reading #{file}..."
       File.open( file, "r" ).each_char do |ch|
         if ch == "\r" then chars << @@eol   # convert to useful character
         else chars << ch
         end
-
-        do_break = valid_limit && chars.scan(HDR).size > limit    # if we have a limit, and we have reached it,
-        break if do_break                                           #+ stop reading file
       end
       
       chars.squeeze!( @@eol )               # only need one line break at a time
       ary = chars.split( @@eol )
-      ary.pop if do_break                   # remove last line ONLY IF it's the header of an unwanted record
       ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty
-      
+
       @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
-
-    def prepare
-      get_separators
-      define_segments
-    end
-    
-    def define_segments
-      fld = HL7.separators[:field]
-      ary = @message.split( SEG_DELIM )
-      ary.each{ |line|
-        type = line.split( fld ).first     # first field of each line, i.e. the segment type
-        @segment_types << type.upcase.to_sym unless type =~ HDR
-      }
-      
-      @segment_types.uniq!                 # a list of all segment types included in this message 
-      @segment_types.each{ |type|
-        HL7Test.new_typed_segment( type )
-      }
-    end
     
     def get_separators
       eol = @message.index( SEG_DELIM )
@@ -184,11 +159,11 @@ module HL7Test
       
       i = line.index( "MSH" )          # index marking the beginning of the first occurrence of 'MSH'
       i += 3                           # i was index of the M in MSH; need index of first character after H
-      HL7.separators[:field] = line[i]
-      HL7.separators[:comp] = line[i+1]
-      HL7.separators[:subcomp] = line[i+2]
-      HL7.separators[:subsub] = line[i+3]
-      HL7.separators[:sub_subsub] = line[i+4]  
+      HL7Test.separators[:field] = line[i]
+      HL7Test.separators[:comp] = line[i+1]
+      HL7Test.separators[:subcomp] = line[i+2]
+      HL7Test.separators[:subsub] = line[i+3]
+      HL7Test.separators[:sub_subsub] = line[i+4]  
     end
         
     # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects
@@ -201,14 +176,14 @@ module HL7Test
         
     # returns array of strings containing hl7 message of individual records, based on @message
     def records_by_text
-      hdrs = @message.scan( HDR )      # all headers (will be needed later)
-      recs = @message.split( HDR )     # split across headers, yielding individual records
+      hdrs = @message.scan( HDR )           # all headers (will be needed later)
+      recs = @message.split( HDR )[1..-1]   # split across headers, yielding individual records
       
       all_recs = []
       for i in 0...hdrs.size
-        all_recs << hdrs[i] + recs[i].chomp      # those pesky endline characters cause a LOT of problems!
+        all_recs << ( hdrs[i] + recs[i] )
       end
-
+      
       all_recs
     end
 

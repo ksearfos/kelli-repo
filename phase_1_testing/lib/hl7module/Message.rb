@@ -73,7 +73,7 @@ module HL7Test
 
       break_into_segments    # sets @lines, @segments
       
-      @id = header.message_control_id
+      @id = header.message_control_id.to_s
       set_message_type
     end  
 
@@ -179,7 +179,7 @@ module HL7Test
       puts "Account #: " + @segments[:PID].account_number.first
       
       if @type != :adt
-        procedure = @segments[:OBR].procedure_id.first
+        procedure = @segments[:OBR].procedure_id
         time = @segments[:OBR][7].as_datetime
         puts "Procedure: " + procedure
         puts "Collected at: " + time
@@ -255,6 +255,7 @@ module HL7Test
     def break_into_segments    
       segs = @original_text.split( SEG_DELIM )    # all segments, including the type found in field 0
       text = {}
+  
       segs.each{ |seg|
         end_of_type = seg.index( HL7Test.separators[:field] )   # first occurrence of delimiter => end of the type field
         type = seg[0...end_of_type]
