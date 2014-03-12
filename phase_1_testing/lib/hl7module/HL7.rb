@@ -23,12 +23,12 @@ module HL7Test
   RESULT_MESSAGE_TYPE = "ORD^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
   
-  UNITS = [ "","%","/hpf","/lpf","/mcL","IU/mL","K/mcL","M/mcL","PG","U","U/L","U/mL","fL","g/dL","h","lbs",
-            "log IU/mL","mIU/mL","mL","mL/min/1.73 m2","mcIU/mL","mcg/dL","mcg/mL FEU","mg/24 h","mg/L","mg/dL",
-            "mg/g crea","mlU/mL","mm Hg","mm/hr","mmol/L","ng/dL","ng/mL","nmol/L","pH units","pg/mL","seconds",
-            "titer","weeks","years" ]
+  UNITS = [ '%', '/hpf', '/lpf', '/mcL', 'IU/mL', 'K/mcL', 'M/mcL', 'PG', 'U', 'U/L', 'U/mL', 'fL', 'g/dL',
+            'h', 'lbs', 'log IU/mL', 'mIU/mL', 'mL', 'mL/min/1.73 m2', 'mcIU/mL', 'mcg/dL', 'mcg/mL FEU',
+            'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mmHg', 'mm/hr', 'mmol/L', 'ng/dL',
+            'ng/mL', 'nmol/L', 'pH units', 'pg/mL', 'seconds', 'titer', 'weeks', 'years' ]
 
-  ABNORMAL_FLAGS = [ "","I","CH","CL","H","L","A","U","N","C" ]
+  ABNORMAL_FLAGS = %w[ I CH CL H L A U N C ]
   
   RESULT_STATUS = %w[ D F N O S W P C X R U I ]
   

@@ -21,14 +21,9 @@
 # READ-ONLY INSTANCE VARIABLES:
 #    @original_text [String]: stores all lines of this segment as they were originally, e.g. "PID|12345||SMITH^JOHN||19631017|M|||"
 #    @fields [Array]: stores each field in the segment as a HL7::Field object, e.g. [nil,F1,nil,F2,nil,F3,F4,nil,nil]
-#             ====>  one array per line, so a 2-line segment would have @fields = [ [F1,nil,F2,F3], [F1,F2,F3,F4] ]
 #    @lines [Array]: stores the original text for each line containing a segment of this type, minus the type itself
 #             ====>  for example, for 2 OBX segments: @lines = [ "1|TX|My favorite number is:", "2|NM|42" ]
 #    @size [Integer]: the number of lines/segments of this type in the message; basically @lines.size
-#
-# PRIVATE INSTANCE VARIABLES:
-#    @default [Hash]: stores the default values of @lines/@fields to use in certain cases
-#             ====>  this is always the first such value, e.g. { [:text] = @lines[0], [:fields] = @fields[0] }
 #
 # CLASS METHODS: 
 #    self.is_eigenclass?: returns false if calling class is Segment; true if it's one of the typed derivatives like PID
@@ -40,13 +35,11 @@
 #    [](which): returns Field with given name or at given index - count starts at 1
 #    field(which): alias for []
 #    all_fields(which): as field(), but for each line in the segment -- returns an array of the values in the given field
-#    each(&block): if there is >1 line in the segment, loops through each line in the segment, executing given code;
-#                  otherwise loops through each field, executing given code
-#             ==>  for most Segments, this will do the same thing as each_field
+#    each(&block): if there is >1 line in the segment, loops through each line as an Array of Fields, executing code;
+#                  otherwise loops through each field, executing code
 #    each_line(&block): loops through each line as an Array of Fields, executing given code for each
-#             ==>  to manipulate the text, use @lines.each
-#    each_field(&block): loops through each field in the first line, executing given code
-#    every_field(&block): loops through each field in each line of the segment, executing given code
+#                  ==>  to manipulate the text, use @lines.each
+#    each_field(&block): loops through each field, executing given code
 #    method_missing: tries to reference a field with the name of the method, if segment has a type
 #                    then tries to call method on @fields[0] (Array)
 #                    then tries to call method on @lines[0] (String)
@@ -55,9 +48,9 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/6/14 9:38 AM
+# LAST UPDATED: 3/12/14 11:12 AM
 #
-# LAST TESTED: 3/4/14
+# LAST TESTED: 3/12/14
 #
 #------------------------------------------
 
@@ -76,14 +69,18 @@ module HL7Test
     # EXAMPLE:
     #  HL7::Segment.new( "PID|a|b|c" ) => new Segment with text "a|b|c" and fields ["a","b","c"]
     def initialize( segment_text )
-      @original_text = segment_text
-      @lines = @original_text.split( SEG_DELIM )    # an array of strings
-      @lines.map!{ |l| l = remove_name_field(l) }   # remove type fields, if present, for standardized format
+      @original_text = segment_text      
+      remove_name_field if self.class.is_eigenclass?  # can't remove type if there is no type
+
+      @lines = @original_text.split( SEG_DELIM )      # an array of strings
       @size = @lines.size
-      
-      @fields = []          # all fields in each line, as objects, e.g. [ [f1,nil,f2,nil,f3], [f1,f2,f3,nil,f4] ]
-      break_into_fields     # sets @fields
-      @default = { :text => @lines.first, :fields => @fields.first }    
+
+      @fields_by_line = []     # all fields in each line, as objects, e.g. [ [f1,nil,f2,nil,f3], [f1,f2,f3,nil,f4] ]
+      break_into_fields        # sets @fields_by_line 
+      @fields = []
+      @fields_by_line.each{ |line|
+        line.each{ |f| @fields << f }
+      }   # flatten will call Flatten for each individual Field, which will separate into components and not fields
     end
 
     # NAME: to_s
@@ -111,15 +108,14 @@ module HL7Test
     
     # NAME: each_line
     # DESC: performs actions with the fields in each line of the segment
-    #       despite the name, manipulates @fields and not @lines
+    #       despite the name, manipulates @fields_by_line and not @lines
     # ARGS: 1
     #  [code block] - the code to execute on each line
     # RETURNS: nothing, unless specified in the code block
     # EXAMPLE:
     #  segment.each_line{ |l| print l.join("|") + ' & ' } => a|b|c & a2|b2|c2 & a3|b3|c3 
     def each_line
-      @fields.each{ |row| yield( row ) }
-      # @lines.each{ |l| yield(l) }
+      @fields_by_line.each{ |row| yield( row ) }
     end
 
     # NAME: each_field
@@ -130,18 +126,7 @@ module HL7Test
     # EXAMPLE:
     #  segment.each_field{ |f| print f.to_s + ' & ' } => a & b & c     
     def each_field
-      @default[:fields].each{ |f_obj| yield(f_obj) }
-    end
-
-    # NAME: every_field
-    # DESC: performs actions for each field of each line of the segment
-    # ARGS: 1
-    #  [code block] - the code to execute on each line
-    # RETURNS: nothing, unless specified in the code block
-    # EXAMPLE:
-    #  segment.every_field{ |f| print f.to_s + ' & ' } => a & b & c & a2 & b2 & c2     
-    def every_field
-      each_line{ |row| row.each{ |f_obj| yield(f_obj) } }
+      @fields.each{ |f_obj| yield(f_obj) }
     end
 
     # NAME: []
@@ -169,7 +154,7 @@ module HL7Test
     #  segment.field(:beta) => "b" 
     def field( which )
       i = field_index(which)
-      i == @@no_index_val ? nil : @default[:fields][i]
+      i == @@no_index_val ? nil : @fields[i]
     end
     
     # NAME: all_fields
@@ -186,7 +171,7 @@ module HL7Test
       i = field_index(which)
       
       all = []
-      all << @fields.map{ |row| row[i] } if i != @@no_index_val
+      @fields_by_line.each{ |row| all << row[i] } if i != @@no_index_val
       all
     end
     
@@ -208,11 +193,11 @@ module HL7Test
     #  segment.fake_method => throws NoMethodError
     def method_missing( sym, *args, &block )
       if self.class.is_eigenclass? && field_index_maps.has_key?( sym )
-          field( sym )
+        field( sym )
       elsif Array.method_defined?( sym )       # a Segment is generally a group of fields
-        @default[:fields].send( sym, *args )
-      elsif String.method_defined?( sym )   # but we might just want String stuff, like match() or gsub
-        @default[:text].send( sym, *args )
+        @fields.map{ |f| f.to_s }.send( sym, *args )
+      elsif String.method_defined?( sym )      # but we might just want String stuff, like match() or gsub
+        @original_text.send( sym, *args )
       else
         super
       end
@@ -227,8 +212,8 @@ module HL7Test
     #  2-line segment: segment.view => 1:a, 2:b, 3:c
     #                                  1:a2, 2:b2, 3:c2
     def view
-      @fields.each{ |row|
-        for i in 1..row.size
+      @fields_by_line.each{ |row|
+        for i in 1..(row.size)
           val = row[i-1] 
           print "#{i}:"
           print val if val    # not nil
@@ -244,33 +229,34 @@ module HL7Test
     @@no_index_val = -1
 
     # NAME: break_into_fields
-    # DESC: creates array of Field objects (@fields) from an array of text (@lines)
+    # DESC: creates array of Field objects (@fields_by_line) from an array of text (@lines)
     # ARGS: 0
-    # RETURNS: nothing; requires @lines and sets @fields
+    # RETURNS: nothing; requires @lines and sets @fields_by_line
     # EXAMPLE:
-    #  @lines = [ "a|b|c", "a2|b2|c2" ] ==> @fields = [ [Field(a),Field(b),Field(c)], [Field(a2),Field(b2),Field(c2)] ]         
+    #  @lines = [ "a|b|c", "a2|b2|c2" ] ==> @fields_by_line = [ [Field(a),Field(b),Field(c)], [Field(a2),Field(b2),Field(c2)] ]         
     def break_into_fields
       @lines.each{ |l|
-        field_ary = l.split( FIELD_DELIM )
-        @fields << field_ary.map{ |f| f.empty? ? nil : Field.new( f ) }   # an array of arrays
+        field_ary = l.split( HL7Test.separators[:field] )
+        @fields_by_line << field_ary.map{ |f| f.empty? ? nil : Field.new( f ) }   # an array of arrays
       }
     end
 
     # NAME: remove_name_field
     # DESC: removes first field from the text, but only if it contains the segment type
-    # ARGS: 1
-    #  line_text [String] - full text of the line
-    # RETURNS:
-    #  [String] the text with no name field
+    # ARGS: none; modifies @original_text
+    # RETURNS: nothing
     # EXAMPLE:
     #  "MSH|a|b|c" => "a|b|c"
     #  "d|e|f" => "d|e|f" (no change)
-    def remove_name_field( line_text )
-        i = line_text.index( /^#{type}\|/ )
-        
-        # i is either 0 (found a name field) or nil (no name field)
-        # if there is a name field, the rest of the text starts at index 4 -- it's preceded by 'XYZ|'
-        i ? line_text[4..-1] : line_text
+    def remove_name_field
+        lines = @original_text.split( SEG_DELIM )
+        new_text = []
+        lines.each{ |l|
+          i = l.index( /^#{type}\|/ )
+          new_text << ( i ? l[4..-1] : l )
+        }
+
+        @original_text.replace( new_text.join(SEG_DELIM) )
     end
     
     # NAME: field_index
