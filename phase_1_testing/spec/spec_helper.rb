@@ -1,9 +1,9 @@
 require 'require_relative'
 require 'hl7_utils'
-require_relative './hl7_specs/support/hl7_shared_examples'
 require 'logger'
 require 'set'
-
+Dir["./spec/hl7_specs/support/*.rb"].sort.each {|f| require f}
+    
 # == Methods and Objects we will use
 
 $proj_dir = File.expand_path( "../../", __FILE__ )
@@ -43,7 +43,7 @@ def get_patient_info( message )
   patient_dob = Date.parse(pid.patient_dob)
   encounter_date = DateTime.parse(message[:OBR][0].observation_date)
 
-  "#{'='*30} Patient Information #{'='*30}\n
+  "#{'='*20} Patient Information #{'='*20}\n
   Name               : #{pid.patient_name}
   MRN                : #{patient_mrn}
   Account Number     : #{patient_acct_num}
@@ -64,7 +64,7 @@ def log_example_exception( example, message )
     Error found in:\n#{example.metadata[:full_description]}\n
     Example Exception:\n#{cap_first( exception_message )}
     Pattern translation:\n#{cap_first( example.metadata[:pattern] )}\n
-\n#{'*'*87}\n"
+\n#{'*'*80}\n"
 
   if $flagged_messages.has_key? message[0]
     $flagged_messages[message[0]] =

@@ -24,24 +24,6 @@ shared_examples "MSH segment" do |msh|
   end
 end
 
-shared_examples "Lab/Rad MSH segment" do |msh|
-  it "has MSH segments with the correct Event format",
-  :pattern => 'ORU^R01' do
-    msh.e8.should match /^ORU\^R01$/
-  end
-end
-
-shared_examples "Lab/ADT MSH segment" do |msh|
-  it "has the correct Processing ID",
-  :pattern => 'if MGH 2.3, otherwise 2.4' do
-    if msh.e3 =~ /MGH/
-      msh.e11.should eq "2.3"
-    else
-      msh.e11.should eq "2.4"
-    end
-  end
-end
-
 # == OBR tests
 
 shared_examples "OBR segment" do |obr, message|
@@ -115,45 +97,11 @@ shared_examples "PID segment" do |pid|
   end
 end
 
-shared_examples "Rad/ADT PID segment" do |pid|
-  it "has a valid race",
-  :pattern => "a human race" do
-    pid.race.should match /^(\d{1})?$/
-  end
-
-  it "has a Country Code that matches the Address",
-  :pattern => "" do
-    unless pid.country_code.empty?
-      country = pid.address[/\^\w{2}\^/]
-      pid.country_code.should eq country
-    end
-  end
-
-  it "has a valid Language",
-  :pattern => "a three character language code" do
-    pid.primary_language.should match /^([a-zA-Z]{3})?$/
-  end
-
-  it "has a valid Marital Status",
-  :pattern => "a single character" do
-    pid.marital_status.should match /^[A-Z]?$/
-  end
-end
-
 # == PV1 tests
 
 shared_examples "PV1 segment" do |pv1, pid|
   it "has Visit ID that matches PID Visit ID", 
   :pattern => 'Visit ID and PID Visit ID fields should match' do
     pv1.visit_number.should eq pid.account_number 
-  end
-end
-
-shared_examples "Lab/ADT PV1 segment" do |pv1|
-  it "has the same Attending and Referring Doctor",
-  :pattern => 'fields should match unless Referring Doctor field is empty' do
-    unless pv1.referring_doctor.empty?
-      pv1.referring_doctor.should eq pv1.attending_doctor
-    end
   end
 end
