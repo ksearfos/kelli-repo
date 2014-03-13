@@ -188,6 +188,43 @@ module HL7Test
       end
     end
 
+<<<<<<< HEAD
+=======
+    # NAME: details
+    # DESC: displays crucial information about the message, clearly labelled
+    # ARGS: none
+    # RETURNS: nothing; writes to stdout
+    # EXAMPLE:
+    #  message.view_details => Message ID: 12345
+    #                          Sent at: 05/15/2013 11:45 AM
+    #                          Patient Name: John W Smith
+    #                          Account #: 123456789
+    #                          Visit Number: 12345
+    def details( *all )
+      all.flatten!
+      h = {}
+      h[:ID] = @id
+      h[:TYPE] = @type.to_s.capitalize
+      h[:DATE] = header.date_time.as_datetime
+      h[:PT_NAME] = @segments[:PID].patient_name.as_name
+      h[:PT_ACCT] = @segments[:PID].account_number.first
+      
+      if @type != :adt
+        procedure = @segments[:OBR].procedure_id
+        time = @segments[:OBR][7].as_datetime
+        h[:PROC_NAME] = procedure
+        h[:PROC_DATE] = time
+      else
+        h[:VISIT] = @segments[:PV1].visit_number
+      end
+      
+      return h if all.empty?
+      
+      h.keep_if{ |key,_| all.include?(key) }
+      h
+    end
+    
+>>>>>>> 3eb4c19... minor tweak to HL7Test::Field - passed retesting; JUST MODULE
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment
     # ARGS: none

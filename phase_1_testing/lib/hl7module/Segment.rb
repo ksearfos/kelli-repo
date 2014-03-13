@@ -169,7 +169,7 @@ module HL7Test
     #  segment.all_fields(:beta) => [ "b", "b2", "b3" ] 
     def all_fields( which )
       i = field_index(which)
-      
+
       all = []
       @fields_by_line.each{ |row| all << row[i] } if i != @@no_index_val
       all
