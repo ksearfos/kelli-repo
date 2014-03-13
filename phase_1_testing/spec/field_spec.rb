@@ -27,7 +27,7 @@ describe "HL7" do
     end
     
     it "allows access to components by index" do
-      @field[3].should == $str.split('^')[3]
+      @field[3].should == $str.split('^')[2]
     end
     
     it "can be iterated through" do

@@ -46,11 +46,11 @@ NTE|5||Suggestive for MI: 0.6-1.5 ng/mL ; Positive for MI: >1.5 ng/mL
 LAB
 
 $rad_str =<<RAD
-MSH|^~\&|CENRAD|RMH|||20140226123258||ORU^R01||T|2.3
+MSH|^~\&|CENRAD|RMH|||20140226123258||ORU^R01||P|2.4
 PID|||03102519^^^ST01||Smith^Kevin^W||195908020000|M|||^^^^^^^|||||||1112431307^^^^STARACC|294645000
 PV1||Outpatient|^^||||15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|^^^^^^^^STARPROV^^^^STARPROV||||||||15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|12|1112431307|||||||||||||||||||||||||201105041208|201105042359
 ORC|||||||||201105041353||||
-OBR|1||H19406393|IMG2027^CT CHEST AND ABDOMEN WITH CONTRAST|||201105041353|||||||||15677^^^^^^^^STARPROV^^^^STARPROV||||||201105041500|||F|||||||21134^^^^^^^^STARPROV^^^^
+OBR|1||H19406393|IMG2027^CT CHEST AND ABDOMEN WITH CONTRAST|||20110501353|||||||||15677^^^^^^^^STARPROV^^^^STARPROV||||||201105041500|||F|||||||21134^^^^^^^^STARPROV^^^^
 OBX|1|TX|&GDT||Clinical Information: lung ca 162.9
 OBX|2|TX|&GDT||HISTORY:  Lung carcinoma.
 OBX|3|TX|&GDT|| 
@@ -64,7 +64,7 @@ $lab_message = HL7Test::Message.new( $lab_str )
 $rad_message = HL7Test::Message.new( $rad_str )
 
 file = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
-$message_handler = HL7Test::MessageHandler.new( file )
+# $message_handler = HL7Test::MessageHandler.new( file )
 
 RSpec.configure do |c|
   c.fail_fast = true
