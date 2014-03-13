@@ -1,12 +1,13 @@
-dir = File.dirname(__FILE__)
-require "#{dir}/Methods.rb"
-require "#{dir}/MessageHandler.rb"
-require "#{dir}/Message.rb"
-require "#{dir}/Segment.rb"
-require "#{dir}/Field.rb"
-require "#{dir}/SegmentEigenclass.rb"
+# dir = File.dirname(__FILE__)
+require 'MessageHandler'
+# require "#{dir}/Methods.rb"
+# require "#{dir}/MessageHandler.rb"
+# require "#{dir}/Message.rb"
+# require "#{dir}/Segment.rb"
+# require "#{dir}/Field.rb"
+# require "#{dir}/SegmentEigenclass.rb"
 
-module HL7Test
+module HL7
  
   SEG_DELIM = "\n"            # split into segments across lines, currently
   FIELD_DEF = "|"             # fields of a segment are separated by this by default
@@ -28,9 +29,9 @@ module HL7Test
             'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mmHg', 'mm/hr', 'mmol/L', 'ng/dL',
             'ng/mL', 'nmol/L', 'pH units', 'pg/mL', 'seconds', 'titer', 'weeks', 'years' ]
 
-  ABNORMAL_FLAGS = %w[ I CH CL H L A U N C ]
+  ABNORMAL_FLAGS = %w( I CH CL H L A U N C )
   
-  RESULT_STATUS = %w[ D F N O S W P C X R U I ]
+  RESULT_STATUS = %w( D F N O S W P C X R U I )
   
   SEXES = %w[ F M O U A N C ]
    

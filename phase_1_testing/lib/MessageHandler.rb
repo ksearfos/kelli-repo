@@ -40,7 +40,7 @@
 #
 #------------------------------------------
 
-module HL7Test
+module HL7
   
   class MessageHandler
 
@@ -59,6 +59,7 @@ module HL7Test
       @message = ""
       @records = []
       
+      raise StandardError("No such file: #{file}") unless File.exists?(file)
       read_message( file )    # updates @message
       get_separators          # updates HL7Test::@separators
       break_into_records      # updates @records
