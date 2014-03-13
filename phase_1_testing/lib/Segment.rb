@@ -236,7 +236,7 @@ module HL7
     #  @lines = [ "a|b|c", "a2|b2|c2" ] ==> @fields_by_line = [ [Field(a),Field(b),Field(c)], [Field(a2),Field(b2),Field(c2)] ]         
     def break_into_fields
       @lines.each{ |l|
-        field_ary = l.split( HL7Test.separators[:field] )
+        field_ary = l.split( HL7.separators[:field] )
         @fields_by_line << field_ary.map{ |f| f.empty? ? nil : Field.new( f ) }   # an array of arrays
       }
     end

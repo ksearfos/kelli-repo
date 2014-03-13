@@ -42,7 +42,7 @@
 #
 #------------------------------------------
 
-module HL7Test
+module HL7
   
   class Segment     
     
@@ -115,14 +115,14 @@ module HL7Test
   def self.typed_segment(type)
     # create new class
     t = type.upcase
-    return HL7Test.const_get(t) if HL7Test.const_defined?(t)
+    return HL7.const_get(t) if HL7.const_defined?(t)
     
     klass = Object.const_set( t.to_s, Class.new(Segment) )   # => new class called TYPE
     klass.type = t.to_sym
   
     # populate @type, @field_index_maps for the class
     hash_name = "#{t}_FIELDS"
-    klass.field_index_maps = HL7Test.const_defined?( hash_name ) ? HL7Test.const_get( hash_name ) : {}
+    klass.field_index_maps = HL7.const_defined?( hash_name ) ? HL7.const_get( hash_name ) : {}
         
     klass
   end

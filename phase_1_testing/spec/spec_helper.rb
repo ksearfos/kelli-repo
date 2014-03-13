@@ -1,5 +1,7 @@
+$LOAD_PATH.unshift File.expand_path("../..",__FILE__)
+
 require 'rspec'
-require 'hl7module/HL7.rb'
+require 'HL7'
 
 # data of various types
 $str = "20535^Watson^David^D^^^MD^^^^^^STARPROV"
@@ -15,20 +17,20 @@ $time_str_as_24hr = "14:11:43"
 $date_time_str = $date_str + $time_str
 
 # field
-$field = HL7Test::Field.new($str)
-$date_field = HL7Test::Field.new($date_str)
-$time_field = HL7Test::Field.new($time_str)
-$dt_field = HL7Test::Field.new($date_time_str)
-$name_field = HL7Test::Field.new($name_str)
-$sm_name_field = HL7Test::Field.new($sm_name_str)
+$field = HL7::Field.new($str)
+$date_field = HL7::Field.new($date_str)
+$time_field = HL7::Field.new($time_str)
+$dt_field = HL7::Field.new($date_time_str)
+$name_field = HL7::Field.new($name_str)
+$sm_name_field = HL7::Field.new($sm_name_str)
 
 # segment
 $seg_str = "||04172769^^^ST01||Follin^Amy^C||19840402|F|||^^^^^^^|||||||1133632194^^^^STARACC|275823686"
 $seg_str2 = "||14159265^^^ST01||Doe^John^^^Mr.||19561217|M|||^^^^^^^|||||||3289472383^^^^STARACC|48711289"
-$pid_cl = HL7Test.typed_segment(:PID)
-$pid_fields = HL7Test::PID_FIELDS
-$segment = HL7Test::Segment.new($seg_str)
-$seg_2_line = HL7Test::Segment.new( $seg_str + "\n" + $seg_str2 )
+$pid_cl = HL7.typed_segment(:PID)
+$pid_fields = HL7::PID_FIELDS
+$segment = HL7::Segment.new($seg_str)
+$seg_2_line = HL7::Segment.new( $seg_str + "\n" + $seg_str2 )
 $pid = $pid_cl.new( "PID|" + $seg_str )
 
 # message
@@ -60,11 +62,11 @@ OBX|6|TX|&GDT||TECHNIQUE:  3 mm sections were obtained from the thoracic inlet t
 OBX|7|TX|&GDT||administration of 100 ml of Omnipaque 350.  Coronal and sagittal reformatted images were obtained.
 RAD
 
-$lab_message = HL7Test::Message.new( $lab_str )
-$rad_message = HL7Test::Message.new( $rad_str )
+$lab_message = HL7::Message.new( $lab_str )
+$rad_message = HL7::Message.new( $rad_str )
 
 file = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
-# $message_handler = HL7Test::MessageHandler.new( file )
+$file_handler = HL7::FileHandler.new( file )
 
 RSpec.configure do |c|
   c.fail_fast = true

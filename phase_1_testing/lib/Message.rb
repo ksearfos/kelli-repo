@@ -39,6 +39,7 @@
 #                    then gives up and throws exception
 #    header: returns the message header, e.g. the MSH segment object
 #    view_details: prints summary of important message information, such as message ID and patient name
+#    details: returns important details for quick summary
 #    view_segments: displays readable version of the segments, headed by the type of the segment
 #    fetch_field(field): returns the value of the segment and field specified -- fetch_field("abc1") ==> self[:ABC][1]
 #                 ====>  always returns array for elegant handling of multi-line segments
@@ -47,9 +48,7 @@
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/12/14 13:20
-#
-# LAST TESTED: 3/12/14
+# LAST UPDATED: 3/13/14 12:00
 #
 #------------------------------------------
 
@@ -188,20 +187,19 @@ module HL7
       end
     end
 
-<<<<<<< HEAD
-=======
     # NAME: details
-    # DESC: displays crucial information about the message, clearly labelled
-    # ARGS: none
-    # RETURNS: nothing; writes to stdout
+    # DESC: compiles crucial information about the message, clearly labelled
+    # ARGS: 0+
+    #  all [Symbol] - the keys of the details to return - will return all of them by default
+    #            ==>  options are: :ID, :TYPE, :DATE, :PT_NAME, :PT_ACCT, :PROC_NAME, :PROC_DATE, :VISIT
+    # RETURNS:
+    #  [Hash] the requested details
     # EXAMPLE:
-    #  message.view_details => Message ID: 12345
-    #                          Sent at: 05/15/2013 11:45 AM
-    #                          Patient Name: John W Smith
-    #                          Account #: 123456789
-    #                          Visit Number: 12345
+    #  message.details(:ID,PT_NAME) => { :ID=>"1234563", :PT_NAME=>"John Smith" } 
     def details( *all )
       all.flatten!
+      all.map!{ |key| key = key.upcase.to_sym }
+      
       h = {}
       h[:ID] = @id
       h[:TYPE] = @type.to_s.capitalize
@@ -223,8 +221,7 @@ module HL7
       h.keep_if{ |key,_| all.include?(key) }
       h
     end
-    
->>>>>>> 3eb4c19... minor tweak to HL7Test::Field - passed retesting; JUST MODULE
+
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment
     # ARGS: none
@@ -294,7 +291,7 @@ module HL7
       text = {}
   
       segs.each{ |seg|
-        end_of_type = seg.index( HL7Test.separators[:field] )   # first occurrence of delimiter => end of the type field
+        end_of_type = seg.index( HL7.separators[:field] )   # first occurrence of delimiter => end of the type field
         type = seg[0...end_of_type]
         body = seg[end_of_type+1..-1]
         is_hdr = ( type =~ HDR )                  # is this a header line?        
@@ -314,7 +311,7 @@ module HL7
       # let objects track multiple occurrences -- 7 obx segments is still 1 OBX object
       text.each{ |type,body|
         line = body.join( SEG_DELIM )
-        cl = HL7Test.typed_segment( type )
+        cl = HL7.typed_segment( type )
         @segments[type] = cl.new( line )  
       }
     end

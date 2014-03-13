@@ -56,7 +56,7 @@ module HL7
     #  HL7::Field.new( "a^b^c" ) => new Field with text "a^b^c" and components ["a","b","c"]
     def initialize( field_text )
       @original_text = field_text
-      @components = field_text.split( HL7Test.separators[:comp] )    # an array of strings
+      @components = field_text.split( HL7.separators[:comp] )    # an array of strings
     end 
     
     # NAME: to_s
@@ -144,7 +144,7 @@ module HL7
     #  field.as_date => 4/15/1983
     #  field.as_date( "-" ) => 4-15-1983
     def as_date( delim = "/" )
-      HL7Test.make_date( @original_text, delim )
+      HL7.make_date( @original_text, delim )
     end
 
     # NAME: as_time
@@ -157,7 +157,7 @@ module HL7
     #  field.as_time => 7:23:56 PM
     #  field.as_time( true ) => 19:23:56
     def as_time( military = false )
-      HL7Test.make_time( @original_text, military )
+      HL7.make_time( @original_text, military )
     end
 
     # NAME: as_datetime
@@ -168,7 +168,7 @@ module HL7
     # EXAMPLE:
     #  field.as_datetime => 4/15/1983 7:23:56 AM
     def as_datetime( delim = "/" )
-      HL7Test.make_datetime( @original_text )
+      HL7.make_datetime( @original_text )
     end
 
     # NAME: as_name
@@ -179,7 +179,7 @@ module HL7
     # EXAMPLE:
     #  field.as_name => JOHN W SMITH JR
     def as_name
-      HL7Test.make_name( @original_text )
+      HL7.make_name( @original_text )
     end
     
   end

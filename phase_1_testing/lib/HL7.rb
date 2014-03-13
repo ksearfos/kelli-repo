@@ -1,14 +1,15 @@
-# dir = File.dirname(__FILE__)
-require 'MessageHandler'
-# require "#{dir}/Methods.rb"
-# require "#{dir}/MessageHandler.rb"
-# require "#{dir}/Message.rb"
-# require "#{dir}/Segment.rb"
-# require "#{dir}/Field.rb"
-# require "#{dir}/SegmentEigenclass.rb"
+require 'Methods'
+require 'FileHandler'
+require 'Message'
+require 'Segment'
+require 'TypedSegment'
+require 'Field'
 
 module HL7
  
+  class Exception < StandardError; end
+  class FileError < HL7::Exception; end
+  
   SEG_DELIM = "\n"            # split into segments across lines, currently
   FIELD_DEF = "|"             # fields of a segment are separated by this by default
   COMP_DEF = "^"              # components in a field are separated by this by default

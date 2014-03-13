@@ -2,7 +2,7 @@
 #
 # MODULE: HL7
 #
-# CLASS: HL7::MessageHandler
+# CLASS: HL7::FileHandler
 #
 # DESC: Defines an object to read HL7 message from a file and split it into Message objects. Basically sets the stage
 #         for treating the file text as a HL7 message.
@@ -13,56 +13,55 @@
 #       It is assumed that the file is in a valid text format and uses either the Windows-style line endings (\r and \r\n)
 #         or the Unix style (\n). It also assumes the file is UTF-8 encoded.
 #
-# EXAMPLE: MessageHandler => "MSH|...MSH|...MSH|..." / [ Message1, Message2, Message 3 ]
+# EXAMPLE: FileHandler => "MSH|...MSH|...MSH|..." / [ Message1, Message2, Message 3 ]
 #
 # CLASS VARIABLES: none; uses HL7::SEG_DELIM and modifies HL7.separators
 #
 # READ-ONLY INSTANCE VARIABLES:
-#    @message [String]: stores entire message text
-#    @records [Array]: stores individual records as Message objects
+#    @file_text [String]: stores entire message text
+#    @messages [Array]: stores individual records as Message objects
 #
 # CLASS METHODS: none
 #
 # INSTANCE METHODS:
-#    new(file,limit): creates new MessageHandler object and reads in text from file, up to limit records (if specified)
-#    to_s: returns String form of MessageHandler, which is the text of the file
+#    new(file,limit): creates new FileHandler object and reads in text from file, up to limit records (if specified)
+#    to_s: returns String form of FileHandler, which is the text of the file
 #    [](index): returns Message at given index
 #    each(&block): loops through each record, executing given code
-#    method_missing: tries to call method on @records (Array)
-#                    then tries to call method on @message (String)
+#    method_missing: tries to call method on @messages (Array)
+#                    then tries to call method on @file_text (String)
 #                    then gives up and throws exception
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/12/14 14:08
-#
-# LAST TESTED: 3/12/14
+# LAST UPDATED: 3/13/14 16:00
 #
 #------------------------------------------
 
 module HL7
   
-  class MessageHandler
+  class FileHandler
 
-    attr_reader :message, :records
+    attr_reader :messages, :file_text
 
     # NAME: new
-    # DESC: creates a new HL7::MessageHandler object from a text file
+    # DESC: creates a new HL7::FileHandler object from a text file
     # ARGS: 1-2
     #  file [String] - complete path to the source file
     #  limit [Integer] - highest number of records to read in from the source file - by default there is no limit
     # RETURNS:
-    #  [HL7::MessageHandler] newly-created MessageHandler
+    #  [HL7::FileHandler] newly-created FileHandler
     # EXAMPLE:
-    #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
+    #  HL7::FileHandler.new( "C:\records.txt", 2 ) => new FileHandler pointed to records.txt, with 2 records total  
     def initialize( file )
-      @message = ""
-      @records = []
+      raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
       
-      raise StandardError("No such file: #{file}") unless File.exists?(file)
-      read_message( file )    # updates @message
-      get_separators          # updates HL7Test::@separators
-      break_into_records      # updates @records
+      @file_text = ""
+      @messages = []
+      
+      read_message( file )    # updates @file_text
+      get_separators          # updates HL7::@separators
+      break_into_records      # updates @messages
     end
 
     # NAME: to_s
@@ -73,7 +72,7 @@ module HL7
     # EXAMPLE:
     #  message_handler.to_s => "MSH|...MSH|...MSH|..."     
     def to_s
-      @message
+      @file_text
     end
 
     # NAME: []
@@ -85,7 +84,7 @@ module HL7
     # EXAMPLE:
     #  message_handler[2] => Message3    
     def []( index )
-      @records[index]
+      @messages[index]
     end
 
     # NAME: each
@@ -96,7 +95,7 @@ module HL7
     # EXAMPLE:
     #  message_handler.each{ |rec| print rec.id + " & " } => 12345 & 12458 & 12045 
     def each
-      @records.each{ |rec| yield(rec) }
+      @messages.each{ |rec| yield(rec) }
     end
 
     # NAME: method_missing
@@ -106,36 +105,36 @@ module HL7
     #  *args - all arguments passed to the method call
     #  [code block] - optional code block passed to the method call
     # RETURNS: depends on handling
-    #     ==>  first checks @records for a matching method
-    #     ==>  second checks @message for a matching method
+    #     ==>  first checks @messages for a matching method
+    #     ==>  second checks @file_text for a matching method
     #     ==>  then gives up and throws an Exception
     # EXAMPLE:
-    #  message_handler.size => 3 (calls @records.size)
-    #  message_handler.gsub( "*", "|" ) => "MSH*...MSH*...MSH*..."  (calls @message.gsub)
+    #  message_handler.size => 3 (calls @messages.size)
+    #  message_handler.gsub( "*", "|" ) => "MSH*...MSH*...MSH*..."  (calls @file_text.gsub)
     #  message_handler.fake_method => throws NoMethodError    
     def method_missing( sym, *args, &block )
       if Array.method_defined?( sym )
-        @records.send( sym, *args )
+        @messages.send( sym, *args )
       elsif String.method_defined?( sym )
-        @message.send( sym, *args )
+        @file_text.send( sym, *args )
       else
         super
       end
     end
     
     def view_separators
-      HL7Test.separators.each{ |type,val| puts type.to_s + ": " + val }
+      HL7.separators.each{ |type,val| puts type.to_s + ": " + val }
     end
 
     def separators
-      HL7Test.separators.values
+      HL7.separators.values
     end
     
     private
 
     @@eol = "\n"             # the end of line character we are using
         
-    # reads in a HL7 message as a text file from the given filepath and stores it in @message
+    # reads in a HL7 message as a text file from the given filepath and stores it in @file_text
     # changes coding to end in \n for easier parsing
     def read_message( file )
       chars = ""
@@ -151,34 +150,34 @@ module HL7
       ary = chars.split( @@eol )
       ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty
 
-      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
+      @file_text = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
     
     def get_separators
-      eol = @message.index( SEG_DELIM )
-      line = @message[0...eol]         # looks something like: MSH|^~\&|info|info|info
+      eol = @file_text.index( SEG_DELIM )
+      line = @file_text[0...eol]         # looks something like: MSH|^~\&|info|info|info
       
       i = line.index( "MSH" )          # index marking the beginning of the first occurrence of 'MSH'
       i += 3                           # i was index of the M in MSH; need index of first character after H
-      HL7Test.separators[:field] = line[i]
-      HL7Test.separators[:comp] = line[i+1]
-      HL7Test.separators[:subcomp] = line[i+2]
-      HL7Test.separators[:subsub] = line[i+3]
-      HL7Test.separators[:sub_subsub] = line[i+4]  
+      HL7.separators[:field] = line[i]
+      HL7.separators[:comp] = line[i+1]
+      HL7.separators[:subcomp] = line[i+2]
+      HL7.separators[:subsub] = line[i+3]
+      HL7.separators[:sub_subsub] = line[i+4]  
     end
         
-    # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects
-    # can access segments as @records[index][segment_name]
+    # sets @messages to contain all HL7 messages contained within @file_text, as HL7::Message objects
+    # can access segments as @messages[index][segment_name]
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
     def break_into_records
       all_recs = records_by_text
-      @records = all_recs.map{ |msg| Message.new( msg ) }
+      @messages = all_recs.map{ |msg| Message.new( msg ) }
     end
         
-    # returns array of strings containing hl7 message of individual records, based on @message
+    # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
-      hdrs = @message.scan( HDR )           # all headers (will be needed later)
-      recs = @message.split( HDR )[1..-1]   # split across headers, yielding individual records
+      hdrs = @file_text.scan( HDR )           # all headers (will be needed later)
+      recs = @file_text.split( HDR )[1..-1]   # split across headers, yielding individual records
       
       all_recs = []
       for i in 0...hdrs.size
