@@ -1,9 +1,7 @@
-require 'specs/shared_examples'
-require 'test_runner'    # gets $logger from there
+require 'test_runner'    # gets $logger and $message from there
 require 'lib/hl7module/HL7'
 require 'rspec'
 require 'rspec/expectations'
-require 'spec/spec_helper'
 
 # == Methods and Objects we will use
 test_descriptions = []
@@ -57,7 +55,12 @@ end
 
 # == Configure RSpec
 RSpec.configure do |config|
-  after(:each) do
+  
+  config.before(:suite) do
+    $logger.info "Beginning test of message #{$message.id}"
+  end  
+  
+  congig.after(:each) do
     add_description( example.metadata[:full_description] )
     log_example_exception( example, message ) if example.exception
   end
