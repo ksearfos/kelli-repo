@@ -4,10 +4,10 @@ require "Record_Comparer/RecordComparer.rb"
 require "Record_Comparer/OHProcs.rb"
 require 'logger'
 
-def run_record_comparer( logger, results_file, messages )
+def run_record_comparer( results_file, messages )
 
-  logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-  logger.formatter = Proc.new{ |severity,datetime,prog,msg|
+  $logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
+  $logger.formatter = Proc.new{ |severity,datetime,prog,msg|
     str = "#{datetime} #{severity}"
     str << "(#{prog})" if prog
     str << ":\n"
@@ -31,8 +31,7 @@ def run_record_comparer( logger, results_file, messages )
   }
 
   # log completion in the logger
-  logger.info comparer.summary
-  logger.info "Record search completed.\n Results can be viewed in #{results_file}."
-  logger.close
+  $logger.info comparer.summary
+  $logger.info "Record search completed.\n Results can be viewed in #{results_file}."
   
 end

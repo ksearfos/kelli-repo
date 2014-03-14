@@ -2,9 +2,6 @@ require 'lib/hl7module/HL7'
 require 'rspec'
 require 'rspec/expectations'
 
-$test_descriptions = []
-$flagged_messages = {}
-
 RSpec.configure do |config|
   
   config.after(:each) do

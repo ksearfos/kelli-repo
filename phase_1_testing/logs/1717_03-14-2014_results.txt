@@ -1,0 +1,57 @@
+==========MATCHED==========
+processing_id_of_T
+message_version_2_4
+attending_doctor_listed
+visit_id_listed_twice
+sex_of_M
+message_event_not_order
+result_status_of_F
+observation_value_is_structured_numeric
+order_control_id_listed
+observation_type_of_SN
+
+==========UNMATCHED==========
+message_version_2_3
+processing_id_of_P
+referring_doctor_listed
+consulting_doctor_listed
+admitting_doctor_listed
+sex_of_F
+sex_of_O
+sex_of_U
+sex_of_A
+sex_of_N
+sex_of_C
+result_date_is_not_collection_date
+result_status_of_D
+result_status_of_N
+result_status_of_O
+result_status_of_S
+result_status_of_W
+result_status_of_P
+result_status_of_C
+result_status_of_X
+result_status_of_R
+result_status_of_U
+result_status_of_I
+observation_value_is_numeric
+observation_value_is_text
+attending_and_referring_doctors_listed
+observation_type_of_TX
+observation_type_of_NM
+abnormal_flag_of_I
+abnormal_flag_of_CH
+abnormal_flag_of_CL
+abnormal_flag_of_H
+abnormal_flag_of_L
+abnormal_flag_of_A
+abnormal_flag_of_U
+abnormal_flag_of_N
+abnormal_flag_of_C
+
+==========RECORDS==========
+NAME: Michael Tanner
+ACCOUNT #: 1134733972
+PROCEDURE: 46608^^OHHOREAP
+DATE/TIME: 12/13/2011 11:47 PM
+

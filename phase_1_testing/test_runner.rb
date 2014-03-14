@@ -20,6 +20,6 @@ hl7_files = [test_file]  # testing only
 
 $logger = set_up_logger(LOG_FILE)
 all_recs = get_records( hl7_files )
-# run_record_comparer( RECS_FILE, all_recs )
+run_record_comparer( RECS_FILE, all_recs )
 run_rspec( all_recs, RSPEC_LOG )
 $logger.close
