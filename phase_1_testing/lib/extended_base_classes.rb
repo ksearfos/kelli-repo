@@ -52,6 +52,10 @@ class Array
 end
 
 class Hash
+  def +(other_hash)
+    self.merge other_hash
+  end
+  
   def add_keys( val, *keys )
     keys.flatten.each{ |k| self[k] = val }
   end

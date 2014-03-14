@@ -1,0 +1,7 @@
+Reading resources/manifest_lab_short_unix.txt...
+Searching 5 records for test cases...
+/2011 11:47 PM
+
+
+2014-03-14 11:55:51 -0400 INFO:
+  Complete list of records can be found in C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/logs/1155_03-14-2014_records_to_use.txt.  while running 

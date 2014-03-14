@@ -39,7 +39,7 @@ class RecordComparer
     end
       
     # now look for records  
-    print "Searching #{num_recs} records for test cases...\n"  
+    puts "Searching #{num_recs} records for test cases...\n"  
     find_me_some_records
 
     # if that is not enough records, supplement with a random sample set

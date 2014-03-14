@@ -188,8 +188,6 @@ module HL7Test
       end
     end
 
-<<<<<<< HEAD
-=======
     # NAME: details
     # DESC: displays crucial information about the message, clearly labelled
     # ARGS: none
@@ -224,7 +222,6 @@ module HL7Test
       h
     end
     
->>>>>>> 3eb4c19... minor tweak to HL7Test::Field - passed retesting; JUST MODULE
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment
     # ARGS: none

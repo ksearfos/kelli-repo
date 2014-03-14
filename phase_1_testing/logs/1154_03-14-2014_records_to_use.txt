@@ -1,0 +1,3 @@
+Reading resources/manifest_lab_short_unix.txt...
+iles:
+  resources/manifest_lab_short_unix.txt  while running 

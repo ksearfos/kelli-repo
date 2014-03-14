@@ -270,7 +270,8 @@ module HL7Test
     #  segment.field_index(:beta) => 1 
     def field_index( which )
       if which.is_a?( Integer )
-        which - 1     # field count starts at 1, but array index starts at 0
+        i = which < 0 ? which : which - 1
+        i     # field count starts at 1, but array index starts at 0
       elsif ( which.is_a?(String) || which.is_a?(Symbol) ) && self.class.is_eigenclass?  # @field_index_maps is defined?
         s = which.downcase.to_sym
         i = field_index_maps[s]

@@ -140,7 +140,18 @@ module HL7Test
   end
 
 # ---------------------------- Methods to verify formatting ---------------------------- #
-  
+
+  def self.is_name?( val )
+    parts = val.is_a?(Array) ? val.flatten : val.split(HL7Test.separators[:comp]) 
+    return if parts.empty?
+    
+    first_last = /^[A-Z][A-z \-]+/
+    return false unless parts[0] =~ first_last                   # last name - required
+    return false unless parts[1] =~ first_last                   # first name - required
+    return false unless parts[2].empty? || parts[2] =~ /^[A-Z]/  # middle name/initial - optional
+    return parts[3].is_suffix?
+  end
+    
   # NAME: is_suffix?
   # DESC: determines whether the value given could represent a name suffix
   #       a suffix is either a roman numeral or Jr/Sr
@@ -403,7 +414,7 @@ module HL7Test
   #  HL7.has_correct_format?( "abc", "TX" ) => true
   #  HL7.has_correct_format?( "1.2", "numeric" ) => true
   #  HL7.has_correct_format?( "12/16/84", "SN" ) => false   
-  # ==> HL7.has_correct_format?( record[:OBX].value, record[:OBX].value_type )
+  # ==> most common usage: HL7.has_correct_format?( record[:OBX].value, record[:OBX].value_type )
   def self.has_correct_format?( value, format )
     case format
     when 'NM',"numeric" then is_numeric?( value )

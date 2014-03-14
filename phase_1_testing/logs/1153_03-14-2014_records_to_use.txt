@@ -1,0 +1,4 @@
+Reading resources/manifest_lab_short_unix.txt...
+HL7Test::Message
+5
+nifest_lab_short_unix.txt  while running 

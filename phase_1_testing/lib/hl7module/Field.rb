@@ -90,7 +90,8 @@ module HL7Test
     # EXAMPLE:
     #  field[2] => "b"
     def [](index)
-      @components[index-1]
+      i = index < 0 ? index : index - 1
+      @components[i]
     end
     
     # NAME: method_missing
