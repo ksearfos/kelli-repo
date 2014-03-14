@@ -2,13 +2,9 @@ require 'shared_examples'
 require 'spec_helper'
 
 describe "Ohio Health Lab HL7" do
-  
-  before :each do
-    @message = $message
-  end
     
   # == General message tests
-  include_examples "General", @message
+  include_examples "General", $message
 
   # == MSH tests
   context "MSH segment" do
@@ -46,9 +42,8 @@ describe "Ohio Health Lab HL7" do
 
   # == OBX tests
   context "OBX segment" do
-    obxseg = $message[:OBX]
-    obxseg.each do |obx|
-
+    $message[:OBX].each do |obx|
+      
       it "has Component Id in the correct format", :pattern => 'LA01' do
         obx.field(:component_id)[-1].should == 'LA01'
       end

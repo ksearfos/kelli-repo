@@ -97,7 +97,7 @@ module HL7Test
     # EXAMPLE:
     #  segment[:PID] => PID object      
     def []( key )
-      @segments[key]
+      @segments.has_key?(key) ? @segments[key] : []
     end
 
     # NAME: each

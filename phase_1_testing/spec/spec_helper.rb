@@ -7,22 +7,11 @@ $flagged_messages = {}
 
 RSpec.configure do |config|
   
-  config.before(:suite) do
-    $logger.info "Beginning test of message: #{$message.id}\n"
-  end  
-  
   config.after(:each) do
     add_description( example.metadata[:full_description] )
     log_example_exception( example, message ) if example.exception
   end
   
-  config.after(:suite) do
-    $logger.info "Number of records with potential errors: #{$flagged_messages.size}\n"    
-    $logger.info "#{'*'*80}\nElements Tested For:\n"
-    $test_descriptions.each{ |desc| $logger.info desc }
-    $logger.info "*"*80 + "\n"    
-    $flagged_messages.each_value{ |errs| errs.each{ |err_data| $logger.error err_data } }
-  end
 end
 
 def get_patient_info( message )
@@ -67,5 +56,5 @@ def log_example_exception( example, message )
 end
 
 def add_description( description )
-  $test_descriptions.add( description )
+  $test_descriptions << description
 end
