@@ -16,7 +16,7 @@ shared_examples "MSH segment" do |msh|
   end
   
   it "has the correct event type", :pattern => 'ORU^R01 for orders, ADT^A08 otherwise' do
-    msh[9].should == ( msh[2].to_s =~ /LAB|RAD/ ? 'ORU^R01' : 'ADT^A08' )
+    msh[8].should == ( msh[2].to_s =~ /LAB|RAD/ ? 'ORU^R01' : 'ADT^A08' )
   end 
 end
 
@@ -27,18 +27,18 @@ shared_examples "OBR segment" do |obr|
   end
       
   it "has a valid ordering provider", :pattern => 'ID, then a name, and final field ends with PROV' do
-    prov = obr.ordering_provider
-    prov[0].should =~ /^[A-Z]?[0-9]+/
-    HL7Test.is_name?( prov[1..4] ).should be_true
+    prov = obr.field(:ordering_provider)
+    prov[1].should =~ /^[A-Z]?[0-9]+/
+    HL7Test.is_name?( prov.components[1..4] ).should be_true
     prov[-1].should =~ /\w+PROV$/
   end
   
   it "has Result Status in the correct format", :pattern => '' do
-    HL7Test::RESULT_STATUS.should include obr.result_status 
+    HL7Test::RESULT_STATUS.should include obr.result_status
   end
 
   it "has a correctly formatted observation date/time", :pattern => '' do
-    HL7Test.is_datetime?( obr.observation_date ).should be_true
+    HL7Test.is_datetime?( obr.observation_date_time ).should be_true
   end
 end
 
@@ -49,8 +49,9 @@ shared_examples "PID segment" do |pid|
   end
 
   it "has a valid patient ID", :pattern => 'begins with digits and ends with characters + "01"' do
-    pid.patient_id[1].should !~ /\D/
-    pid.patient_id[-1].should =~ /\w+01$/
+    ptid = pid.field(:patient_id)
+    ptid[1].should_not =~ /\D/
+    ptid[-1].should =~ /\w+01$/
   end
 
   it "has a valid patient birthdate", :pattern => '' do
@@ -62,7 +63,7 @@ shared_examples "PID segment" do |pid|
   end
 
   it "has a valid SSN", :pattern => '9 digits without dashes' do
-    pid.social_security_num.should =~ /^\d{9}$/
+    pid.ssn.should =~ /^\d{9}$/
   end  
 end
 
@@ -95,17 +96,17 @@ shared_examples "PV1 and PID segments" do |pv1, pid|
   it "have the correct format", :pattern => 'begin with an optional capital letter + numbers and end with "ACC"' do
     beg = /^[A-Z]?\d+/
     ending = /\w+ACC$/    
-    acct = pid.account_number
-    visit = pv1.visit_number
+    acct = pid.field(:account_number)
+    visit = pv1.field(:visit_number)
     
-    acct[0].should =~ beg
-    visit[0].should =~ beg
+    acct[1].should =~ beg
+    visit[1].should =~ beg
     acct[-1].should =~ ending
     visit[-1].should =~ ending
   end
   
   it "show the same visit ID/account number", :pattern => '' do
-    pv1.visit_number.should == pid.account_number[1] 
+    pv1.visit_number.should == pid.account_number
   end
 end
 

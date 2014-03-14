@@ -203,13 +203,13 @@ module HL7Test
       h = {}
       h[:ID] = @id
       h[:TYPE] = @type.to_s.capitalize
-      h[:DATE] = header.date_time.as_datetime
-      h[:PT_NAME] = @segments[:PID].patient_name.as_name
-      h[:PT_ACCT] = @segments[:PID].account_number.first
+      h[:DATE] = header.field(:date_time).as_datetime
+      h[:PT_NAME] = @segments[:PID].field(:patient_name).as_name
+      h[:PT_ACCT] = @segments[:PID].field(:account_number).first
       
       if @type != :adt
         procedure = @segments[:OBR].procedure_id
-        time = @segments[:OBR][7].as_datetime
+        time = @segments[:OBR].field(7).as_datetime
         h[:PROC_NAME] = procedure
         h[:PROC_DATE] = time
       else

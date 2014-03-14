@@ -146,10 +146,13 @@ module HL7Test
     return if parts.empty?
     
     first_last = /^[A-Z][A-z \-]+/
-    return false unless parts[0] =~ first_last                   # last name - required
-    return false unless parts[1] =~ first_last                   # first name - required
-    return false unless parts[2].empty? || parts[2] =~ /^[A-Z]/  # middle name/initial - optional
-    return parts[3].is_suffix?
+    return false unless parts[0] =~ first_last        # last name - required
+    return false unless parts[1] =~ first_last        # first name - required
+    return false if parts[2] && parts[2] !~ /^[A-Z]/  # middle name/initial - optional
+    
+    if parts[3] then is_suffix?( parts[3] )           # suffix - also optional
+    else true
+    end
   end
     
   # NAME: is_suffix?

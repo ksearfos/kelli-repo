@@ -74,6 +74,8 @@ module HL7Test
 
       @lines = @original_text.split( SEG_DELIM )      # an array of strings
       @size = @lines.size
+      @children = []
+      break_into_children if @size > 1
 
       @fields_by_line = []     # all fields in each line, as objects, e.g. [ [f1,nil,f2,nil,f3], [f1,f2,f3,nil,f4] ]
       break_into_fields        # sets @fields_by_line 
@@ -95,7 +97,7 @@ module HL7Test
     end
     
     # NAME: each
-    # DESC: performs actions for each line--if there are more than 1--or each field
+    # DESC: performs actions for each object, self + all children
     # ARGS: 1
     #  [code block] - the code to execute on each line
     # RETURNS: nothing, unless specified in the code block
@@ -103,7 +105,9 @@ module HL7Test
     #  1-line segment: segment.each{ |s| print s + ' & ' } => a & b & c
     #  2-line segment: segment.each{ |s| print s + ' & ' } => [a,b,c] & [a2,b2,c2] 
     def each(&block)
-      @size == 1 ? each_field(&block) : each_line(&block)  
+      yield(self)
+      @children.each{ |ch| yield(ch) }
+      # @size == 1 ? each_field(&block) : each_line(&block)  
     end
     
     # NAME: each_line
@@ -140,7 +144,7 @@ module HL7Test
     #  segment[:beta] => "b"  
     # ALIASES: field()  
     def [](which)
-      field(which)
+      field(which).to_s
     end
     
     # NAME: field
@@ -148,7 +152,7 @@ module HL7Test
     # ARGS: 1
     #  index [Integer/Symbol/String] - the index or name of the field we want -- count starts at 1
     # RETURNS:
-    #  [String] the value of the field
+    #  [Field] the actual field object
     # EXAMPLE:
     #  segment.field(2) => "b"
     #  segment.field(:beta) => "b" 
@@ -193,7 +197,7 @@ module HL7Test
     #  segment.fake_method => throws NoMethodError
     def method_missing( sym, *args, &block )
       if self.class.is_eigenclass? && field_index_maps.has_key?( sym )
-        field( sym )
+        field( sym ).to_s
       elsif Array.method_defined?( sym )       # a Segment is generally a group of fields
         @fields.map{ |f| f.to_s }.send( sym, *args )
       elsif String.method_defined?( sym )      # but we might just want String stuff, like match() or gsub
@@ -280,6 +284,10 @@ module HL7Test
         puts "Cannot find field of type #{which.class}"
         @@no_index_val
       end
+    end
+    
+    def break_into_children
+      @lines[1..-1].each{ |line| @children << self.class.new(line) }
     end
     
   end

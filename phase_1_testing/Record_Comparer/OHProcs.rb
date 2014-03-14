@@ -77,8 +77,8 @@ module OHProcs
   # OBR
   OBR7 = Proc.new{ |rec| has_val?(rec,"obr7") } 
   OBR7_AND_OBR22 = Proc.new{ |rec| 
-    obr7 = rec[:OBR][7].as_date          # it's important to convert to dates because rad
-    obr22 = rec[:OBR][22].as_date        #+ includes time, but we don't need times to be the same
+    obr7 = rec[:OBR].field(7).as_date          # it's important to convert to dates because rad
+    obr22 = rec[:OBR].field(22).as_date        #+ includes time, but we don't need times to be the same
     obr7 != obr22
   }
   OBR22 = Proc.new{ |rec| has_val?(rec,"obr22") }
