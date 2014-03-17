@@ -1,5 +1,15 @@
 # last updated 2/28/14 3:35pm
 
+class Object
+  def self.subclasses
+    ObjectSpace.each_object(::Class).select{ |klass| klass < self }
+  end
+  
+  def self.is_subclass?( klass )
+    self.subclasses.include?(klass)
+  end
+end
+
 # added the following to class String:
 #    rem() / rem!()   This removes the given character(s) from the string
 #                     Calls tr(), meaning removes all characters given but not sequence
