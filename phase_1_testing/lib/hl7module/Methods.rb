@@ -6,6 +6,8 @@
 #         with HL7 messages
 #
 # CLASS-LEVEL METHODS:
+#    find_field(value) - finds segment and index of the given field, returning field string as "seg#"
+#    get_data(messages,field) - gathers a list of all values of field appearing in the messages
 #    make_date(date,delim) - takes String representing a date and puts it into more recognizable format
 #    make_time(time,military) - takes String representing a time and puts it into more recognizable format
 #    make_datetime(datetime) - takes String representing a date and a time and puts it into more recognizable format
@@ -32,6 +34,48 @@
 #
 #------------------------------------------
 module HL7Test                          
+
+  # NAME: find_field
+  # DESC: returns given field in String form, e.g. "seg#"
+  # ARGS: 1
+  #   value [String/Symbol] - the name of the field
+  # RETURNS:
+  #   [String] segment and index where the field is located, or empty String if not found
+  #       ==>  if there are multiple occurrences of the same field, such as :set_id, uses first matching segment it finds
+  # EXAMPLE:
+  #   HL7.find_field(:patient_id) => "pid3"
+  def self.find_field( value )
+    seg = ""  
+    field = ""
+    key = value.to_sym
+    
+    HL7Test::Segment.subclasses.each{ |cl|
+      fim = cl.field_index_maps
+      if fim.has_key?(key)
+        seg = cl.to_s
+        field = fim[key].to_s    # the field's index
+        break    
+      end
+    }
+
+    seg.downcase + field         # "seg#"
+  end
+  
+  # NAME: get_values
+  # DESC: returns a list of all values appearing in the given field in the given messages
+  # ARGS: 2
+  #   messages [Array] - list of HL7::Messages
+  #   field [String] - field whose values we seek, in fetch_field() format ("seg#")
+  # RETURNS:
+  #   [Array] all unique values appearing in that field
+  # EXAMPLE:
+  #   HL7.get_values(msg_list,"pid3") => all patient IDs appearing in the messages of msg_list
+  def self.get_data( messages, field )
+    data = []
+    messages.each{ |msg| data << msg.fetch_field(field) }
+    data.flatten!(1)   # only flatten arrays; don't flatten Fields
+    data.uniq
+  end
 
 # ---------------------------- Methods to add formatting ---------------------------- #
 

@@ -45,6 +45,17 @@
 module HL7Test
   
   class Segment     
+
+    # NAME: Segment.subclasses
+    # DESC: finds all subclasses created
+    # ARGS: 0
+    # RETURNS:
+    #  [Array] list of all eigenclasses
+    # EXAMPLE:
+    #  Segment.subclasses => [ :MSH, :PID ]
+    def self.subclasses
+      ObjectSpace.each_object(::Class).select{ |klass| klass < self }
+    end
     
     # NAME: Segment.is_eigenclass?
     # DESC: determines whether object is instance of Segment or one of its eigenclasses

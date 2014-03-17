@@ -175,7 +175,7 @@ module HL7Test
       i = field_index(which)
 
       all = []
-      @fields_by_line.each{ |row| all << row[i] } if i != @@no_index_val
+      @fields_by_line.each{ |row| all << row[i].to_s } if i != @@no_index_val
       all
     end
     
