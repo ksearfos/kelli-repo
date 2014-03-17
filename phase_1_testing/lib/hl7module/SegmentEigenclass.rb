@@ -25,6 +25,7 @@
 #    self.add(field,index): addes new fieldname-index pair to @field_index_maps
 #
 # SEGMENT CLASS METHODS:
+#    self.subclasses: returns Array of all instantiated subclasses of Segment
 #    self.is_eigenclass?: returns false if calling class is Segment; true if it's one of the typed derivatives like PID
 #
 # SEGMENT INSTANCE METHODS:

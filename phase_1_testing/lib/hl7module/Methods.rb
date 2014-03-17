@@ -8,6 +8,7 @@
 # CLASS-LEVEL METHODS:
 #    find_field(value) - finds segment and index of the given field, returning field string as "seg#"
 #    get_data(messages,field) - gathers a list of all values of field appearing in the messages
+#    make_hl7_date(str,delim) - takes date in standard format, and puts it into HL7 date format
 #    make_date(date,delim) - takes String representing a date and puts it into more recognizable format
 #    make_time(time,military) - takes String representing a time and puts it into more recognizable format
 #    make_datetime(datetime) - takes String representing a date and a time and puts it into more recognizable format
@@ -23,6 +24,7 @@
 #    is_datetime?(val) - determines whether value given represents a valid date + time, by HL7 formatting standards
 #    is_numeric?(val) - determines whether value given is numeric, by HL7 formatting standards
 #    is_struct_num?(val) - determines whether value given is a structured numeric, by HL7 formatting standards
+#    is_timestamp?(val) - determines whether value given is a timestamp, by HL7 formatting standards
 #    is_text?(val) - determines whether value given is (unformatted) text, by HL7 formatting standards
 #    has_correct_format?(value,format) - determines whether the value given is of the format specified
 #
@@ -79,6 +81,25 @@ module HL7Test
 
 # ---------------------------- Methods to add formatting ---------------------------- #
 
+  # NAME: make_hl7_date
+  # DESC: returns standard date value formatted as YYYYMMDD
+  #       essentially reverses make_date()
+  # ARGS: 1-2
+  #   str [String] - date in more standard format, e.g. MM/DD/YYYY
+  #   delim [String] - delimiter to use to find the date components -- '/' by default
+  # RETURNS:
+  #   [String] the value of the field reformatted as a date HL7 will recognize
+  # EXAMPLE:
+  #   HL7.make_date( "11/05/1903" ) => 19031105
+  #   HL7.make_date( "11-05-1903", "-" ) => 19031105
+  def self.make_hl7_date( str, delim='/' )
+    parts = str.split(delim)
+    mo = parts[0]
+    day = parts[1]
+    year = parts[2]
+    year + mo + day 
+  end
+  
   # NAME: make_date
   # DESC: returns value formatted as a date
   #       HL7 dates are generally stored in the following format: YYYYMMDD
@@ -431,6 +452,27 @@ module HL7Test
     #+ separator, and the rest is numeric, so...
     true
   end
+
+  # NAME: is_timestamp
+  # DESC: determines whether the value given is a timestamp
+  #       a HL7 timestamp is a date (with dashes) followed by a time in military time
+  # ARGS: 1
+  #   val [String] - value to be checked
+  # RETURNS:
+  #  [Boolean] true if the value is text, false otherwise
+  # EXAMPLE:
+  #  HL7.is_timestamp?( "10-18-2011 23:59" ) => true
+  #  HL7.is_timestamp?( "26" ) => false    
+  def self.is_timestamp?( str )
+    parts = str.split( " " )
+    date = parts[0]
+    time = parts[1]     # some timestamps end with a space, so don't take last index
+    
+    return false unless date =~ /^\d{2}\-\d{2}\-\d{4}$/
+    return false unless time =~ /^\d{2}:\d{2}$/
+    return false unless is_date?( make_hl7_date(date) )
+    is_time?( time.tr!(':','') )     
+  end  
   
   # NAME: is_text
   # DESC: determines whether the value given is proper text
@@ -444,7 +486,7 @@ module HL7Test
   #  HL7.is_numeric?( "26" ) => false    
   def self.is_text?( str )
     # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
-    is_other = ( is_numeric?(str) || is_struct_num?(str) )
+    is_other = ( is_numeric?(str) || is_struct_num?(str) || is_timestamp?(str) )
     str && !( str.empty? || is_other )
   end
   
@@ -467,6 +509,7 @@ module HL7Test
     when 'NM',"numeric" then is_numeric?( value )
     when 'SN',"structured numeric" then is_struct_num?( value )
     when 'TX',"text" then is_text?( value )
+    when 'TS',"timestamp" then is_timestamp?( value )
     else false    # not a valid type, so how could we match it?
     end
   end  
