@@ -470,7 +470,7 @@ module HL7Test
     
     return false unless date =~ /^\d{2}\-\d{2}\-\d{4}$/
     return false unless time =~ /^\d{2}:\d{2}$/
-    return false unless is_date?( make_hl7_date(date) )
+    return false unless is_date?( make_hl7_date(date,'-') )
     is_time?( time.tr!(':','') )     
   end  
   
