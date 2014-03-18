@@ -3,7 +3,7 @@
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'lib/hl7module/HL7'
 
-FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
+FILE = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
 
 mh = HL7Test::MessageHandler.new FILE
-puts HL7Test.get_data( mh.records, "obr4" ).size
+puts mh.records.size

@@ -30,13 +30,12 @@ ftp = $LOAD_PATH[0]  # testing
 # ftp = "d:/FTP"
 LOG_DIR = "#{ftp}/logs"
 LOG_FILE = "#{LOG_DIR}/#{dt}_testrunner.log"
-MAX = 1000    # max number of records to test at one time
 
 # create the directory, if needed
 `mkdir "#{LOG_DIR}"` unless File.exists?( LOG_DIR )
 
-# test_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
-test_file = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"  # testing only
+test_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
+# test_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
 hl7_files = [test_file]  # testing only  
 # hl7_files = Dir.entries( FTP ).select{ |f| File.file? "#{FTP}/#{f}" }
 
@@ -48,13 +47,6 @@ all_recs = get_records( hl7_files )
 run_record_comparer( "#{LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
 
 # test all records, if RUN_RSPEC is true
-# must be done a bit at a time to avoid memory overload
-if RUN_RSPEC
-  set_up_rspec( "#{LOG_DIR}/#{dt}_rspec.log" )
-  $flagged_messages = {}
-  
-  all_recs.each{ |msg| run_rspec(msg) }
-  summarize
-end
+run_rspec( "#{LOG_DIR}/#{dt}_rspec", all_recs ) if RUN_RSPEC
 
 $logger.close

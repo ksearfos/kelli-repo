@@ -140,19 +140,22 @@ module HL7Test
       chars = ""
      
       puts "Reading #{file}..."
-      File.open( file, "r" ).each_char do |ch|
-        if ch == "\r" then chars << @@eol   # convert to useful character
+      File.open( file, "r" ).each_char{ |ch| 
+        if ch == "\r" then chars << @@eol
         else chars << ch
         end
-      end
-      
-      chars.squeeze!( @@eol )               # only need one line break at a time
-      ary = chars.split( @@eol )
-      ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty
+      }
 
+      chars.gsub!( '\\r', @@eol )
+      chars.squeeze!( @@eol )                # only need one line break at a time
+      
+      chars.gsub!( "'MSH", "#{@@eol}MSH" )
+      ary = chars.split( @@eol )
+      ary.delete_if{ |line| line !~ /^\d*[A-Z]{3}\|/ }  # non-segment lines
+      
       @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
-    
+
     def get_separators
       eol = @message.index( SEG_DELIM )
       line = @message[0...eol]         # looks something like: MSH|^~\&|info|info|info

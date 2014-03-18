@@ -62,18 +62,17 @@ class RecordComparer
   end
   
   def unmatched  
-    @unmatched.join( "\n" )
+    @unmatched.sort.join( "\n" )
   end
   
   def matched
     m = @criteria.keys - @unmatched
-    m.join( "\n" )  
+    m.sort.join( "\n" )  
   end
   
   def used_records
-    str = ""
-    @use.each{ |rec| str << record_details(rec) << "\n" }
-    str
+    recs = @use.map{ |rec| record_details(rec) }
+    recs.sort.join("\n")
   end
   
   private

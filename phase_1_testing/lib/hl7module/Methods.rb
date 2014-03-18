@@ -213,9 +213,9 @@ module HL7Test
     first_last = /^[A-Z][A-z \-]+/
     return false unless parts[0] =~ first_last        # last name - required
     return false unless parts[1] =~ first_last        # first name - required
-    return false if parts[2] && parts[2] !~ /^[A-Z]/  # middle name/initial - optional
+    return false unless parts[2].to_s.empty? || parts[2] =~ /^[A-Z]/  # middle name/initial - optional
     
-    if parts[3] then is_suffix?( parts[3] )           # suffix - also optional
+    if !parts[3].to_s.empty? then is_suffix?( parts[3] )              # suffix - also optional
     else true
     end
   end
@@ -487,7 +487,7 @@ module HL7Test
   def self.is_text?( str )
     # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
     is_other = ( is_numeric?(str) || is_struct_num?(str) || is_timestamp?(str) )
-    str && !( str.empty? || is_other )
+    !is_other
   end
   
   # NAME: has_correct_format?

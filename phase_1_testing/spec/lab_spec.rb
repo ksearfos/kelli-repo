@@ -13,7 +13,7 @@ describe "Ohio Health Lab HL7" do
   end
 
   # == ORC tests
-  context "ORC segment", :pattern => 'any two characters' do
+  context "ORC segment" do
     it "has a Control ID of two characters" do
       $message[:ORC].order_control.size.should == 2
     end
@@ -24,17 +24,12 @@ describe "Ohio Health Lab HL7" do
     $message[:OBR].each do |obr|
       include_examples "OBR segment", obr
 
-      it "has a valid procedure ID", :pattern => 'begins with capital letters/numbers and ends with ECAREEAP or OHHOREAP' do
-        proc_id = obr.field(:procedure_id)
-        
+      it "has a valid procedure ID", :pattern => 'capital letters + numbers' do
+        proc_id = obr.field(:procedure_id)      
         proc_id[1].should =~ /^[A-Z0-9]+/
-        
-        if $message[:MSH][3] =~ /MGH/ then proc_id[-1].should == 'ECAREEAP'
-        else proc_id[-1].should == 'OHHOREAP'
-        end
       end
 
-      it "has the same observation date and result status date", :pattern => '' do
+      it "has the same observation date and result status date", :pattern => 'OBR.7 == OBR.22' do
         obr.field(:result_date_time).as_date.should == obr.field(:observation_date_time).as_date
       end
     end #each
@@ -44,22 +39,22 @@ describe "Ohio Health Lab HL7" do
   context "OBX segment" do
     $message[:OBX].each do |obx|
       
-      it "has Component Id in the correct format", :pattern => 'LA01' do
+      it "has the correct component ID", :pattern => 'LA01' do
         obx.field(:component_id)[-1].should == 'LA01'
       end
 
-      it "has an observation value of the appropriate type", :pattern => 'type is listed in OBX.2' do
+      it "has an observation value of the appropriate type", :pattern => "a #{obx.value}" do
         HL7Test.has_correct_format?(obx.value,obx.value_type).should be_true
       end
     
       context "with value type of SN or NM" do
         if obx.value_type != 'TX'
-          it "has valid Units", :pattern => '' do
+          it "has valid Units", :pattern => "OBX.6" do
             u = obx.units
             HL7Test::UNITS.should include u unless u.empty? 
           end
 
-          it "has a valid reference range", :pattern => '' do
+          it "has a valid reference range", :pattern => "OBX.7" do
             range = obx.reference_range
             nums = range.split('-')
             
@@ -68,7 +63,7 @@ describe "Ohio Health Lab HL7" do
             HL7Test.is_numeric?(nums.last).should be_true
           end
 
-          it "has a valid Abnormal Flag", :pattern => '' do
+          it "has a valid Abnormal Flag", :pattern => "OBX.8" do
             flag = obx.abnormal_flag
             HL7Test::ABNORMAL_FLAGS.should include flag unless flag.empty?
           end
@@ -88,10 +83,11 @@ describe "Ohio Health Lab HL7" do
     include_examples "PV1 and PID segments", pv1, $message[:PID]
     include_examples "Lab/ADT PV1 segment", pv1
 
-    it "has a valid attending doctor", :pattern => 'begins with an optional P + digits, ends with something-PROV' do
+    it "has a valid attending doctor", :pattern => 'begins with an optional P + digits, ends with (something)PROV' do
       att = pv1.field(:attending_doctor).components
       att.first.should =~ /^P?\d+/
-      HL7Test.is_name?(att[1..3]).should be_true
+
+      HL7Test.is_name?(att[1..4]).should be_true
       att[-1].should =~ /\w+PROV$/
     end
 
@@ -103,9 +99,12 @@ describe "Ohio Health Lab HL7" do
       pv1.patient_type.should =~ /^\d{1,2}$/
     end
 
-    it "does not have a VIP Indicator", :pattern => '' do
+    it "does not have a VIP Indicator", :pattern => 'PV1.16 is empty' do
       pv1[16].should be_empty
     end
   end
 
+  after(:each) do
+    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
+  end
 end

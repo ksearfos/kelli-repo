@@ -8,14 +8,8 @@ def flag_example_exception( example, message )
   patt = example.metadata[:pattern]
   error_message = "#{example.metadata[:full_description]}"
   error_message << " (" + patt + ")" if patt
-  error_message << "\n" + exception_message
-  
-  dets = patient_details(message)
-  if $flagged_messages.has_key?( dets )
-    $flagged_messages[dets] << error_message
-  else
-    $flagged_messages[dets] = [error_message]
-  end
+
+  $errors << error_message
 end
 
 def patient_details( message )
