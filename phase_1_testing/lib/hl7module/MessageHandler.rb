@@ -151,7 +151,7 @@ module HL7Test
       
       chars.gsub!( "'MSH", "#{@@eol}MSH" )
       ary = chars.split( @@eol )
-      ary.delete_if{ |line| line !~ /^\d*[A-Z]{3}\|/ }  # non-segment lines
+      ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines
       
       @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
