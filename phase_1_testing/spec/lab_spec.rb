@@ -105,6 +105,8 @@ describe "Ohio Health Lab HL7" do
   end
 
   after(:each) do
+    # flag_record if example.exception
+    
     flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
   end
 end

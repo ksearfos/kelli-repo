@@ -1,0 +1,59 @@
+Reading C:/Users/Owner/Documents/manifest_lab_out.txt...
+ew file(s):
+  C:/Users/Owner/Documents/manifest_lab_out.txt
+
+I, [2014-03-18T17:19:51.157111 #9980]  INFO -- : Found 12182 messages to test
+
+I, [2014-03-18T17:19:51.157111 #9980]  INFO -- : Beginning testing of messages
+
+I, [2014-03-18T17:19:51.157111 #9980]  INFO -- : Checking batch 1...
+E, [2014-03-18T17:20:08.310286 #9980] ERROR -- : Ohio Health Lab HL7 OBX segment with value type of SN or NM has a valid reference range (OBX.7)
+
+Example:
+  Message Date: 01/28/2014 4:18:53 AM
+  Patient: 00560957 - Meagen E Belcher
+  Account: 1128732550
+  Date of Birth: 03/12/1978      
+  Procedure: 46087^^OHHOREAP on 10/15/2011 5:58 AM
+
+
+E, [2014-03-18T17:20:08.310286 #9980] ERROR -- : Ohio Health Lab HL7 OBR segment has a valid ordering provider (ID and/or a name, and final field ends with PROV)
+
+Example:
+  Message Date: 01/28/2014 4:18:53 AM
+  Patient: 00560957 - Meagen E Belcher
+  Account: 1129933610
+  Date of Birth: 03/12/1978      
+  Procedure: 46391^^OHHOREAP on 10/30/2011 7:43 AM
+
+
+E, [2014-03-18T17:20:08.310286 #9980] ERROR -- : Ohio Health Lab HL7 OBX segment has an observation value of the appropriate type (a   88305)
+
+Example:
+  Message Date: 01/28/2014 4:19:03 AM
+  Patient: 03422354 - Lynda M Vallette
+  Account: 1129710502
+  Date of Birth: 03/05/1967      
+  Procedure: 47015^^OHHOREAP on 10/24/2011 3:22 PM
+
+
+E, [2014-03-18T17:20:08.310286 #9980] ERROR -- : Ohio Health Lab HL7 OBX segment has an observation value of the appropriate type (a   1)
+
+Example:
+  Message Date: 01/28/2014 4:19:03 AM
+  Patient: 03422354 - Lynda M Vallette
+  Account: 1129710502
+  Date of Birth: 03/05/1967      
+  Procedure: 47015^^OHHOREAP on 10/24/2011 3:22 PM
+
+
+E, [2014-03-18T17:20:08.310286 #9980] ERROR -- : Ohio Health Lab HL7 OBX segment with value type of SN or NM has valid Units (OBX.6)
+
+Example:
+  Message Date: 01/28/2014 4:19:08 AM
+  Patient: 00549993 - Kayrn J Jackson
+  Account: 1134331279
+  Date of Birth: 08/13/1946      
+  Procedure: 46233^^OHHOREAP on 12/10/2011 5:45 PM
+
+

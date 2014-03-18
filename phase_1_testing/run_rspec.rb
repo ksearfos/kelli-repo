@@ -3,29 +3,30 @@
 require "spec/spec_helper"
 require 'logger'
 
-MAX = 1000    # max number of records to test at one time
+MAX = 500    # max number of records to test at one time
 
 def run_rspec( file, messages )
+  $flagged_records = []
   i = 0
-  begin
-    recs = messages.shift( MAX )
+  # begin
+    recs = messages.pop( MAX )
     i += 1
     set_up_rspec( file + "_#{i}.log" )
-    $logger.info "Batch #{i}"
+    $logger.info "Checking batch #{i}...\n"
+    $errors = {}    #=> { error => 1 message to have this error } 
     
     recs.each{ |msg|
       $message = msg
-      $errors = []
+      $found_error = false
       
-      # run tests (for this message)
       RSpec::Core::Runner.run [ "spec/#{$message.type}_spec.rb" ]
-      
-      # output record and error details to rspec log and testrunner log  
-      print_record(msg) unless $errors.empty?
-      summarize
+      print_record(msg) if $found_error
     }
-
-  end until messages.empty?  
+  # end until messages.empty?
+  
+  $errors.each{ |err_txt,msg_summ| 
+    $logger.error "#{err_txt}\n\n#{msg_summ}\n"
+  }
 end
 
 def set_up_rspec( file )
@@ -39,11 +40,26 @@ def print_record( message )
     puts "#{"="*66}\n"
 end
 
-def summarize
-  sz = $errors.size
-  err_text = "#{sz} errors found for record\n\n#{patient_details($message)}\n"
-  for i in (1..sz)
-    err_text << "Error #{i}: ".rjust(10) << $errors[i-1] << "\n\n" 
-  end
-  $logger.error err_text
-end
+# def summarize
+  # sz = $errors.size
+# 
+  # err_text = "#{sz} errors found for record\n\n#{patient_details($message)}\n"
+  # for i in (1..sz)
+    # err_text << "Error #{i}: ".rjust(10) << $errors[i-1] << "\n\n" 
+  # end
+#   
+  # $logger.error err_text
+# end
+
+# def patient_details( message )
+  # det = message.details
+  # str = <<-END
+  # Message Date: #{message.header.field(:date_time).as_datetime}
+  # Patient: #{det[:PT_ID]} - #{det[:PT_NAME]}
+  # Account: #{det[:PT_ACCT]}
+  # Date of Birth: #{det[:DOB]}      
+  # END
+# 
+  # str << "  Procedure: #{det[:PROC_NAME]} on #{det[:PROC_DATE]}\n" if message.type != :adt  
+  # str
+# end
