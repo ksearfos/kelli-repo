@@ -50,10 +50,11 @@ run_record_comparer( "#{LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
 # test all records, if RUN_RSPEC is true
 # must be done a bit at a time to avoid memory overload
 if RUN_RSPEC
-  begin
-    recs = all_recs.shift( MAX )
-    run_rspec( recs, "#{LOG_DIR}/#{dt}_rspec.log" )
-  end until all_recs.empty?
+  set_up_rspec( "#{LOG_DIR}/#{dt}_rspec.log" )
+  $flagged_messages = {}
+  
+  all_recs.each{ |msg| run_rspec(msg) }
+  summarize
 end
 
 $logger.close

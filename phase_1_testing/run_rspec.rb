@@ -3,25 +3,20 @@
 require "spec/spec_helper"
 require 'logger'
 
-def run_rspec( messages, file )
-  $stdout.reopen(file, "w")   # send results of test to new file
-  type = messages[0].type
-
-  $logger.info "Beginning testing of #{type} messages\n"
-  messages.each{ |msg|
-    $flagged_messages = {}
-    $message = msg 
-    
-    introduce_record( msg )
-    RSpec::Core::Runner.run [ "spec/#{type}_spec.rb" ]
-    summarize
-  }  
-  
+def run_rspec( message )
+  $message = message
+  introduce_record
+  RSpec::Core::Runner.run [ "spec/#{$message.type}_spec.rb" ]  
 end
 
-def introduce_record( message )
+def set_up_rspec( file )
+  $stdout.reopen(file, "w")   # send results of test to new file
+  $logger.info "Beginning testing of messages\n"
+end
+
+def introduce_record
     puts "\n#{"="*30}RECORD#{"="*30}\n"
-    message.view_segments
+    $message.view_segments
     puts "#{"="*66}\n"
 end
 

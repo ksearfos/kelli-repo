@@ -42,20 +42,18 @@ describe "Ohio Health Rad HL7" do
       obr.set_id.should == '1'
     end
 
-    it "has a valid result interpreter", :pattern => "OBR.8 is (something)PROV, OBR.12 is empty" do
-      res_int = obr.field(32)
-      res_int[8].should =~ /\w+PROV$/
-      res_int[12].should be_empty
+    it "has a valid result interpreter", :pattern => "OBR.32 is (something)PROV" do
+      obr[32].should =~ /PROV/
     end
 
     it "has a valid observation date/time", :pattern => "OBR.8" do
       dt = obr.observation_date_time
-      HL7Test.is_datetime?( dt ).should be_true if dt
+      HL7Test.is_datetime?( dt ).should be_true unless dt.empty?
     end
 
     it "has a valid end exam date/time", :pattern => "OBR.27" do
       dt = obr[27]
-      HL7Test.is_datetime?( dt ).should be_true if dt
+      HL7Test.is_datetime?( dt ).should be_true unless dt.empty?
     end
 
     it "has a corresponding ORC segment", :pattern => "ORC listed directly before OBR, with same date/time" do
@@ -94,8 +92,8 @@ describe "Ohio Health Rad HL7" do
     it "has a valid patient location", :pattern => "'ED' if patient class is 'E', and components 2/3 are empty" do
       loc = pv1.field(:patient_location)  
       loc[1].should == "ED" if pv1.patient_class == "E"
-      loc[2].should be_empty
-      loc[3].should be_empty
+      loc[2].to_s.should be_empty
+      loc[3].to_s.should be_empty
     end
 
     context "provider type", :pattern => "components 8 and 12 are the same" do
@@ -136,5 +134,9 @@ describe "Ohio Health Rad HL7" do
     it "has a Patient Type", :pattern => "a number in a list" do
       pv1.patient_type.should_not =~ /\D/
     end
+  end
+  
+  after(:each) do
+    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
   end
 end

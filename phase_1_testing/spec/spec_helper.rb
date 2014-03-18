@@ -2,20 +2,12 @@ require 'lib/hl7module/HL7'
 require 'rspec'
 require 'rspec/expectations'
 
-RSpec.configure do |config|
-  
-  config.after(:each) do
-    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
-  end
-
-end
-
 def flag_example_exception( example, message )
   exception_message = example.exception.to_s.split("Diff:")[0].chomp
 
   patt = example.metadata[:pattern]
   error_message = "#{example.metadata[:full_description]}"
-  error_message << "(" + patt + ")" if patt
+  error_message << " (" + patt + ")" if patt
   error_message << "\n" + exception_message
   
   dets = patient_details(message)
@@ -35,9 +27,6 @@ def patient_details( message )
   Date of Birth: #{det[:DOB]}      
   END
 
-  if message.type != :adt
-    str << "  Procedure: #{det[:PROC_NAME]} on #{det[:PROC_DATE]}\n"
-  end
-  
+  str << "  Procedure: #{det[:PROC_NAME]} on #{det[:PROC_DATE]}\n" if message.type != :adt  
   str
 end
