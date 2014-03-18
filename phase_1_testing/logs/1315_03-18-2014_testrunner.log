@@ -1,0 +1,10 @@
+Reading C:/Users/Owner/Documents/manifest_rad_out_shortened.txt...
+:
+  C:/Users/Owner/Documents/manifest_rad_out_shortened.txt
+
+I, [2014-03-18T13:15:00.576153 #9648]  INFO -- : Found 3 messages to test
+
+I, [2014-03-18T13:15:00.576153 #9648]  INFO -- : Beginning testing of rad messages
+
+I, [2014-03-18T13:15:00.904295 #9648]  INFO -- : Number of records with potential errors: 0
+

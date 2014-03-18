@@ -73,7 +73,7 @@ module HL7Test
 
       break_into_segments    # sets @lines, @segments
       
-      @id = header.message_control_id.to_s
+      @id = header.message_control_id
       set_message_type
     end  
 
@@ -205,7 +205,9 @@ module HL7Test
       h[:TYPE] = @type.to_s.capitalize
       h[:DATE] = header.field(:date_time).as_datetime
       h[:PT_NAME] = @segments[:PID].field(:patient_name).as_name
+      h[:PT_ID] = @segments[:PID].field(:mrn).first
       h[:PT_ACCT] = @segments[:PID].field(:account_number).first
+      h[:DOB] = @segments[:PID].field(:dob).as_date
       
       if @type != :adt
         procedure = @segments[:OBR].procedure_id
@@ -236,6 +238,14 @@ module HL7Test
       each{ |type,obj| 
         obj.lines.each{ |line| puts type.to_s + ": " + line }
       }
+    end
+    
+    def get_segments
+      str = ""
+      each{ |type,obj| 
+        obj.lines.each{ |line| str << type.to_s + ": " + line + "\n" }
+      }
+      str
     end
 
     # NAME: fetch_field

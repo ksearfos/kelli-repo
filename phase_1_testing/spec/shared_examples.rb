@@ -23,13 +23,17 @@ end
 # == OBR tests (orders only)
 shared_examples "OBR segment" do |obr|  
   it "has a Control Code containing only letters, numbers, and spaces", :pattern => '' do
-    obr.control_code.should =~ /^[A-Za-z0-9][A-Za-z0-9 ]*/
+    obr.control_code.should =~ /^[A-z0-9][A-z0-9 ]*/
   end
       
-  it "has a valid ordering provider", :pattern => 'ID, then a name, and final field ends with PROV' do
+  it "has a valid ordering provider", :pattern => 'ID and/or a name, and final field ends with PROV' do
     prov = obr.field(:ordering_provider)
-    prov[1].should =~ /^[A-Z]?[0-9]+/
-    HL7Test.is_name?( prov.components[1..4] ).should be_true
+    
+    id = prov[1]
+    if id =~ /\d/ then id.should =~ /^[A-Z]?\d+/
+    else HL7Test.is_name?( prov.components[2..5] ).should be_true
+    end
+     
     prov[-1].should =~ /\w+PROV$/
   end
   
@@ -44,7 +48,7 @@ end
 
 # == PID tests
 shared_examples "PID segment" do |pid|
-  it "has a valid patient name", :pattern => '' do
+  it "has a valid patient name" do
     HL7Test.is_name?(pid.patient_name)
   end
 
@@ -54,11 +58,11 @@ shared_examples "PID segment" do |pid|
     ptid[-1].should =~ /\w+01$/
   end
 
-  it "has a valid patient birthdate", :pattern => '' do
+  it "has a valid patient birthdate" do
     HL7Test.is_date?( pid.dob )
   end
 
-  it "has a valid patient sex", :pattern => '' do
+  it "has a valid patient sex" do
     HL7Test::SEXES.should include pid.sex
   end
 
@@ -69,12 +73,12 @@ end
 
 # == ADT PID tests
 shared_examples "ADT PID segment" do |pid|
-  it "has a valid race", :pattern => "a number (corresponding to a list item)" do
+  it "has a valid race", :pattern => "a number corresponding to a list item" do
     race = pid.race
     race.should =~ /^\d$/ unless race.empty? 
   end
 
-  it "has a Country Code that matches the Address", :pattern => "" do
+  it "has a Country Code that matches the Address", :pattern => "PID.11.7 == PID.12" do
     unless pid.country_code.empty?
       pid.country_code.should == pid.address[7]
     end
@@ -93,20 +97,17 @@ end
 
 # == PV1 tests
 shared_examples "PV1 and PID segments" do |pv1, pid|
-  it "have the correct format", :pattern => 'begin with an optional capital letter + numbers and end with "ACC"' do
+  pv1_visit = pv1.field(:visit_number).first
+  pid_acct = pid.field(:account_number).first
+  
+  it "have the correct format", :pattern => 'an optional capital letter and numbers' do
     beg = /^[A-Z]?\d+/
-    ending = /\w+ACC$/    
-    acct = pid.field(:account_number)
-    visit = pv1.field(:visit_number)
-    
-    acct[1].should =~ beg
-    visit[1].should =~ beg
-    acct[-1].should =~ ending
-    visit[-1].should =~ ending
+    pid_acct.should =~ beg
+    pv1_visit.should =~ beg
   end
   
-  it "show the same visit ID/account number", :pattern => '' do
-    pv1.visit_number.should == pid.account_number
+  it "show the same visit ID/account number", :pattern => 'PV1.19 == PID.18' do
+    pv1_visit.should == pid_acct
   end
 end
 

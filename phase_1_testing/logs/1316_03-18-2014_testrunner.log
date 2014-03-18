@@ -1,0 +1,30 @@
+Reading C:/Users/Owner/Documents/manifest_rad_out_shortened.txt...
+:
+  C:/Users/Owner/Documents/manifest_rad_out_shortened.txt
+
+I, [2014-03-18T13:16:28.365664 #4512]  INFO -- : Found 3 messages to test
+
+I, [2014-03-18T13:16:28.365664 #4512]  INFO -- : Beginning testing of rad messages
+
+I, [2014-03-18T13:16:28.553173 #4512]  INFO -- : Number of records with potential errors: 1
+
+E, [2014-03-18T13:16:28.553173 #4512] ERROR -- : 3 errors found for record
+
+  Message Date: 02/26/2014 12:32:58 AM
+  Patient: 03102519 - Kevin W Smith
+  Account: 1112431307
+  Date of Birth: 08/02/1959      
+  Procedure: IMG2027^CT CHEST AND ABDOMEN WITH CONTRAST on 05/04/2011 1:53 PM
+
+ Error 1: Ohio Health Rad HL7 OBR segment has a valid result interpreter(OBR.8 is (something)PROV, OBR.12 is empty)
+expected: /\w+PROV$/
+     got: "" (using =~)
+
+ Error 2: Ohio Health Rad HL7 OBR segment has a valid end exam date/time(OBR.27)
+expected: true value
+     got: false
+
+ Error 3: Ohio Health Rad HL7 PV1 segment has a valid patient location('ED' if patient class is 'E', and components 2/3 are empty)
+undefined method `empty?' for nil:NilClass
+
+

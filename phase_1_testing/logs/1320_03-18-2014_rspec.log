@@ -1,0 +1,326 @@
+
+==============================RECORD==============================
+MSH: ^~\&|CENRAD|RMH|||20140226123258||ORU^R01||T|2.3
+PID: ||03102519^^^ST01||Smith^Kevin^W||195908020000|M|||^^^^^^^|||||||1112431307^^^^STARACC|294645000
+PV1: |Outpatient|^^||||15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|^^^^^^^^STARPROV^^^^STARPROV||||||||15677^Hofmeister^Joseph^K^^^MD^^STARPROV^^^^STARPROV|12|1112431307|||||||||||||||||||||||||201105041208|201105042359
+ORC: ||||||||201105041353||||
+OBR: 1||H19406393|IMG2027^CT CHEST AND ABDOMEN WITH CONTRAST|||201105041353|||||||||15677^^^^^^^^STARPROV^^^^STARPROV||||||201105041500|||F|||||||21134^^^^^^^^STARPROV^^^^
+OBX: 1|TX|&GDT||Clinical Information: lung ca 162.9
+OBX: 2|TX|&GDT||HISTORY:  Lung carcinoma.
+OBX: 3|TX|&GDT|| 
+OBX: 4|TX|&GDT||CT OF THE CHEST AND ABDOMEN WITH CONTRAST 05/04/2011:
+OBX: 5|TX|&GDT|| 
+OBX: 6|TX|&GDT||TECHNIQUE:  3 mm sections were obtained from the thoracic inlet through the iliac crest following
+OBX: 7|TX|&GDT||administration of 100 ml of Omnipaque 350.  Coronal and sagittal reformatted images were obtained.
+OBX: 8|TX|&GDT|| 
+OBX: 9|TX|&GDT||CT CHEST:  A right supraclavicular node on image #8 measures 1.5 x 1.9 cm as compared to previous where
+OBX: 10|TX|&GDT||it measured 1.0 x 1.3 cm.  Just medial to this a nodal lesion along the right IJ chain measures 1.9 x
+OBX: 11|TX|&GDT||2.2 cm compared to 0.8 x 1.6 cm.  There may be a new small metastatic node within the right posterior
+OBX: 12|TX|&GDT||cervical triangle measuring 5 mm on image #4.
+OBX: 13|TX|&GDT|| 
+OBX: 14|TX|&GDT||Abnormally enlarged mediastinal and hilar lymphadenopathy overall appears to have progressed.  A
+OBX: 15|TX|&GDT||right-sided superior mediastinal node measures 1.6 x 1.8 cm as compared to 1.5 x 1.8 cm.  Multiple small
+OBX: 16|TX|&GDT||paratracheal nodes are identified.  A dominant partially necrotic infiltrative subcarinal mass measures
+OBX: 17|TX|&GDT||2.4 x 5.2 cm compared to 2.4 x 3.9 cm.  Bilateral small hilar nodes are evident.  A right hilar node
+OBX: 18|TX|&GDT||measures 1.2 x 1.5 cm compared to 0.6 x 0.7 cm.  A right infrahilar nodal lesion has developed in the
+OBX: 19|TX|&GDT||interval measuring 1.3 x 2.1 cm on image #55.
+OBX: 20|TX|&GDT|| 
+OBX: 21|TX|&GDT||The dominant right lower lobe mass measures 2.6 x 3.2 cm compared to 2.4 x 2.8 cm.  A new nodule has
+OBX: 22|TX|&GDT||developed caudal to this near the costophrenic gutter measuring 1.0 x 1.5 cm.
+OBX: 23|TX|&GDT|| 
+OBX: 24|TX|&GDT||Upper lobe predominant bullous emphysema is identified.  A new punctate nodule is noted within the right
+OBX: 25|TX|&GDT||upper lobe on image #36 measuring 4 mm.  There are 2 nodules in the superior segment right lower lobe. 
+OBX: 26|TX|&GDT||The medial of the 2 measures 7 mm in diameter as compared to 5 mm.
+OBX: 27|TX|&GDT|| 
+OBX: 28|TX|&GDT||A new subpleural nodule involving the left lower lobe on image #73 measures 4 mm.  A left apical nodule
+OBX: 29|TX|&GDT||has developed on image #13 measuring 5 mm.  A medially located nodule is also noted measuring 6 mm in
+OBX: 30|TX|&GDT||diameter.  Multiple additional subcentimeter nodules are noted within the left upper lobe.  There are
+OBX: 31|TX|&GDT||also more ill-defined ground-glass opacities noted more caudally within the left upper lobe and lingula
+OBX: 32|TX|&GDT||on images #47 through 52 as well as involving the lateral basilar segment of the left lower lobe on
+OBX: 33|TX|&GDT||images #52 and 56.
+OBX: 34|TX|&GDT|| 
+OBX: 35|TX|&GDT||CT ABDOMEN:  The previously noted lesion near the liver dome is unchanged in size.  This measures 1.1 x
+OBX: 36|TX|&GDT||1.4 cm.  On the remote MRI study from 09/26/2009 it measured 1.4 x 1.6 cm.  There is however a new
+OBX: 37|TX|&GDT||rim-enhancing hypodense lesion within the right hepatic lobe not seen on MRI study.  This measures 1.4 x
+OBX: 38|TX|&GDT||1.6 cm.
+OBX: 39|TX|&GDT|| 
+OBX: 40|TX|&GDT||The spleen, gallbladder, pancreas, adrenal glands and kidneys appear unremarkable.  No significantly
+OBX: 41|TX|&GDT||enlarged upper abdominal nodes.  The bowel pattern does not appear to be obstructive.  A right upper
+OBX: 42|TX|&GDT||chest Mediport device is in place.  No acute or suspicious osseous lesion noted.
+OBX: 43|TX|&GDT|| 
+OBX: 44|TX|&IMP||IMPRESSION:
+OBX: 45|TX|&IMP|| 
+OBX: 46|TX|&IMP||1.  Mild interval increase in size in dominant right lower lobe heterogeneously enhancing partially
+OBX: 47|TX|&IMP||necrotic mass consistent with lung carcinoma.
+OBX: 48|TX|&IMP||2.  Interval increase in both size and number of pulmonary metastatic deposits bilaterally.  The more
+OBX: 49|TX|&IMP||ill-defined ground-glass opacities within the left upper lobe and involving the lateral basilar segment
+OBX: 50|TX|&IMP||of the left lower lobe are nonspecific and may represent superimposed multifocal inflammatory or
+OBX: 51|TX|&IMP||infectious foci.
+OBX: 52|TX|&IMP||3.  Significant interval increase in size of right supraclavicular and right lower neck lymphadenopathy.
+OBX: 53|TX|&IMP|| The previously identified mediastinal and hilar nodes have increased in both size and number.  The
+OBX: 54|TX|&IMP||large infiltrative subcarinal nodal mass has increased and cannot be separated from the esophagus.
+OBX: 55|TX|&IMP||4.  New right hepatic metastatic deposit.  The previously identified lesion closer to the liver dome is
+OBX: 56|TX|&IMP||unchanged compared to MRI study from 09/26/2009 and may represent hepatic hemangioma versus treated
+OBX: 57|TX|&IMP||metastatic deposit.  SKS/jas
+OBX: 58|TX|&IMP|| 
+OBX: 59|TX|&IMP|| 
+OBX: 60|TX|&IMP|| 
+OBX: 61|TX|&IMP|| 
+OBX: 62|TX|&IMP|| 
+OBX: 63|TX|&IMP|| 
+OBX: 64|TX|&IMP|| 
+OBX: 65|TX|&IMP|| 
+OBX: 66|TX|&IMP||Dictated By:      SETH, SUMIT K, MD                     5/4/2011 2:26:34 PM
+OBX: 67|TX|&IMP||Transcribed By:   Stevens, Julie A, Transcriptionist    5/4/2011 2:37:35 PM
+OBX: 68|TX|&IMP||Finalized By:     SETH, SUMIT K, MD                     5/4/2011 3:00:38 PM
+OBX: 69|TX|&IMP
+OBX: 70|TX|&IMP
+OBX: 71|TX|&IMP
+OBX: 72|TX|&IMP||Thank you for your imaging referral and for choosing OhioHealth and Riverside Radiology Associates. If you are a physician's office and have questions regarding this report, please call 566-1RAD.
+==================================================================
+.............F.F........................................................................................................................................................F.......
+
+Failures:
+
+  1) Ohio Health Rad HL7 OBR segment has a valid result interpreter
+     Failure/Error: res_int[8].should =~ /\w+PROV$/
+       expected: /\w+PROV$/
+            got: "" (using =~)
+       Diff:
+       @@ -1,2 +1,2 @@
+       -/\w+PROV$/
+       +""
+     # ./spec/rad_spec.rb:47:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  2) Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+     Failure/Error: HL7Test.is_datetime?( dt ).should be_true if dt
+       expected: true value
+            got: false
+     # ./spec/rad_spec.rb:58:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  3) Ohio Health Rad HL7 PV1 segment has a valid patient location
+     Failure/Error: loc[2].should be_empty
+     NoMethodError:
+       undefined method `empty?' for nil:NilClass
+     # ./spec/rad_spec.rb:97:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+Finished in 0.01562 seconds
+176 examples, 3 failures
+
+Failed examples:
+
+rspec ./spec/rad_spec.rb:45 # Ohio Health Rad HL7 OBR segment has a valid result interpreter
+rspec ./spec/rad_spec.rb:56 # Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+rspec ./spec/rad_spec.rb:94 # Ohio Health Rad HL7 PV1 segment has a valid patient location
+
+==============================RECORD==============================
+MSH: ^~\&|CENRAD|DH|||20140226123258||ORU^R01||T|2.3
+PID: ||03102883^^^ST01||Snyder^Lori^A||196207240000|F|||^^^^^^^|||||||1114010067^^^^STARACC|301727119
+PV1: |Outpatient|^^||||13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|^^^^^^^^STARPROV^^^^STARPROV||||||||13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|12|1114010067|||||||||||||||||||||||||201105200753|201105202359
+ORC: ||||||||201105201137||||
+OBR: 1||H19446139|^MM DIAGNOSTIC MAMMOGRAM DIGITAL WITH CAD LEFT|||201105201137|||||||||13945^^^^^^^^STARPROV^^^^STARPROV||||||201105230703|||F|||||||11484^^^^^^^^STARPROV^^^^
+OBX: 1|TX|&GDT||Clinical Information: screening   call back  793.89
+OBX: 2|TX|&GDT||DIAGNOSTIC DIGITAL LEFT BREAST MAMMOGRAM WITH CAD, LEFT BREAST ULTRASOUND: 
+OBX: 3|TX|&GDT|| 
+OBX: 4|TX|&GDT||CLINICAL NOTE:  Two nodules are noted in the upper outer quadrant of the left breast on the recent
+OBX: 5|TX|&GDT||screening study.  Now for diagnostic workup.
+OBX: 6|TX|&GDT|| 
+OBX: 7|TX|&GDT||Digital left diagnostic mammography with computer-aided detection, R-2 checker, version 8.3.
+OBX: 8|TX|&GDT|| 
+OBX: 9|TX|&GDT||COMPARISONS:  The screening study done 2 days ago.
+OBX: 10|TX|&GDT|| 
+OBX: 11|TX|&GDT||BREAST COMPOSITION:  Prominent glandular pattern.
+OBX: 12|TX|&GDT|| 
+OBX: 13|TX|&GDT||DISCUSSION:  Coned compression images were obtained of the left breast in the CC and MLO positions as
+OBX: 14|TX|&GDT||well as a 90 degrees ML position.
+OBX: 15|TX|&GDT|| 
+OBX: 16|TX|&GDT||The two small nodular opacities are again seen in the upper outer quadrant.  These are fairly well
+OBX: 17|TX|&GDT||demarcated.  No associated calcifications are seen.
+OBX: 18|TX|&GDT|| 
+OBX: 19|TX|&GDT||TARGETED ULTRASOUND STUDY OF THE LEFT BREAST: Upper outer quadrant reveals several tiny cysts.  One of
+OBX: 20|TX|&GDT||these measures 1 cm in its greatest dimension while the others are all subcentimeter in size. 
+OBX: 21|TX|&GDT||Malignancy is not seen.
+OBX: 22|TX|&GDT|| 
+OBX: 23|TX|&GDT||BIRADS CATEGORY: 2/benign.
+OBX: 24|TX|&GDT|| 
+OBX: 25|TX|&IMP||IMPRESSION:  
+OBX: 26|TX|&IMP|| 
+OBX: 27|TX|&IMP||Benign findings.  Several tiny cysts are demonstrated in the upper outer quadrant of the left breast by
+OBX: 28|TX|&IMP||ultrasound.
+OBX: 29|TX|&IMP|| 
+OBX: 30|TX|&IMP||RECOMMENDATION:  Routine screening.
+OBX: 31|TX|&IMP|| 
+OBX: 32|TX|&IMP||A letter of notification will be sent to the patient regarding the results.
+OBX: 33|TX|&IMP|| 
+OBX: 34|TX|&IMP||REF/ng
+OBX: 35|TX|&IMP|| 
+OBX: 36|TX|&IMP|| 
+OBX: 37|TX|&IMP|| 
+OBX: 38|TX|&IMP|| 
+OBX: 39|TX|&IMP|| 
+OBX: 40|TX|&IMP||Dictated By:      FARNEMAN, ROY, DO                     5/20/2011 1:25:23 PM
+OBX: 41|TX|&IMP||Transcribed By:   Mall-Graves, Nisha, Transcriptionist  5/20/2011 2:40:20 PM
+OBX: 42|TX|&IMP||Finalized By:     FARNEMAN, ROY, DO                     5/23/2011 7:03:21 AM
+OBX: 43|TX|&IMP
+OBX: 44|TX|&IMP
+OBX: 45|TX|&IMP
+OBX: 46|TX|&IMP||Thank you for your imaging referral and for choosing OhioHealth and Dr. T.C. Hobbs and Associates, Inc.
+==================================================================
+.............F.F....................................................................................................F.......
+
+Failures:
+
+  1) Ohio Health Rad HL7 OBR segment has a valid result interpreter
+     Failure/Error: res_int[8].should =~ /\w+PROV$/
+       expected: /\w+PROV$/
+            got: "" (using =~)
+       Diff:
+       @@ -1,2 +1,2 @@
+       -/\w+PROV$/
+       +""
+     # ./spec/rad_spec.rb:47:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  2) Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+     Failure/Error: HL7Test.is_datetime?( dt ).should be_true if dt
+       expected: true value
+            got: false
+     # ./spec/rad_spec.rb:58:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  3) Ohio Health Rad HL7 PV1 segment has a valid patient location
+     Failure/Error: loc[2].should be_empty
+     NoMethodError:
+       undefined method `empty?' for nil:NilClass
+     # ./spec/rad_spec.rb:97:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+Finished in 0.01563 seconds
+124 examples, 3 failures
+
+Failed examples:
+
+rspec ./spec/rad_spec.rb:45 # Ohio Health Rad HL7 OBR segment has a valid result interpreter
+rspec ./spec/rad_spec.rb:56 # Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+rspec ./spec/rad_spec.rb:94 # Ohio Health Rad HL7 PV1 segment has a valid patient location
+
+==============================RECORD==============================
+MSH: ^~\&|CENRAD|DH|||20140226123258||ORU^R01||T|2.3
+PID: ||03102883^^^ST01||Snyder^Lori^A||196207240000|F|||^^^^^^^|||||||1114010067^^^^STARACC|301727119
+PV1: |Outpatient|^^||||13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|^^^^^^^^STARPROV^^^^STARPROV||||||||13945^Perez^James^J^^^DO^^STARPROV^^^^STARPROV|12|1114010067|||||||||||||||||||||||||201105200753|201105202359
+ORC: ||||||||201105201154||||
+OBR: 1||H19446242|IMG522^US BREAST LEFT|||201105201154|||||||||13945^^^^^^^^STARPROV^^^^STARPROV||||||201105230703|||F|||||||11484^^^^^^^^STARPROV^^^^
+OBX: 1|TX|&GDT||Clinical Information: callback
+OBX: 2|TX|&GDT||DIAGNOSTIC DIGITAL LEFT BREAST MAMMOGRAM WITH CAD, LEFT BREAST ULTRASOUND: 
+OBX: 3|TX|&GDT|| 
+OBX: 4|TX|&GDT||CLINICAL NOTE:  Two nodules are noted in the upper outer quadrant of the left breast on the recent
+OBX: 5|TX|&GDT||screening study.  Now for diagnostic workup.
+OBX: 6|TX|&GDT|| 
+OBX: 7|TX|&GDT||Digital left diagnostic mammography with computer-aided detection, R-2 checker, version 8.3.
+OBX: 8|TX|&GDT|| 
+OBX: 9|TX|&GDT||COMPARISONS:  The screening study done 2 days ago.
+OBX: 10|TX|&GDT|| 
+OBX: 11|TX|&GDT||BREAST COMPOSITION:  Prominent glandular pattern.
+OBX: 12|TX|&GDT|| 
+OBX: 13|TX|&GDT||DISCUSSION:  Coned compression images were obtained of the left breast in the CC and MLO positions as
+OBX: 14|TX|&GDT||well as a 90 degrees ML position.
+OBX: 15|TX|&GDT|| 
+OBX: 16|TX|&GDT||The two small nodular opacities are again seen in the upper outer quadrant.  These are fairly well
+OBX: 17|TX|&GDT||demarcated.  No associated calcifications are seen.
+OBX: 18|TX|&GDT|| 
+OBX: 19|TX|&GDT||TARGETED ULTRASOUND STUDY OF THE LEFT BREAST: Upper outer quadrant reveals several tiny cysts.  One of
+OBX: 20|TX|&GDT||these measures 1 cm in its greatest dimension while the others are all subcentimeter in size. 
+OBX: 21|TX|&GDT||Malignancy is not seen.
+OBX: 22|TX|&GDT|| 
+OBX: 23|TX|&GDT||BIRADS CATEGORY: 2/benign.
+OBX: 24|TX|&GDT|| 
+OBX: 25|TX|&IMP||IMPRESSION:  
+OBX: 26|TX|&IMP|| 
+OBX: 27|TX|&IMP||Benign findings.  Several tiny cysts are demonstrated in the upper outer quadrant of the left breast by
+OBX: 28|TX|&IMP||ultrasound.
+OBX: 29|TX|&IMP|| 
+OBX: 30|TX|&IMP||RECOMMENDATION:  Routine screening.
+OBX: 31|TX|&IMP|| 
+OBX: 32|TX|&IMP||A letter of notification will be sent to the patient regarding the results.
+OBX: 33|TX|&IMP|| 
+OBX: 34|TX|&IMP||REF/ng
+OBX: 35|TX|&IMP|| 
+OBX: 36|TX|&IMP|| 
+OBX: 37|TX|&IMP|| 
+OBX: 38|TX|&IMP|| 
+OBX: 39|TX|&IMP|| 
+OBX: 40|TX|&IMP||Dictated By:      FARNEMAN, ROY, DO                     5/20/2011 1:25:24 PM
+OBX: 41|TX|&IMP||Transcribed By:   Mall-Graves, Nisha, Transcriptionist  5/20/2011 2:40:21 PM
+OBX: 42|TX|&IMP||Dictated and Read by ROY  FARNEMAN DO
+OBX: 43|TX|&IMP
+OBX: 44|TX|&IMP
+OBX: 45|TX|&IMP
+OBX: 46|TX|&IMP||Thank you for your imaging referral and for choosing OhioHealth and Dr. T.C. Hobbs and Associates, Inc.
+==================================================================
+.............F.F....................................................................................................F.......
+
+Failures:
+
+  1) Ohio Health Rad HL7 OBR segment has a valid result interpreter
+     Failure/Error: res_int[8].should =~ /\w+PROV$/
+       expected: /\w+PROV$/
+            got: "" (using =~)
+       Diff:
+       @@ -1,2 +1,2 @@
+       -/\w+PROV$/
+       +""
+     # ./spec/rad_spec.rb:47:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  2) Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+     Failure/Error: HL7Test.is_datetime?( dt ).should be_true if dt
+       expected: true value
+            got: false
+     # ./spec/rad_spec.rb:58:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+  3) Ohio Health Rad HL7 PV1 segment has a valid patient location
+     Failure/Error: loc[2].should be_empty
+     NoMethodError:
+       undefined method `empty?' for nil:NilClass
+     # ./spec/rad_spec.rb:97:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:16:in `block in run_rspec'
+     # ./run_rspec.rb:11:in `each'
+     # ./run_rspec.rb:11:in `run_rspec'
+     # ./test_runner.rb:55:in `<main>'
+
+Finished in 0.03125 seconds
+124 examples, 3 failures
+
+Failed examples:
+
+rspec ./spec/rad_spec.rb:45 # Ohio Health Rad HL7 OBR segment has a valid result interpreter
+rspec ./spec/rad_spec.rb:56 # Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+rspec ./spec/rad_spec.rb:94 # Ohio Health Rad HL7 PV1 segment has a valid patient location

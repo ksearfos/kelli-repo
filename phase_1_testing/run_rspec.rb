@@ -6,25 +6,35 @@ require 'logger'
 def run_rspec( messages, file )
   $stdout.reopen(file, "w")   # send results of test to new file
   type = messages[0].type
-  $test_descriptions = []
-  $flagged_messages = {}
 
-  $logger.info "Beginning testing of #{type} messages"
+  $logger.info "Beginning testing of #{type} messages\n"
   messages.each{ |msg|
-    $message = msg
-    $logger.info "Beginning test of message: #{$message.id}\n"
- 
+    $flagged_messages = {}
+    $message = msg 
+    
+    introduce_record( msg )
     RSpec::Core::Runner.run [ "spec/#{type}_spec.rb" ]
+    summarize
   }  
   
-  summarize
-  
+end
+
+def introduce_record( message )
+    puts "\n#{"="*30}RECORD#{"="*30}\n"
+    message.view_segments
+    puts "#{"="*66}\n"
 end
 
 def summarize
   $logger.info "Number of records with potential errors: #{$flagged_messages.size}\n"    
-  $logger.info "#{'*'*80}\nElements Tested For:\n"
-  $test_descriptions.each{ |desc| $logger.info desc }
-  $logger.info "*"*80 + "\n"    
-  $flagged_messages.each_value{ |errs| errs.each{ |err_data| $logger.error err_data } }
+
+  $flagged_messages.each{ |msg,errs| 
+    div = '*' * 60
+    sz = errs.size
+    err_text = "#{sz} errors found for record\n\n#{msg}\n"
+    for i in (1..sz)
+      err_text << "Error #{i}: ".rjust(10) << errs[i-1] << "\n\n" 
+    end
+    $logger.error err_text
+  }
 end

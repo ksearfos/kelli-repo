@@ -5,53 +5,39 @@ require 'rspec/expectations'
 RSpec.configure do |config|
   
   config.after(:each) do
-    add_description( example.metadata[:full_description] )
-    log_example_exception( example, message ) if example.exception
+    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
   end
-  
+
 end
 
-def get_patient_info( message )
-  pid = message[:PID]
+def flag_example_exception( example, message )
+  exception_message = example.exception.to_s.split("Diff:")[0].chomp
 
-  str = <<-DONE
-  #{'='*30} Patient Information #{'='*30}
-  Name               : #{pid.patient_name.as_name}
-  MRN                : #{pid.patient_id}
-  Account Number     : #{pid.account_number}
-  Date of Birth      : #{pid.dob.as_date}
-  Encounter Date/Time: #{message[:OBR][:observation_date].as_datetime}
-  #{'='*87}
-  DONE
+  patt = example.metadata[:pattern]
+  error_message = "#{example.metadata[:full_description]}"
+  error_message << "(" + patt + ")" if patt
+  error_message << "\n" + exception_message
+  
+  dets = patient_details(message)
+  if $flagged_messages.has_key?( dets )
+    $flagged_messages[dets] << error_message
+  else
+    $flagged_messages[dets] = [error_message]
+  end
+end
+
+def patient_details( message )
+  det = message.details
+  str = <<-END
+  Message Date: #{message.header.field(:date_time).as_datetime}
+  Patient: #{det[:PT_ID]} - #{det[:PT_NAME]}
+  Account: #{det[:PT_ACCT]}
+  Date of Birth: #{det[:DOB]}      
+  END
+
+  if message.type != :adt
+    str << "  Procedure: #{det[:PROC_NAME]} on #{det[:PROC_DATE]}\n"
+  end
   
   str
-end
-
-def log_example_exception( example, message )
-  exception_message = ""
-  if example.exception.to_s[/Diff:/]
-    exception_message = example.exception.to_s.split("Diff:")[0]
-  else
-    exception_message = example.exception.to_s
-  end
-
-  error_message = <<-END
-    #{'*'*80}
-    Error found in:\n#{example.metadata[:full_description]}
-    Example Exception:\n#{cap_first( exception_message )}
-    Pattern translation:\n#{cap_first( example.metadata[:pattern] )}
-    #{'*'*87}
-  END
-  
-  if $flagged_messages.has_key?( message[0] )
-    $flagged_messages[message[0]] =
-      $flagged_messages.fetch(message[0]) << error_message
-  else
-    patient_info = get_patient_info( message )
-    $flagged_messages[message[0]] = [patient_info, error_message] 
-  end
-end
-
-def add_description( description )
-  $test_descriptions << description
 end
