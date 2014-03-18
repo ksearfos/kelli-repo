@@ -97,7 +97,7 @@ module OHProcs
     all_procs = {}
     vals.each{ |s| 
       key = "#{name}_of_#{s}".to_sym    # :some_val_of_x
-      all_procs[key] = Proc.new{ |rec| comp_is_val?(rec,field,1,s) }
+      all_procs[key] = Proc.new{ |rec| is_val?(rec,field,s) }
     }
     self.const_set( "#{field.upcase}_VALS", all_procs )
   end
