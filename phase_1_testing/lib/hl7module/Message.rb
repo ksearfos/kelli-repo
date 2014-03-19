@@ -210,12 +210,10 @@ module HL7Test
       h[:DOB] = @segments[:PID].field(:dob).as_date
       
       if @type != :adt
-        procedure = @segments[:OBR].procedure_id
-        time = @segments[:OBR].field(7).as_datetime
-        h[:PROC_NAME] = procedure
-        h[:PROC_DATE] = time
+        h[:PROC_NAME] = @segments[:OBR].procedure_id
+        h[:PROC_DATE] = @segments[:OBR].field(7).as_datetime
       else
-        h[:VISIT] = @segments[:PV1].visit_number
+        h[:VISIT_DATE] = @segments[:PV1].field(:admit_date_time).as_datetime
       end
       
       return h if all.empty?

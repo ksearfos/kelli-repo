@@ -5,12 +5,11 @@ class RecordComparer
   include OHProcs
   
   attr_reader :records, :matches, :use, :recs_to_use
-
-  @@details = [ :PT_NAME, :PT_ACCT, :PROC_NAME, :PROC_DATE ]
   
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
+    @details = ( type == :adt ? [:PT_NAME,:PT_ACCT,:VISIT_DATE] : [:PT_NAME,:PT_ACCT,:PROC_NAME,:PROC_DATE] )
     
     # items for tracking criteria
     @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
@@ -156,7 +155,7 @@ class RecordComparer
   end
   
   def fetch_details(rec)
-    rec.details(@@details)
+    rec.details(@details)
   end
 
   def pick_random( amt )
@@ -170,9 +169,14 @@ class RecordComparer
     str = <<STR
 NAME: #{rec[:PT_NAME]}
 ACCOUNT #: #{rec[:PT_ACCT]}
-PROCEDURE: #{rec[:PROC_NAME]}
-DATE/TIME: #{rec[:PROC_DATE]}
 STR
+    
+    if @details.include?(:VISIT_DATE)
+      str << "DATE/TIME: #{rec[:VISIT_DATE]}\n"
+    else
+      str << "PROCEDURE: #{rec[:PROC_NAME]}\n"
+      str << "DATE/TIME: #{rec[:PROC_DATE]}\n"
+    end
     
     str
   end
