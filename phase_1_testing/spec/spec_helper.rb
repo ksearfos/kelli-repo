@@ -8,6 +8,16 @@ def pass?( messages, logic )
   failed
 end
 
+def pass_for_each?( messages, logic, segment )
+  p = Proc.new{ |msg|
+    ok = true
+    msg[segment].each{ |seg| ok &&= logic.call(seg) }        
+    ok
+  }
+  
+  pass?( messages, p )
+end
+
 def log_example( example )
   $logger.info example_summary( example )
 end

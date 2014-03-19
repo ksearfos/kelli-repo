@@ -1,0 +1,29 @@
+Reading C:/Users/Owner/Documents/manifest_lab_out.txt...
+ew file(s):
+  C:/Users/Owner/Documents/manifest_lab_out.txt
+
+I, [2014-03-19T12:13:07.545101 #8184]  INFO -- : Found 12182 messages to test
+
+I, [2014-03-19T12:13:07.545101 #8184]  INFO -- : Beginning testing of messages
+
+I, [2014-03-19T12:13:08.045125 #8184]  INFO -- : Ohio Health Lab HL7 has an observation value of the appropriate type
+E, [2014-03-19T12:13:09.170177 #8184] ERROR -- : Failed for 38 records. See C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/logs/has_an_observation_value_of_the_appropriate_type.log.
+
+I, [2014-03-19T12:13:09.170177 #8184]  INFO -- : Ohio Health Lab HL7 behaves like every HL7 message has only one PID segment (only one PID line)
+I, [2014-03-19T12:13:09.185802 #8184]  INFO -- : Passed for all records.
+
+I, [2014-03-19T12:13:09.185802 #8184]  INFO -- : Ohio Health Lab HL7 behaves like every HL7 message has only one PV1 segment (only one PV1 line)
+I, [2014-03-19T12:13:09.201429 #8184]  INFO -- : Passed for all records.
+
+I, [2014-03-19T12:13:09.201429 #8184]  INFO -- : Ohio Health Lab HL7 PV1 segment has a valid attending doctor (begins with an optional P + digits, ends with (something)PROV)
+E, [2014-03-19T12:13:09.342067 #8184] ERROR -- : Failed for 106 records. See C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/logs/has_a_valid_attending_doctor.log.
+
+I, [2014-03-19T12:13:09.342067 #8184]  INFO -- : Ohio Health Lab HL7 PV1 segment has a valid patient class (not a single-digit number)
+I, [2014-03-19T12:13:09.404561 #8184]  INFO -- : Passed for all records.
+
+I, [2014-03-19T12:13:09.404561 #8184]  INFO -- : Ohio Health Lab HL7 PV1 segment has a valid Patient Type (one or two digits)
+I, [2014-03-19T12:13:09.467065 #8184]  INFO -- : Passed for all records.
+
+I, [2014-03-19T12:13:09.467065 #8184]  INFO -- : Ohio Health Lab HL7 PV1 segment does not have a VIP Indicator (PV1.16 is empty)
+I, [2014-03-19T12:13:09.482690 #8184]  INFO -- : Passed for all records.
+

@@ -1,0 +1,637 @@
+Ohio Health Lab HL7 PV1 segment has a valid attending doctor (begins with an optional P + digits, ends with (something)PROV)
+  Message Date: 01/28/2014 4:11:48 AM
+  Patient: 01049400 - Ruiwen Huang
+  Account: 1131933012
+  Date of Birth: 02/03/1974      
+  Procedure: 45217^^OHHOREAP on 11/15/2011 7:38 AM
+
+  Message Date: 01/28/2014 4:11:48 AM
+  Patient: 01049400 - Ruiwen Huang
+  Account: 1131933012
+  Date of Birth: 02/03/1974      
+  Procedure: 46087^^OHHOREAP on 11/15/2011 7:38 AM
+
+  Message Date: 01/28/2014 4:11:48 AM
+  Patient: 01049400 - Ruiwen Huang
+  Account: 1131933012
+  Date of Birth: 02/03/1974      
+  Procedure: 46126^^OHHOREAP on 11/15/2011 7:38 AM
+
+  Message Date: 01/28/2014 4:12:35 AM
+  Patient: 03268398 - Melinda D Reifenrath
+  Account: 1131332020
+  Date of Birth: 04/22/1980      
+  Procedure: 45826^^OHHOREAP on 11/09/2011 9:45 AM
+
+  Message Date: 01/28/2014 4:12:41 AM
+  Patient: 01050557 - Laura L Meyer
+  Account: 1135540159
+  Date of Birth: 02/20/1962      
+  Procedure: 45217^^OHHOREAP on 12/22/2011 4:09 PM
+
+  Message Date: 01/28/2014 4:12:41 AM
+  Patient: 01050557 - Laura L Meyer
+  Account: 1135540159
+  Date of Birth: 02/20/1962      
+  Procedure: 45866^^OHHOREAP on 12/22/2011 4:09 PM
+
+  Message Date: 01/28/2014 4:12:41 AM
+  Patient: 01050558 - Judith A Poe
+  Account: 1124140108
+  Date of Birth: 12/21/1939      
+  Procedure: 46932^^OHHOREAP on 11/02/2011 6:26 AM
+
+  Message Date: 01/28/2014 4:12:53 AM
+  Patient: 00211517 - Rebecca H Gullett
+  Account: 1127030298
+  Date of Birth: 07/18/1943      
+  Procedure: 45217^^OHHOREAP on 09/28/2011 9:45 AM
+
+  Message Date: 01/28/2014 4:12:53 AM
+  Patient: 00211517 - Rebecca H Gullett
+  Account: 1127030298
+  Date of Birth: 07/18/1943      
+  Procedure: 46953^^OHHOREAP on 09/28/2011 9:45 AM
+
+  Message Date: 01/28/2014 4:12:53 AM
+  Patient: 00211517 - Rebecca H Gullett
+  Account: 1127030298
+  Date of Birth: 07/18/1943      
+  Procedure: 47015^^OHHOREAP on 09/28/2011 1:00 PM
+
+  Message Date: 01/28/2014 4:12:53 AM
+  Patient: 00211517 - Rebecca H Gullett
+  Account: 1127030298
+  Date of Birth: 07/18/1943      
+  Procedure: 48161^^OHHOREAP on 09/28/2011 0:01 AM
+
+  Message Date: 01/28/2014 4:13:01 AM
+  Patient: 03294644 - Thomas E Manuel
+  Account: 1127640080
+  Date of Birth: 06/13/1942      
+  Procedure: 47015^^OHHOREAP on 10/12/2011 11:21 AM
+
+  Message Date: 01/28/2014 4:13:07 AM
+  Patient: 03333473 - Debora A Obryan
+  Account: A2079834
+  Date of Birth: 01/23/1955      
+  Procedure: 4ACBCD^^OHHOREAP on 12/29/2011 11:51 AM
+
+  Message Date: 01/28/2014 4:13:07 AM
+  Patient: 03333473 - Debora A Obryan
+  Account: A2079834
+  Date of Birth: 01/23/1955      
+  Procedure: 4ALIPPROF^^OHHOREAP on 12/29/2011 11:51 AM
+
+  Message Date: 01/28/2014 4:13:07 AM
+  Patient: 03333473 - Debora A Obryan
+  Account: A2079834
+  Date of Birth: 01/23/1955      
+  Procedure: 4ACMETPAN^^OHHOREAP on 12/29/2011 11:51 AM
+
+  Message Date: 01/28/2014 4:13:07 AM
+  Patient: 03333473 - Debora A Obryan
+  Account: A2079834
+  Date of Birth: 01/23/1955      
+  Procedure: 4ATSH^^OHHOREAP on 12/29/2011 11:51 AM
+
+  Message Date: 01/28/2014 4:13:07 AM
+  Patient: 03333473 - Debora A Obryan
+  Account: A2079834
+  Date of Birth: 01/23/1955      
+  Procedure: 4A4103^^OHHOREAP on 12/29/2011 11:51 AM
+
+  Message Date: 01/28/2014 4:14:03 AM
+  Patient: 01062611 - Wilma J Blythe
+  Account: 1129840132
+  Date of Birth: 12/09/1933      
+  Procedure: 46932^^OHHOREAP on 11/14/2011 8:17 AM
+
+  Message Date: 01/28/2014 4:14:03 AM
+  Patient: 01062611 - Wilma J Blythe
+  Account: 1129840132
+  Date of Birth: 12/09/1933      
+  Procedure: 46932^^OHHOREAP on 11/14/2011 9:37 AM
+
+  Message Date: 01/28/2014 4:14:03 AM
+  Patient: 01062611 - Wilma J Blythe
+  Account: 1129840132
+  Date of Birth: 12/09/1933      
+  Procedure: 46932^^OHHOREAP on 11/14/2011 10:40 AM
+
+  Message Date: 01/28/2014 4:14:03 AM
+  Patient: 01062611 - Wilma J Blythe
+  Account: 1129840132
+  Date of Birth: 12/09/1933      
+  Procedure: 47015^^OHHOREAP on 11/14/2011 9:50 AM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45217^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45033^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45014^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46472^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46126^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 47230^^OHHOREAP on 12/28/2011 8:49 PM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45332^^OHHOREAP on 12/30/2011 8:47 AM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45329^^OHHOREAP on 12/31/2011 6:48 AM
+
+  Message Date: 01/28/2014 4:14:09 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45332^^OHHOREAP on 12/31/2011 6:48 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 44046^^OHHOREAP on 12/31/2011 1:59 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 44014^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 44014^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46932^^OHHOREAP on 12/29/2011 10:55 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 44053^^OHHOREAP on 12/29/2011 10:00 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45218^^OHHOREAP on 12/30/2011 8:47 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45866^^OHHOREAP on 12/30/2011 8:47 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45329^^OHHOREAP on 12/30/2011 8:47 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46953^^OHHOREAP on 12/30/2011 8:47 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45332^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46608^^OHHOREAP on 12/29/2011 12:26 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45329^^OHHOREAP on 12/29/2011 12:26 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45332^^OHHOREAP on 12/29/2011 12:26 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46932^^OHHOREAP on 12/29/2011 11:25 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46932^^OHHOREAP on 12/29/2011 4:52 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45218^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46109^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46608^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46953^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45866^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45329^^OHHOREAP on 12/29/2011 7:56 AM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46608^^OHHOREAP on 12/28/2011 8:50 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45329^^OHHOREAP on 12/28/2011 8:50 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46965^^OHHOREAP on 12/28/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 47548^^OHHOREAP on 12/28/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 45332^^OHHOREAP on 12/28/2011 8:50 PM
+
+  Message Date: 01/28/2014 4:14:10 AM
+  Patient: 03271472 - Steven R Minic
+  Account: 1136233151
+  Date of Birth: 01/07/1987      
+  Procedure: 46932^^OHHOREAP on 12/29/2011 5:25 AM
+
+  Message Date: 01/28/2014 4:14:28 AM
+  Patient: 03280439 - Steven O Young
+  Account: 1128633266
+  Date of Birth: 01/22/1952      
+  Procedure: 46629^^OHHOREAP on 10/13/2011 12:41 AM
+
+  Message Date: 01/28/2014 4:14:30 AM
+  Patient: 00897205 - Howard E Peck
+  Account: 1134130207
+  Date of Birth: 11/19/1918      
+  Procedure: 47408^^OHHOREAP on 12/07/2011 8:36 AM
+
+  Message Date: 01/28/2014 4:14:30 AM
+  Patient: 00897205 - Howard E Peck
+  Account: 1134130207
+  Date of Birth: 11/19/1918      
+  Procedure: 46619^^OHHOREAP on 12/07/2011 9:13 AM
+
+  Message Date: 01/28/2014 4:14:30 AM
+  Patient: 00897205 - Howard E Peck
+  Account: 1134130207
+  Date of Birth: 11/19/1918      
+  Procedure: ABORH^^OHHOREAP on 12/07/2011 9:34 AM
+
+  Message Date: 01/28/2014 4:14:30 AM
+  Patient: 00897205 - Howard E Peck
+  Account: 1134130207
+  Date of Birth: 11/19/1918      
+  Procedure: RBC2^^OHHOREAP on 12/07/2011 8:36 AM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04262289 - Todd M Lucas
+  Account: A2053204
+  Date of Birth: 05/03/1971      
+  Procedure: 4ACBCD^^OHHOREAP on 10/28/2011 2:41 PM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04262289 - Todd M Lucas
+  Account: A2053204
+  Date of Birth: 05/03/1971      
+  Procedure: 4AAST^^OHHOREAP on 10/28/2011 2:41 PM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04262289 - Todd M Lucas
+  Account: A2053204
+  Date of Birth: 05/03/1971      
+  Procedure: 4AALT^^OHHOREAP on 10/28/2011 2:41 PM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04262289 - Todd M Lucas
+  Account: A2053204
+  Date of Birth: 05/03/1971      
+  Procedure: 4AALP^^OHHOREAP on 10/28/2011 2:41 PM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04262289 - Todd M Lucas
+  Account: A2053204
+  Date of Birth: 05/03/1971      
+  Procedure: 4ATBI^^OHHOREAP on 10/28/2011 2:41 PM
+
+  Message Date: 01/28/2014 4:15:29 AM
+  Patient: 03274293 - Juliana Frimpong
+  Account: 1130140053
+  Date of Birth: 10/25/1965      
+  Procedure: 48123^^OHHOREAP on 11/28/2011 6:15 AM
+
+  Message Date: 01/28/2014 4:15:29 AM
+  Patient: 03274293 - Juliana Frimpong
+  Account: 1130140053
+  Date of Birth: 10/25/1965      
+  Procedure: 47015^^OHHOREAP on 11/28/2011 9:22 AM
+
+  Message Date: 01/28/2014 4:15:29 AM
+  Patient: 03274293 - Juliana Frimpong
+  Account: 1130140053
+  Date of Birth: 10/25/1965      
+  Procedure: 45217^^OHHOREAP on 12/01/2011 11:15 AM
+
+  Message Date: 01/28/2014 4:15:29 AM
+  Patient: 03274293 - Juliana Frimpong
+  Account: 1130140053
+  Date of Birth: 10/25/1965      
+  Procedure: 46124^^OHHOREAP on 12/01/2011 11:15 AM
+
+  Message Date: 01/28/2014 4:15:31 AM
+  Patient: 01446898 - Barbara T Hoffmann
+  Account: 1133932750
+  Date of Birth: 08/06/1968      
+  Procedure: 875D^^OHHOREAP on 12/05/2011 4:06 PM
+
+  Message Date: 01/28/2014 4:15:31 AM
+  Patient: 01446898 - Barbara T Hoffmann
+  Account: 1133932750
+  Date of Birth: 08/06/1968      
+  Procedure: 46391^^OHHOREAP on 12/05/2011 4:06 PM
+
+  Message Date: 01/28/2014 4:15:31 AM
+  Patient: 01446898 - Barbara T Hoffmann
+  Account: 1133932750
+  Date of Birth: 08/06/1968      
+  Procedure: 46314^^OHHOREAP on 12/05/2011 4:06 PM
+
+  Message Date: 01/28/2014 4:17:08 AM
+  Patient: 03288954 - Charlotte A Jordan
+  Account: 1136332139
+  Date of Birth: 07/21/1954      
+  Procedure: 46314^^OHHOREAP on 12/29/2011 3:11 PM
+
+  Message Date: 01/28/2014 4:17:08 AM
+  Patient: 03288954 - Charlotte A Jordan
+  Account: 1136332139
+  Date of Birth: 07/21/1954      
+  Procedure: 46391^^OHHOREAP on 12/29/2011 3:11 PM
+
+  Message Date: 01/28/2014 4:17:54 AM
+  Patient: 00157189 - Thomas J Koehler
+  Account: 1133332666
+  Date of Birth: 07/18/1935      
+  Procedure: 46124^^OHHOREAP on 11/29/2011 4:13 PM
+
+  Message Date: 01/28/2014 4:18:12 AM
+  Patient: 04304646 - Jude R Eagan
+  Account: 1131430104
+  Date of Birth: 11/10/2011      
+  Procedure: 46725^^OHHOREAP on 11/10/2011 3:43 AM
+
+  Message Date: 01/28/2014 4:18:12 AM
+  Patient: 04304646 - Jude R Eagan
+  Account: 1131430104
+  Date of Birth: 11/10/2011      
+  Procedure: 46734^^OHHOREAP on 11/10/2011 3:43 AM
+
+  Message Date: 01/28/2014 4:18:12 AM
+  Patient: 04304646 - Jude R Eagan
+  Account: 1131430104
+  Date of Birth: 11/10/2011      
+  Procedure: 46932^^OHHOREAP on 11/10/2011 10:32 AM
+
+  Message Date: 01/28/2014 4:18:17 AM
+  Patient: 01063257 - Bharti Gupta
+  Account: 1133232844
+  Date of Birth: 11/29/1975      
+  Procedure: 45217^^OHHOREAP on 11/28/2011 1:58 PM
+
+  Message Date: 01/28/2014 4:18:17 AM
+  Patient: 01063257 - Bharti Gupta
+  Account: 1133232844
+  Date of Birth: 11/29/1975      
+  Procedure: 46124^^OHHOREAP on 11/28/2011 1:58 PM
+
+  Message Date: 01/28/2014 4:18:17 AM
+  Patient: 01063257 - Bharti Gupta
+  Account: 1133232844
+  Date of Birth: 11/29/1975      
+  Procedure: 46612^^OHHOREAP on 11/28/2011 1:58 PM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 47408^^OHHOREAP on 12/21/2011 7:14 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46625^^OHHOREAP on 12/21/2011 6:50 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: XMGEL^^OHHOREAP on 12/21/2011 7:46 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: XMGEL^^OHHOREAP on 12/21/2011 7:46 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: RBC2^^OHHOREAP on 12/21/2011 7:14 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46608^^OHHOREAP on 12/22/2011 2:16 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 44053^^OHHOREAP on 12/21/2011 6:50 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 45218^^OHHOREAP on 12/23/2011 5:23 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 45336^^OHHOREAP on 12/23/2011 5:23 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46351^^OHHOREAP on 12/23/2011 5:23 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46124^^OHHOREAP on 12/23/2011 4:58 PM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46608^^OHHOREAP on 12/21/2011 10:42 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46909^^OHHOREAP on 12/21/2011 1:30 PM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46351^^OHHOREAP on 12/21/2011 1:30 PM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46608^^OHHOREAP on 12/21/2011 5:41 PM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 45218^^OHHOREAP on 12/22/2011 2:16 AM
+
+  Message Date: 01/28/2014 4:18:19 AM
+  Patient: 01203872 - Beverly A Tisdale
+  Account: 1133420796
+  Date of Birth: 11/19/1942      
+  Procedure: 46953^^OHHOREAP on 12/22/2011 2:16 AM
+
+  Message Date: 01/28/2014 4:18:33 AM
+  Patient: 03281466 - James D Mayabb
+  Account: 1125032470
+  Date of Birth: 07/11/1953      
+  Procedure: 47015^^OHHOREAP on 09/02/2011 5:36 PM
+
+  Message Date: 01/28/2014 4:18:51 AM
+  Patient: 03293185 - Jana M Drvota
+  Account: 1133330368
+  Date of Birth: 11/06/1933      
+  Procedure: 45217^^OHHOREAP on 11/29/2011 8:49 AM
+
+  Message Date: 01/28/2014 4:18:51 AM
+  Patient: 03293185 - Jana M Drvota
+  Account: 1133330368
+  Date of Birth: 11/06/1933      
+  Procedure: 46087^^OHHOREAP on 11/29/2011 8:49 AM
+
+  Message Date: 01/28/2014 4:18:51 AM
+  Patient: 03293185 - Jana M Drvota
+  Account: 1133330368
+  Date of Birth: 11/06/1933      
+  Procedure: 46613^^OHHOREAP on 11/29/2011 8:49 AM
+
+  Message Date: 01/28/2014 4:18:51 AM
+  Patient: 03293185 - Jana M Drvota
+  Account: 1133330368
+  Date of Birth: 11/06/1933      
+  Procedure: 46126^^OHHOREAP on 11/29/2011 8:49 AM
+
+  Message Date: 01/28/2014 4:18:51 AM
+  Patient: 03293185 - Jana M Drvota
+  Account: 1136432736
+  Date of Birth: 11/06/1933      
+  Procedure: 44053^^OHHOREAP on 12/30/2011 9:53 PM
+

@@ -2,57 +2,86 @@ require 'shared_examples'
 require 'spec_helper'
 
 describe "Ohio Health Lab HL7" do
-    
+  before(:all) do
+    @messages = $messages
+  end 
+  
+  before(:each) do
+    log_example( example )
+    @failed = []
+  end 
+      
   # == General message tests
-  include_examples "General", $message
+  it_behaves_like "every HL7 message" do
+    let(:message){ @messages }
+  end
 
   # == MSH tests
-  context "MSH segment" do
-    msh = $message.header    
-    include_examples "MSH segment", msh
+  it_behaves_like "MSH segment" do
+    let(:message){ @messages }
   end
 
   # == ORC tests
   context "ORC segment" do
     it "has a Control ID of two characters" do
-      $message[:ORC].order_control.size.should == 2
+      logic = Proc.new{ |msg| msg[:ORC].order_control.size == 2 }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
   end
 
   # == OBR tests    
   context "OBR segment" do
-    $message[:OBR].each do |obr|
-      include_examples "OBR segment", obr
+    it_behaves_like "OBR segment" do
+      let(:message){ @messages }
+    end
 
-      it "has a valid procedure ID", :pattern => 'capital letters + numbers' do
-        proc_id = obr.field(:procedure_id)      
-        proc_id[1].should =~ /^[A-Z0-9]+/
-      end
+    it "has a valid procedure ID", :pattern => 'capital letters + numbers' do
+      logic = Proc.new{ |msg|
+        msg[:OBR].each{ |obr| obr.field(:procedure_id)[1] =~ /^[A-Z0-9]+/ }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
 
-      it "has the same observation date and result status date", :pattern => 'OBR.7 == OBR.22' do
-        obr.field(:result_date_time).as_date.should == obr.field(:observation_date_time).as_date
-      end
-    end #each
+    it "has the same observation date and result status date" do
+      logic = Proc.new{ |msg|
+        msg[:OBR].each{ |obr| obr.field(:result_date_time).as_date == obr.field(:observation_date_time).as_date }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
   end 
 
   # == OBX tests
   context "OBX segment" do
-    $message[:OBX].each do |obx|
-      
-      it "has the correct component ID", :pattern => 'LA01' do
-        obx.field(:component_id)[-1].should == 'LA01'
-      end
+    it "has the correct component ID", :pattern => 'LA01' do
+      logic = Proc.new{ |msg|
+        msg[:OBX].each{ |obx| obx.field(:component_id)[-1] == 'LA01' }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
 
-      it "has an observation value of the appropriate type", :pattern => "a #{obx.value_type}" do
-        HL7Test.has_correct_format?(obx.value,obx.value_type).should be_true
-      end
+    it "has an observation value of the appropriate type" do
+      logic = Proc.new{ |msg|
+        msg[:OBX].each{ |obx| HL7Test.has_correct_format?(obx.value,obx.value_type) }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
     
-      context "with value type of SN or NM" do
-        if obx.value_type != 'TX'
-          it "has valid Units" do
+    context "with value type of SN or NM" do
+      it "has valid Units" do
+        logic = Proc.new{ |obx|
+          if obx.type[0] != 'T'   # not a TX or TS, e.g. a NM or SN
             u = obx.units
-            HL7Test::UNITS.should include u unless u.empty? 
+            u.empty? || HL7Test::UNITS.include?(u)
           end
+        }
+        @failed = pass_for_each?( @messages, logic, :OBX )
+        @failed.should be_empty
+      end
 
           it "has a valid reference range", :pattern => "number - number" do
             range = obx.reference_range
@@ -61,11 +90,21 @@ describe "Ohio Health Lab HL7" do
             nums.size.should eq 2
             HL7Test.is_numeric?(nums.first).should be_true
             HL7Test.is_numeric?(nums.last).should be_true
+                  logic = Proc.new{ |msg|
+        msg[:OBR].each{ |obr| obr.field(:procedure_id)[1] =~ /^[A-Z0-9]+/ }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
           end
 
           it "has a valid Abnormal Flag" do
             flag = obx.abnormal_flag
             HL7Test::ABNORMAL_FLAGS.should include flag unless flag.empty?
+                  logic = Proc.new{ |msg|
+        msg[:OBR].each{ |obr| obr.field(:procedure_id)[1] =~ /^[A-Z0-9]+/ }
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
           end
         end #if
       end #context - SN or NM
@@ -74,13 +113,13 @@ describe "Ohio Health Lab HL7" do
 
   # == PID tests
   context "PID segment" do
-    include_examples "PID segment", $message[:PID] 
+    include_examples "PID segment", msg[:PID] 
   end
 
   # == PV1 tests
   context "PV1 segment" do
-    pv1 = $message[:PV1]
-    include_examples "PV1 and PID segments", pv1, $message[:PID]
+    pv1 = msg[:PV1]
+    include_examples "PV1 and PID segments", pv1, msg[:PID]
     include_examples "Lab/ADT PV1 segment", pv1
 
     it "has a valid attending doctor", :pattern => 'begins with an optional P + digits, ends with (something)PROV' do
@@ -105,8 +144,6 @@ describe "Ohio Health Lab HL7" do
   end
 
   after(:each) do
-    # flag_record if example.exception
-    
-    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
+    log_result( @failed, example )
   end
 end

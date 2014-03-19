@@ -14,12 +14,22 @@ describe "Ohio Health Lab HL7" do
 
   # == General message tests
   it_behaves_like "every HL7 message" do
-    let(:message){ @messages }
+    let(:messages){ @messages }
   end
 
+  # == OBX test
+  it "has an observation value of the appropriate type" do
+    logic = Proc.new{ |msg|
+      ok = true
+      msg[:OBX].each{ |obx| ok &&= HL7Test.has_correct_format?(obx.value,obx.value_type) }
+      ok
+    }
+    @failed = pass?( @messages, logic )
+    @failed.should be_empty
+  end
+    
   # == PV1 tests
   context "PV1 segment" do
-
     it "has a valid attending doctor", :pattern => 'begins with an optional P + digits, ends with (something)PROV' do
       logic = Proc.new{ |msg|
         att = msg[:PV1].field(:attending_doctor).components        
