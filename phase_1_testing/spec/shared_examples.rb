@@ -1,11 +1,16 @@
 # == General tests
-shared_examples "General" do |message|  
+shared_examples "every HL7 message" do  
+ 
   it "has only one PID segment", :pattern => '' do
-    message[:PID].size.should == 1
+    logic = Proc.new{ |msg| msg[:PID].size == 1 }
+    @failed = pass?( messages, logic )
+    @failed.should be_empty
   end
   
   it "has only one PV1 segment", :pattern => '' do
-    message[:PV1].size.should == 1
+    logic = Proc.new{ |msg| msg[:PV1].size == 1 }
+    @failed = pass?( messages, logic )
+    @failed.should be_empty
   end 
 end
 

@@ -2,14 +2,36 @@ require 'lib/hl7module/HL7'
 require 'rspec'
 require 'rspec/expectations'
 
-def flag_example_exception( example, message )
-  patt = example.metadata[:pattern]
-  error_message = "#{example.metadata[:full_description]}"
-  error_message << " (" + patt + ")" if patt
+def pass?( messages, logic )
+  failed = []
+  messages.each{ |msg| failed << msg unless logic.call(msg) }
+  failed
+end
 
-  $errors << error_message
-  # $errors[error_message] = patient_details( message ) unless $errors.has_key?( error_message )
-  # $found_error = true
+def log_example( example )
+  $logger.info example_summary( example )
+end
+
+def example_summary( example )
+  patt = example.metadata[:pattern]
+  message = "#{example.metadata[:full_description]}"
+  message << " (" + patt + ")" if patt
+  message  
+end  
+
+def log_result( ary, example )
+  if ary.empty?
+    $logger.info "Passed for all records.\n"
+  else
+    filename = example.metadata[:description].gsub(" ", "_") + ".log"
+    file = "#{$LOG_DIR}/#{filename}"
+    File.open( file, "w" ) do |f|
+      f.puts example_summary( example )
+      ary.each{ |rec| f.puts patient_details( rec ) + "\n" }
+    end
+
+    $logger.error "Failed for #{ary.size} records. See #{file}.\n"
+  end  
 end
 
 def patient_details( message )

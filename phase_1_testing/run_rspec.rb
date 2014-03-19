@@ -2,50 +2,24 @@
 
 require "spec/spec_helper"
 require 'logger'
-require 'FileUtils'
-
-MAX = 1000    # max number of records to test at one time
 
 def run_rspec( file, messages )
-  $flagged_records = []
-
-  i = 1
-  begin
-    recs = messages.pop( MAX )
-
-    set_up_rspec( file + "_#{i}" )
-    $logger.info "Checking batch #{i}...\n"
-    # $errors = {}    #=> { error => 1 message to have this error } 
-    
-    recs.each{ |msg|
-      $message = msg
-      # $found_error = false
-      $errors = []
-      RSpec::Core::Runner.run [ "spec/#{$message.type}_spec.rb" ]
-      # print_record(msg) if $found_error
-      
-      summarize
-    }
-    
-    # FileUtils.rm( file + "_#{i-1}" ) if i > 1 #truncate( file + "_#{i-1}", 0 )
-    i += 1
-  end until messages.empty?
-  
-  # $errors.each{ |err_txt,msg_summ| 
-    # $logger.error "#{err_txt}\n\n#{msg_summ}\n"
-  # }
+  set_up_rspec( file )
+  $messages = messages
+  RSpec::Core::Runner.run [ "spec/test_spec.rb" ]
+  # RSpec::Core::Runner.run [ "spec/#{$messages[0].type}_spec.rb" ]
 end
 
 def set_up_rspec( file )
-  # $stdout.reopen(file, "w")   # send results of test to new file
+  $stdout.reopen(file, "w")   # send results of test to new file
   $logger.info "Beginning testing of messages\n"
 end
 
-def print_record( message )
-    puts "\n#{"="*30}RECORD#{"="*30}\n"
-    $message.view_segments
-    puts "#{"="*66}\n"
-end
+# def print_record( message )
+    # puts "\n#{"="*30}RECORD#{"="*30}\n"
+    # $message.view_segments
+    # puts "#{"="*66}\n"
+# end
 
 def summarize
   sz = $errors.size

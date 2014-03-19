@@ -28,11 +28,11 @@ end
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 ftp = $LOAD_PATH[0]  # testing  
 # ftp = "d:/FTP"
-LOG_DIR = "#{ftp}/logs"
-LOG_FILE = "#{LOG_DIR}/#{dt}_testrunner.log"
+$LOG_DIR = "#{ftp}/logs"
+LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
 
 # create the directory, if needed
-`mkdir "#{LOG_DIR}"` unless File.exists?( LOG_DIR )
+`mkdir "#{$LOG_DIR}"` unless File.exists?( $LOG_DIR )
 
 test_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
 # test_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
@@ -44,9 +44,9 @@ $logger = set_up_logger(LOG_FILE)
 all_recs = get_records( hl7_files )
 
 # find records to manually validate, if RUN_RCOMP is true
-run_record_comparer( "#{LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
+run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
 
 # test all records, if RUN_RSPEC is true
-run_rspec( "#{LOG_DIR}/#{dt}_rspec", all_recs ) if RUN_RSPEC
+run_rspec( "#{$LOG_DIR}/#{dt}_rspec.log", all_recs ) if RUN_RSPEC
 
 $logger.close

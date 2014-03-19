@@ -5,7 +5,7 @@ require 'run_record_comparer'
 
 # set up and prettify the $logger
 def set_up_logger( file )
-  # $stdout.reopen(file, "w")
+  $stdout.reopen(file, "w")
   Logger.new file
 end
 
