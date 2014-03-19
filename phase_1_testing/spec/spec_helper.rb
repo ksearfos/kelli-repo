@@ -20,14 +20,7 @@ end
 
 def log_example( example )
   $logger.info example_summary( example )
-end
-
-def example_summary( example )
-  patt = example.metadata[:pattern]
-  message = "#{example.metadata[:full_description]}"
-  message << " (" + patt + ")" if patt
-  message  
-end  
+end 
 
 def log_result( ary, example )
   if ary.empty?
@@ -36,13 +29,20 @@ def log_result( ary, example )
     filename = example.metadata[:description].gsub(" ", "_") + ".log"
     file = "#{$LOG_DIR}/#{filename}"
     File.open( file, "w" ) do |f|
-      f.puts example_summary( example )
+      f.puts "Example: #{example_summary(example)}\n"
       ary.each{ |rec| f.puts patient_details( rec ) + "\n" }
     end
 
     $logger.error "Failed for #{ary.size} records. See #{file}.\n"
   end  
 end
+
+def example_summary( example )
+  patt = example.metadata[:pattern]
+  message = "#{example.metadata[:full_description]}"
+  message << " (" + patt + ")" if patt
+  message  
+end 
 
 def patient_details( message )
   det = message.details

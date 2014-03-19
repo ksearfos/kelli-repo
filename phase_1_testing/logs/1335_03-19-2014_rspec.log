@@ -1,0 +1,60 @@
+........F...F.F.F...FF......
+
+Failures:
+
+  1) Ohio Health Lab HL7 OBR segments behaves like normal OBR segments have a valid ordering provider
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     Shared Example Group: "normal OBR segments" called from ./spec/lab_spec.rb:37
+     # ./spec/shared_examples.rb:62:in `block (2 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+  2) Ohio Health Lab HL7 OBX segments has an observation value of the appropriate type
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/lab_spec.rb:65:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+  3) Ohio Health Lab HL7 OBX segments with SN or NM values have a valid reference range
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/lab_spec.rb:93:in `block (4 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+  4) Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid patient name
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     Shared Example Group: "a normal PID segment" called from ./spec/lab_spec.rb:113
+     # ./spec/shared_examples.rb:83:in `block (2 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+  5) Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid SSN
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     Shared Example Group: "a normal PID segment" called from ./spec/lab_spec.rb:113
+     # ./spec/shared_examples.rb:110:in `block (2 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+  6) Ohio Health Lab HL7 PV1 segment has a valid attending doctor
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/lab_spec.rb:134:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./test_runner.rb:50:in `<main>'
+
+Finished in 5.25 seconds
+28 examples, 6 failures
+
+Failed examples:
+
+rspec ./spec/shared_examples.rb:51 # Ohio Health Lab HL7 OBR segments behaves like normal OBR segments have a valid ordering provider
+rspec ./spec/lab_spec.rb:62 # Ohio Health Lab HL7 OBX segments has an observation value of the appropriate type
+rspec ./spec/lab_spec.rb:82 # Ohio Health Lab HL7 OBX segments with SN or NM values have a valid reference range
+rspec ./spec/shared_examples.rb:80 # Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid patient name
+rspec ./spec/shared_examples.rb:107 # Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid SSN
+rspec ./spec/lab_spec.rb:128 # Ohio Health Lab HL7 PV1 segment has a valid attending doctor

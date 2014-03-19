@@ -23,20 +23,23 @@ module HL7Test
   RESULT_MESSAGE_TYPE = "ORD^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
   
-  UNITS = [ '%', '/hpf', '/lpf', '/mcL', 'IU/mL', 'K/mcL', 'M/mcL', 'PG', 'U', 'U/L', 'U/mL', 'fL', 'g/dL',
-            'h', 'lbs', 'log IU/mL', 'mIU/mL', 'mL', 'mL/min/1.73 m2', 'mcIU/mL', 'mcg/dL', 'mcg/mL FEU',
-            'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mmHg', 'mm/hr', 'mmol/L', 'ng/dL',
-            'ng/mL', 'nmol/L', 'pH units', 'pg/mL', 'seconds', 'titer', 'weeks', 'years' ]
+  UNITS = [ '#/mcL', '%', '% of total Hb', '%/L', '/hpf', '/lpf', '/mcL', 'AU/mL', 'IU/mL', 'K/mcL', 'L/min',
+            'M/mL', 'M/mcL', 'PG', 'U', 'U/L', 'U/mL', 'Units', 'cells/mcL', 'copies/mL', 'fL', 'g', 'g/24 hr',
+            'g/dL', 'h', 'hours', 'inches', 'index', 'kU/L', 'lbs', 'log IU/mL', 'log copies/mL', 'mEq/L', 'mIU/mL',
+            'mL', 'mL/min', 'mL/min/1.73 m2', 'mOsm/L', 'mOsm/kg', 'mcIU/mL', 'mcg/24 h', 'mcg/dL', 'mcg/mL',
+            'mcg/mL FEU', 'mcmol/L', 'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mm/hr', 'mmol/L',
+            'ng/dL', 'ng/mL', 'ng/mL/h', 'nm', 'nmol/L', 'nmol/mL', 'pH units', 'pg/mL', 'ratio', 'seconds',
+            'sqMETERS', 'titer', 'umol/L', 'unit', 'weeks', 'years' ]
 
-  ABNORMAL_FLAGS = %w[ I CH CL H L A U N C ]
+  ABNORMAL_FLAGS = %w( I CH CL H L A U N C )
   
-  RESULT_STATUS = %w[ D F N O S W P C X R U I ]
+  RESULT_STATUS = %w( D F N O S W P C X R U I )
   
-  SEXES = %w[ F M O U A N C ]
+  SEXES = %w( F M O U A N C )
    
   MSH_FIELDS = { :sending_application => 2, :sending_facility => 3, :receiving_application => 4,
                  :receiving_facility => 5, :date_time => 6, :security => 7, :message_type => 8,
-                 :message_control_id => 9, :processing_id => 10, :version => 11 } 
+                 :event => 8, :message_control_id => 9, :processing_id => 10, :version => 11 } 
 
   # full list of PID fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-pid-segment              
   PID_FIELDS = { :set_id => 1, :patient_id => 3, :mrn => 3, :patient_name => 5, :mothers_maiden_name => 6,

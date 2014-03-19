@@ -14,7 +14,7 @@ shared_examples "every HL7 message" do
 end
 
 # == MSH tests
-shared_examples "MSH segment" do
+shared_examples "a normal MSH segment" do
   it "has a valid Message Control ID", :pattern => 'P if the sender is MGH, T otherwise' do
     logic = Proc.new{ |msg|
       msh = msg[:MSH]
@@ -41,7 +41,7 @@ shared_examples "MSH segment" do
 end
 
 # == OBR tests (orders only)
-shared_examples "OBR segments" do  
+shared_examples "normal OBR segments" do  
   it "have a valid Control Code", :pattern => "only letters, numbers, and spaces" do
     logic = Proc.new{ |obr| obr.control_code =~ /^[A-z0-9][A-z0-9 ]*/ }   
     @failed = pass_for_each?( messages, logic, :OBR )
@@ -76,7 +76,7 @@ shared_examples "OBR segments" do
 end
 
 # == PID tests
-shared_examples "PID segment" do |pid|
+shared_examples "a normal PID segment" do |pid|
   it "has a valid patient name" do
     logic = Proc.new{ |msg| HL7Test.is_name? msg[:PID].patient_name }
     @failed = pass?( messages, logic )
@@ -112,7 +112,7 @@ shared_examples "PID segment" do |pid|
 end
 
 # == ADT PID tests
-shared_examples "PID segment in ADT messages" do |pid|
+shared_examples "a PID segment in ADT messages" do |pid|
   it "has a valid race", :pattern => "a number corresponding to a list item" do
     logic = Proc.new{ |msg|
       race = msg[:PID].race
@@ -152,7 +152,7 @@ shared_examples "PID segment in ADT messages" do |pid|
 end
 
 # == PV1 tests
-shared_examples "PV1 visit number and PID account number" do  
+shared_examples "the PV1 visit number and PID account number" do  
   it "have the correct format", :pattern => 'an optional capital letter and numbers' do
     logic = Proc.new{ |msg|
       pv1_visit = msg[:PV1].field(:visit_number).first
@@ -175,7 +175,7 @@ shared_examples "PV1 visit number and PID account number" do
   end
 end
 
-shared_examples "PV1 segment in Lab/ADT messages" do
+shared_examples "a PV1 segment in Lab/ADT messages" do
   it "has the same Attending and Referring Doctor", :pattern => 'fields should match unless Referring Doctor is empty' do
     logic = Proc.new{ |msg|
       pv1 = msg[:PV1]

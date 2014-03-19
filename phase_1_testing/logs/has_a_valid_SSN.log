@@ -1,0 +1,115 @@
+Example: Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid SSN (9 digits without dashes)
+  Message Date: 01/28/2014 4:14:05 AM
+  Patient: 04446051 - Christopher L Pike
+  Account: A2054891
+  Date of Birth: 06/05/1997      
+  Procedure: 4ALIPPROF^^OHHOREAP on 10/06/2011 8:31 AM
+
+  Message Date: 01/28/2014 4:14:05 AM
+  Patient: 04446051 - Christopher L Pike
+  Account: A2054891
+  Date of Birth: 06/05/1997      
+  Procedure: 4AHEPPAN^^OHHOREAP on 10/06/2011 8:31 AM
+
+  Message Date: 01/28/2014 4:14:05 AM
+  Patient: 04446051 - Christopher L Pike
+  Account: A2065422
+  Date of Birth: 06/05/1997      
+  Procedure: 4ALIPPROF^^OHHOREAP on 11/09/2011 8:30 AM
+
+  Message Date: 01/28/2014 4:14:05 AM
+  Patient: 04446051 - Christopher L Pike
+  Account: A2065422
+  Date of Birth: 06/05/1997      
+  Procedure: 4AHEPPAN^^OHHOREAP on 11/09/2011 8:30 AM
+
+  Message Date: 01/28/2014 4:14:13 AM
+  Patient: 04430915 - Mikaela S Keller
+  Account: A2064267
+  Date of Birth: 02/14/1996      
+  Procedure: 4ACBCD^^OHHOREAP on 11/04/2011 3:35 PM
+
+  Message Date: 01/28/2014 4:14:13 AM
+  Patient: 04430915 - Mikaela S Keller
+  Account: A2064267
+  Date of Birth: 02/14/1996      
+  Procedure: 4ACMETPAN^^OHHOREAP on 11/04/2011 3:35 PM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04442133 - Jaimeson R Bigler
+  Account: A2046779
+  Date of Birth: 09/08/2000      
+  Procedure: 4ACBCD^^OHHOREAP on 09/16/2011 12:24 AM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04442133 - Jaimeson R Bigler
+  Account: A2046779
+  Date of Birth: 09/08/2000      
+  Procedure: 4ACMETPAN^^OHHOREAP on 09/16/2011 12:24 AM
+
+  Message Date: 01/28/2014 4:15:06 AM
+  Patient: 04442133 - Jaimeson R Bigler
+  Account: A2046779
+  Date of Birth: 09/08/2000      
+  Procedure: 4ATSH^^OHHOREAP on 09/16/2011 12:24 AM
+
+  Message Date: 01/28/2014 4:16:45 AM
+  Patient: 04427044 - Jacob T Justice
+  Account: A2045874
+  Date of Birth: 05/01/1997      
+  Procedure: 4ACBCD^^OHHOREAP on 09/13/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:16:45 AM
+  Patient: 04427044 - Jacob T Justice
+  Account: A2045874
+  Date of Birth: 05/01/1997      
+  Procedure: 4ABMETPAN^^OHHOREAP on 09/13/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:16:45 AM
+  Patient: 04427044 - Jacob T Justice
+  Account: A2045874
+  Date of Birth: 05/01/1997      
+  Procedure: 4ALIP^^OHHOREAP on 09/13/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:16:45 AM
+  Patient: 04427044 - Jacob T Justice
+  Account: A2045874
+  Date of Birth: 05/01/1997      
+  Procedure: 4AHEPPAN^^OHHOREAP on 09/13/2011 10:25 PM
+
+  Message Date: 01/28/2014 4:16:45 AM
+  Patient: 04427044 - Jacob T Justice
+  Account: A2045874
+  Date of Birth: 05/01/1997      
+  Procedure: 4AUA^^OHHOREAP on 09/13/2011 10:00 PM
+
+  Message Date: 01/28/2014 4:18:20 AM
+  Patient: 04425824 - Larissa L Stratton
+  Account: A2078847
+  Date of Birth: 01/25/1991      
+  Procedure: 4ACBCD^^OHHOREAP on 12/25/2011 4:52 PM
+
+  Message Date: 01/28/2014 4:18:20 AM
+  Patient: 04425824 - Larissa L Stratton
+  Account: A2078847
+  Date of Birth: 01/25/1991      
+  Procedure: 4ATS^^OHHOREAP on 12/25/2011 4:52 PM
+
+  Message Date: 01/28/2014 4:18:20 AM
+  Patient: 04425824 - Larissa L Stratton
+  Account: A2078847
+  Date of Birth: 01/25/1991      
+  Procedure: 4ATSMSG^^OHHOREAP on 12/25/2011 4:52 PM
+
+  Message Date: 01/28/2014 4:18:20 AM
+  Patient: 04425824 - Larissa L Stratton
+  Account: A2078847
+  Date of Birth: 01/25/1991      
+  Procedure: 4AUDRGM^^OHHOREAP on 12/25/2011 5:45 PM
+
+  Message Date: 01/28/2014 4:18:20 AM
+  Patient: 04425824 - Larissa L Stratton
+  Account: A2078847
+  Date of Birth: 01/25/1991      
+  Procedure: 4ARPR^^OHHOREAP on 12/25/2011 4:52 PM
+

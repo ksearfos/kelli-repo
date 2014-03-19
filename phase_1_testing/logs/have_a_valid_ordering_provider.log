@@ -1,0 +1,67 @@
+Example: Ohio Health Lab HL7 OBR segments behaves like normal OBR segments have a valid ordering provider (ID and/or a name, and final field ends with PROV)
+  Message Date: 01/28/2014 4:13:10 AM
+  Patient: 00156513 - Melodee L Tomblin
+  Account: 1130433263
+  Date of Birth: 07/19/1965      
+  Procedure: 44148^^OHHOREAP on 10/31/2011 8:15 AM
+
+  Message Date: 01/28/2014 4:13:48 AM
+  Patient: 04201789 - Noriko Yokoyama
+  Account: 1128040019
+  Date of Birth: 03/28/1975      
+  Procedure: 45217^^OHHOREAP on 10/07/2011 10:03 AM
+
+  Message Date: 01/28/2014 4:13:48 AM
+  Patient: 04201789 - Noriko Yokoyama
+  Account: 1128040019
+  Date of Birth: 03/28/1975      
+  Procedure: 46625^^OHHOREAP on 10/07/2011 10:03 AM
+
+  Message Date: 01/28/2014 4:13:48 AM
+  Patient: 04201789 - Noriko Yokoyama
+  Account: 1128040019
+  Date of Birth: 03/28/1975      
+  Procedure: 46126^^OHHOREAP on 10/07/2011 10:03 AM
+
+  Message Date: 01/28/2014 4:13:48 AM
+  Patient: 04201789 - Noriko Yokoyama
+  Account: 1128040019
+  Date of Birth: 03/28/1975      
+  Procedure: 46613^^OHHOREAP on 10/07/2011 10:03 AM
+
+  Message Date: 01/28/2014 4:13:48 AM
+  Patient: 04201789 - Noriko Yokoyama
+  Account: 1128040019
+  Date of Birth: 03/28/1975      
+  Procedure: 46087^^OHHOREAP on 10/07/2011 10:03 AM
+
+  Message Date: 01/28/2014 4:17:45 AM
+  Patient: 04176204 - Natalie A Schultz
+  Account: 1130530539
+  Date of Birth: 03/13/1996      
+  Procedure: 44053^^OHHOREAP on 11/01/2011 2:55 AM
+
+  Message Date: 01/28/2014 4:18:40 AM
+  Patient: 00557505 - Linda M Lewis
+  Account: 1125033155
+  Date of Birth: 03/19/1951      
+  Procedure: 45113^^OHHOREAP on 09/07/2011 9:41 PM
+
+  Message Date: 01/28/2014 4:18:53 AM
+  Patient: 00560957 - Meagen E Belcher
+  Account: 1129933610
+  Date of Birth: 03/12/1978      
+  Procedure: 46391^^OHHOREAP on 10/30/2011 7:43 AM
+
+  Message Date: 01/28/2014 4:18:54 AM
+  Patient: 00560957 - Meagen E Belcher
+  Account: 1129933610
+  Date of Birth: 03/12/1978      
+  Procedure: 46391^^OHHOREAP on 10/28/2011 5:11 AM
+
+  Message Date: 01/28/2014 4:18:54 AM
+  Patient: 00560957 - Meagen E Belcher
+  Account: 1129933610
+  Date of Birth: 03/12/1978      
+  Procedure: 46391^^OHHOREAP on 10/29/2011 5:58 AM
+

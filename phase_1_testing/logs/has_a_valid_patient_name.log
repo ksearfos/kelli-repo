@@ -1,0 +1,193 @@
+Example: Ohio Health Lab HL7 PID segment behaves like a normal PID segment has a valid patient name
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 46625^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 46126^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 45334^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 45217^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 45182^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 45179^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:12:33 AM
+  Patient: 03264328 - Cynthia S Sayers MD
+  Account: 1124933327
+  Date of Birth: 11/06/1972      
+  Procedure: 45079^^OHHOREAP on 09/06/2011 6:11 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 45217^^OHHOREAP on 12/28/2011 8:59 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 46953^^OHHOREAP on 12/28/2011 8:59 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 45064^^OHHOREAP on 12/28/2011 8:59 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 46086^^OHHOREAP on 12/28/2011 8:59 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 45866^^OHHOREAP on 12/28/2011 8:59 PM
+
+  Message Date: 01/28/2014 4:13:55 AM
+  Patient: 03289323 - Craig Carpenter MD
+  Account: 1136233180
+  Date of Birth: 07/27/1966      
+  Procedure: 46625^^OHHOREAP on 12/28/2011 10:00 PM
+
+  Message Date: 01/28/2014 4:14:28 AM
+  Patient: 00900251 - Kent M Underwood DDS
+  Account: 1135030592
+  Date of Birth: 07/04/1970      
+  Procedure: 874D^^OHHOREAP on 12/16/2011 9:43 AM
+
+  Message Date: 01/28/2014 4:14:28 AM
+  Patient: 00900251 - Kent M Underwood DDS
+  Account: 1135030592
+  Date of Birth: 07/04/1970      
+  Procedure: 45852^^OHHOREAP on 12/16/2011 9:43 AM
+
+  Message Date: 01/28/2014 4:14:28 AM
+  Patient: 00900251 - Kent M Underwood DDS
+  Account: 1135030592
+  Date of Birth: 07/04/1970      
+  Procedure: 46087^^OHHOREAP on 12/16/2011 9:43 AM
+
+  Message Date: 01/28/2014 4:14:28 AM
+  Patient: 00900251 - Kent M Underwood DDS
+  Account: 1135030592
+  Date of Birth: 07/04/1970      
+  Procedure: 46612^^OHHOREAP on 12/16/2011 9:43 AM
+
+  Message Date: 01/28/2014 4:15:44 AM
+  Patient: 04206121 - Katherine A Holmes DO
+  Account: 1132133898
+  Date of Birth: 03/30/1981      
+  Procedure: 46087^^OHHOREAP on 11/17/2011 12:30 AM
+
+  Message Date: 01/28/2014 4:15:44 AM
+  Patient: 04206121 - Katherine A Holmes DO
+  Account: 1132133898
+  Date of Birth: 03/30/1981      
+  Procedure: 46124^^OHHOREAP on 11/17/2011 12:30 AM
+
+  Message Date: 01/28/2014 4:15:44 AM
+  Patient: 04206121 - Katherine A Holmes DO
+  Account: 1132133898
+  Date of Birth: 03/30/1981      
+  Procedure: 46567^^OHHOREAP on 11/17/2011 12:30 AM
+
+  Message Date: 01/28/2014 4:15:44 AM
+  Patient: 04206121 - Katherine A Holmes DO
+  Account: 1132133898
+  Date of Birth: 03/30/1981      
+  Procedure: 46613^^OHHOREAP on 11/17/2011 12:30 AM
+
+  Message Date: 01/28/2014 4:16:42 AM
+  Patient: 00898535 - Stephen R Vijan MD
+  Account: 1127233306
+  Date of Birth: 12/03/1955      
+  Procedure: 45217^^OHHOREAP on 09/29/2011 9:00 AM
+
+  Message Date: 01/28/2014 4:16:42 AM
+  Patient: 00898535 - Stephen R Vijan MD
+  Account: 1127233306
+  Date of Birth: 12/03/1955      
+  Procedure: 46126^^OHHOREAP on 09/29/2011 9:00 AM
+
+  Message Date: 01/28/2014 4:16:42 AM
+  Patient: 00898535 - Stephen R Vijan MD
+  Account: 1127233306
+  Date of Birth: 12/03/1955      
+  Procedure: 46399^^OHHOREAP on 09/29/2011 9:00 AM
+
+  Message Date: 01/28/2014 4:16:42 AM
+  Patient: 00898535 - Stephen R Vijan MD
+  Account: 1127233306
+  Date of Birth: 12/03/1955      
+  Procedure: 46087^^OHHOREAP on 09/29/2011 9:00 AM
+
+  Message Date: 01/28/2014 4:16:42 AM
+  Patient: 00898535 - Stephen R Vijan MD
+  Account: 1127233306
+  Date of Birth: 12/03/1955      
+  Procedure: 46547^^OHHOREAP on 09/29/2011 9:00 AM
+
+  Message Date: 01/28/2014 4:17:00 AM
+  Patient: 03280728 - Rohit Uppal DR
+  Account: 1128432948
+  Date of Birth: 02/14/1974      
+  Procedure: OHYBIO^^OHHOREAP on 10/11/2011 8:20 AM
+
+  Message Date: 01/28/2014 4:17:00 AM
+  Patient: 03280728 - Rohit Uppal DR
+  Account: 1128432948
+  Date of Birth: 02/14/1974      
+  Procedure: 46087^^OHHOREAP on 10/11/2011 8:20 AM
+
+  Message Date: 01/28/2014 4:17:00 AM
+  Patient: 03280728 - Rohit Uppal DR
+  Account: 1128432948
+  Date of Birth: 02/14/1974      
+  Procedure: 45708^^OHHOREAP on 10/11/2011 8:20 AM
+
+  Message Date: 01/28/2014 4:18:32 AM
+  Patient: 01055773 - Robert Skully MD
+  Account: 1131630648
+  Date of Birth: 09/16/1955      
+  Procedure: 46087^^OHHOREAP on 11/12/2011 8:45 AM
+
+  Message Date: 01/28/2014 4:18:32 AM
+  Patient: 01055773 - Robert Skully MD
+  Account: 1131630648
+  Date of Birth: 09/16/1955      
+  Procedure: 45708^^OHHOREAP on 11/12/2011 8:45 AM
+
+  Message Date: 01/28/2014 4:18:32 AM
+  Patient: 01055773 - Robert Skully MD
+  Account: 1131630648
+  Date of Birth: 09/16/1955      
+  Procedure: OHYBIO^^OHHOREAP on 11/12/2011 8:45 AM
+

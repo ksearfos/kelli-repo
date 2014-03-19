@@ -6,8 +6,8 @@ require 'logger'
 def run_rspec( file, messages )
   set_up_rspec( file )
   $messages = messages
-  RSpec::Core::Runner.run [ "spec/test_spec.rb" ]
-  # RSpec::Core::Runner.run [ "spec/#{$messages[0].type}_spec.rb" ]
+  # RSpec::Core::Runner.run [ "spec/test_spec.rb" ]
+  RSpec::Core::Runner.run [ "spec/#{$messages[0].type}_spec.rb" ]
 end
 
 def set_up_rspec( file )
