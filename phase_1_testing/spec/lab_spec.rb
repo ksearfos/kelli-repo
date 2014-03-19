@@ -34,19 +34,22 @@ describe "Ohio Health Lab HL7" do
 
   # == OBR tests    
   context "OBR segments" do
-    it_behaves_like "normal OBR segments" do
+    it_behaves_like "a normal OBR segment" do
       let(:messages){ @messages }
     end
 
-    it "have a valid procedure ID", :pattern => 'capital letters + numbers' do
-      logic = Proc.new{ |obr| obr.field(:procedure_id).first =~ /[A-Z0-9]+/ }
-      @failed = pass_for_each?( @messages, logic, :OBR )
+    it "has a valid procedure ID", :pattern => 'capital letters + numbers' do
+      logic = Proc.new{ |msg| msg[:OBR].field(:procedure_id).first =~ /[A-Z0-9]+/ }
+      @failed = pass?( @messages, logic )
       @failed.should be_empty
     end
 
-    it "have the same observation date and result status date" do
-      logic = Proc.new{ |obr| obr.field(:result_date_time).as_date == obr.field(:observation_date_time).as_date }
-      @failed = pass_for_each?( @messages, logic, :OBR )
+    it "has the same observation date and result status date" do
+      logic = Proc.new{ |msg|
+        obr = msg[:OBR]
+        obr.field(:result_date_time).as_date == obr.field(:observation_date_time).as_date
+      }
+      @failed = pass?( @messages, logic )
       @failed.should be_empty
     end
   end 

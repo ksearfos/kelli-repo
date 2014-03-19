@@ -2,141 +2,191 @@ require 'shared_examples'
 require 'spec_helper'
 
 describe "Ohio Health Rad HL7" do
+  before(:all) do
+    @messages = $messages
+  end 
   
+  before(:each) do
+    log_example( example )
+    @failed = []
+  end 
+      
   # == General message tests
-  include_examples "General", $message
+  it_behaves_like "every HL7 message" do
+    let(:messages){ @messages }
+  end
 
   # == MSH tests
   context "MSH segment" do
-    msh = $message.header    
-    include_examples "MSH segment", msh
+    it_behaves_like "a normal MSH segment" do
+      let(:messages){ @messages }
+    end
 
     it "has the correct Processing ID", :pattern => "T" do
-      msh.processing_id.should == "T"
+      logic = Proc.new{ |msg| msg[:MSH].processing_id == "T" }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
     
     it "has the correct version", :pattern => "2.3" do
-      msh.version.should == "2.3"
+      logic = Proc.new{ |msg| msg[:MSH].version == "2.3" }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
   end
 
   # == ORC tests
   context "ORC segment" do
-    $message[:ORC].each do |orc|
-      it "has a valid transaction date/time" do
-        HL7Test.is_datetime?( orc.transaction_date_time ).should be_true
-      end
-    end #each
+    it_behaves_like "a normal ORC segment" do
+      let(:messages){ @messages }
+    end
+    
+    it "has a valid transaction date/time" do
+      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:ORC].transaction_date_time }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
   end
 
   # == OBR tests  
   context "OBR segment" do
-    obr = $message[:OBR]
-    include_examples "OBR segment", obr
-        
-    it "only appears once per message" do
-      obr.size.should == 1 
+    it_behaves_like "a normal OBR segment" do
+      let(:messages){ @messages }
     end
-    
+
     it "shows the correct set ID", :pattern => "1" do
-      obr.set_id.should == '1'
+      logic = Proc.new{ |msg| msg[:OBR].set_id == '1' }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
 
-    it "has a valid result interpreter", :pattern => "OBR.32 is (something)PROV" do
-      obr[32].should =~ /PROV/
+    it "has a valid result interpreter", :pattern => "ID first, then (something)PROV" do      
+      logic = Proc.new{ |msg|
+        int = msg[:OBR].field(32)
+        int[1] =~ /\d+/ && int[9] =~ /PROV$/
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
 
-    it "has a valid observation date/time", :pattern => "OBR.8" do
-      dt = obr.observation_date_time
-      HL7Test.is_datetime?( dt ).should be_true unless dt.empty?
-    end
-
-    it "has a valid end exam date/time", :pattern => "OBR.27" do
-      dt = obr[27]
-      HL7Test.is_datetime?( dt ).should be_true unless dt.empty?
+    it "has a valid end exam date/time" do
+      logic = Proc.new{ |msg|
+        dt = msg[:OBR][27]
+        dt.empty? || HL7Test.is_datetime?(dt)
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
 
     it "has a corresponding ORC segment", :pattern => "ORC listed directly before OBR, with same date/time" do
-      $message.segment_before(:OBR).should eq :ORC
-      $message[:ORC].transaction_date_time.should == obr.observation_date_time
+      logic = Proc.new{ |msg|
+        ( msg.segment_before(:OBR) == :ORC ) &&
+        ( msg[:ORC].transaction_date_time == msg[:OBR].observation_date_time )
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
   end
 
   # == OBX tests
-  context "OBX segment" do
-    $message[:OBX].each do |obx|
-      it "has a valid value type", :pattern => "TX" do
-        obx.value_type.should == 'TX'
-      end
+  context "OBX segmentS" do
+    it "have the correct value type", :pattern => "TX" do
+      logic = Proc.new{ |obx| obx.value_type == 'TX' }
+      @failed = pass_for_each?( @messages, logic, :OBX )
+      @failed.should be_empty
+    end
 
-      it "has a valid Observation ID", :pattern => "one of &GDT, &IMP, or &ADT" do
-        ['&GDT','&IMP','&ADT'].should include obx.observation_id
-      end
-    end #each
+    list = ['&GDT','&IMP','&ADT']
+    it "have a valid Observation ID", :pattern => "one of #{list.join(', ')}" do        
+      logic = Proc.new{ |obx| list.include? obx.observation_id }
+      @failed = pass_for_each?( @messages, logic, :OBX )
+      @failed.should be_empty
+    end
   end
 
   # == PID tests
   context "PID segment" do
-    pid = $message[:PID]
-    include_examples "PID segment", pid
+    it_behaves_like "a normal PID segment" do 
+      let(:messages){ @messages }
+    end
   end
 
   # == PV1 tests
-  context "PV1 and PID segments" do
-    include_examples "PV1 and PID segments", $message[:PV1], $message[:PID]
-  end
-  
   context "PV1 segment" do
-    pv1 = $message[:PV1]
+    it_behaves_like "the PV1 visit number and PID account number" do
+      let(:messages){ @messages }
+    end
     
-    it "has a valid patient location", :pattern => "'ED' if patient class is 'E', and components 2/3 are empty" do
-      loc = pv1.field(:patient_location)  
-      loc[1].should == "ED" if pv1.patient_class == "E"
-      loc[2].to_s.should be_empty
-      loc[3].to_s.should be_empty
+    it "has a valid patient location", :pattern => "'ED' if patient class is 'E', and no other information" do
+      logic = Proc.new{ |msg|
+        pv1 = msg[:PV1]
+        loc = pv1.field(:patient_location)  
+        empty = ( loc[2].to_s.empty? && loc[3].to_s.empty? )
+        pv1.patient_class == "E" ? loc[1] == "ED" && empty : empty
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
 
-    context "provider type", :pattern => "components 8 and 12 are the same" do
-      att = pv1.field(:attending_doctor)
-      type = att[8]
-      
-      it "is correct for the attending physician", :pattern => "PV1.7" do
-        att[12].should eq type  # att[8] IS the type
+    context "provider type", :pattern => "appears twice for each provider" do
+      it "is correct for the attending physician" do
+        logic = Proc.new{ |msg| 
+          att = msg[:PV1].field(:attending_doctor)
+          att[8] = att[12]
+        }
+        @failed = pass?( @messages, logic )
+        @failed.should be_empty
       end
       
-      it "is correct for the referring physician", :pattern => "PV1.8" do
-        ref = pv1.field(:referring_doctor)
-        ref[8].should eq type
-        ref[12].should eq type
+      it "is correct for the referring physician" do
+        logic = Proc.new{ |msg| 
+          ref = msg[:PV1].field(:referring_doctor)
+          ref[8] = ref[12]
+        }
+        @failed = pass?( @messages, logic )
+        @failed.should be_empty
       end
       
-      it "is correct for the consulting physician", :pattern => "PV1.9" do
-        cons = pv1.field(:consulting_doctor)
-        cons[8].should eq type
-        cons[12].should eq type
+      it "is correct for the consulting physician" do
+        logic = Proc.new{ |msg| 
+          cons = msg[:PV1].field(:consulting_doctor)
+          cons[8] = cons[12]
+        }
+        @failed = pass?( @messages, logic )
+        @failed.should be_empty
       end
       
-      it "is correct for the admitting physician", :pattern => "PV1.17" do
-        adm = pv1.field(:admitting_doctor) 
-        adm[8].should eq type
-        adm[12].should eq type
+      it "is correct for the admitting physician" do
+        logic = Proc.new{ |msg| 
+          adm = msg[:PV1].field(:admitting_doctor)
+          adm[8] = adm[12]
+        }
+        @failed = pass?( @messages, logic )
+        @failed.should be_empty
       end
     end # provider type context
   
-    it "has a valid Patient Class", :pattern => "one of Outpatient, Inpatient, Emergency, Observation, Q, or O" do
-      ['Outpatient','Emergency','Inpatient','Observation','Q','O'].should include pv1.patient_class
+    list = ['Outpatient','Emergency','Inpatient','Observation','Q','O']
+    it "has a valid Patient Class", :pattern => "one of #{list.join(', ')}" do      
+      logic = Proc.new{ |msg| list.include? msg[:PV1].patient_class }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
     
-    it "does not have a VIP Indicator", :pattern => "no value for PV1.16" do
-      pv1[16].should be_empty
+    it "does not have a VIP Indicator" do
+      logic = Proc.new{ |msg| msg[:PV1][16].empty? }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
 
     it "has a Patient Type", :pattern => "a number in a list" do
-      pv1.patient_type.should_not =~ /\D/
+      logic = Proc.new{ |msg| msg[:PV1].patient_type !~ /\D/ }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
     end
   end
   
   after(:each) do
-    flag_example_exception( example, $message ) if example.exception   # store specifics for future logging
+    log_result( @failed, example )
   end
 end

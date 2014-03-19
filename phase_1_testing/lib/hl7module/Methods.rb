@@ -231,10 +231,12 @@ module HL7Test
   #  HL7.is_suffix?( "III" ) => true
   #  HL7.is_suffix?( "rainbow" ) => false 
   def self.is_suffix?( val )
-    return true if val.empty?
+    return true if val.to_s.empty?
     
-    val =~ /^[XVI]+$/ ||           # roman numeral, e.g. III for The 3rd
-    val =~ /^[J|j|S|s][Rr][.]?$/   # Jr./Sr. (the period is optional)       
+    val.chomp!('.')
+    val.upcase!
+    allowed = %w( JR SR MD DO DDS DR )
+    val =~ /^[XVI]+$/ || allowed.include?( val )     # roman numeral, e.g. III for The 3rd, or value in the list      
   end
   
   # NAME: is_year?
@@ -347,9 +349,7 @@ module HL7Test
   # EXAMPLE:
   #  HL7.is_date?( "20041203" ) => true
   #  HL7.is_date?( "18121532" ) => false 
-  def self.is_date?( val )
-    return false if val !~ /^\d{8}$/
-    
+  def self.is_date?( val )    
     yr = val[0...4]
     mo = val[4...6]
     day = val[6...8]

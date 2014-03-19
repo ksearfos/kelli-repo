@@ -40,17 +40,32 @@ shared_examples "a normal MSH segment" do
   end 
 end
 
+# == ORC tests (orders only)
+shared_examples "a normal ORC segment" do  
+  it "only appears once per message" do
+    logic = Proc.new{ |msg| msg[:OBR].size == 1  }
+    @failed = pass?( @messages, logic )
+    @failed.should be_empty
+  end
+end
+    
 # == OBR tests (orders only)
-shared_examples "normal OBR segments" do  
-  it "have a valid Control Code", :pattern => "only letters, numbers, and spaces" do
-    logic = Proc.new{ |obr| obr.control_code =~ /^[A-z0-9][A-z0-9 ]*/ }   
-    @failed = pass_for_each?( messages, logic, :OBR )
+shared_examples "a normal OBR segment" do  
+  it "only appears once per message" do
+    logic = Proc.new{ |msg| msg[:OBR].size == 1  }
+    @failed = pass?( @messages, logic )
+    @failed.should be_empty
+  end
+  
+  it "has a valid Control Code", :pattern => "only letters, numbers, and spaces" do
+    logic = Proc.new{ |msg| msg[:OBR].control_code =~ /^[A-z0-9][A-z0-9 ]*/ }   
+    @failed = pass?( messages, logic )
     @failed.should be_empty
   end
       
-  it "have a valid ordering provider", :pattern => 'ID and/or a name, and final field ends with PROV' do
-    logic = Proc.new{ |obr|
-      prov = obr.field(:ordering_provider)
+  it "has a valid ordering provider", :pattern => 'ID and/or a name, and final field ends with PROV' do
+    logic = Proc.new{ |msg|
+      prov = msg[:OBR].field(:ordering_provider)
       id = prov[1]      
       if id =~ /\d/
         prov[-1] =~ /\w+PROV$/ && id =~ /^[A-Z]?\d+/
@@ -58,19 +73,19 @@ shared_examples "normal OBR segments" do
         prov[-1] =~ /\w+PROV$/ && HL7Test.is_name?( prov.components[2..5] )
       end
     }    
-    @failed = pass_for_each?( messages, logic, :OBR )
+    @failed = pass?( messages, logic )
     @failed.should be_empty
   end
   
-  it "have a valid Result Status" do
-    logic = Proc.new{ |obr| HL7Test::RESULT_STATUS.include? obr.result_status }
-    @failed = pass_for_each?( messages, logic, :OBR )
+  it "has a valid Result Status" do
+    logic = Proc.new{ |msg| HL7Test::RESULT_STATUS.include? msg[:OBR].result_status }
+    @failed = pass?( messages, logic )
     @failed.should be_empty
   end
 
-  it "have a valid observation date/time" do
-    logic = Proc.new{ |obr| HL7Test.is_datetime? obr.observation_date_time }
-    @failed = pass_for_each?( messages, logic, :OBR )
+  it "has a valid observation date/time" do
+    logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:OBR].observation_date_time }
+    @failed = pass?( messages, logic )
     @failed.should be_empty
   end
 end

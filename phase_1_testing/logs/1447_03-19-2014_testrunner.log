@@ -1,0 +1,110 @@
+Reading C:/Users/Owner/Documents/manifest_rad_out.txt...
+ew file(s):
+  C:/Users/Owner/Documents/manifest_rad_out.txt
+
+I, [2014-03-19T14:47:42.437279 #3224]  INFO -- : Found 100 messages to test
+
+I, [2014-03-19T14:47:42.437279 #3224]  INFO -- : Beginning testing of messages
+
+I, [2014-03-19T14:47:42.515409 #3224]  INFO -- : Ohio Health Rad HL7 behaves like every HL7 message has only one PID segment (only one PID line)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 behaves like every HL7 message has only one PV1 segment (only one PV1 line)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 MSH segment has the correct Processing ID (T)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 MSH segment has the correct version (2.3)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 MSH segment behaves like a normal MSH segment has a valid Message Control ID (P if the sender is MGH, T otherwise)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 MSH segment behaves like a normal MSH segment has the correct event type (ORU^R01 for orders, ADT^A08 otherwise)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 ORC segment has a valid transaction date/time
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 ORC segment behaves like a normal ORC segment only appears once per message
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment shows the correct set ID (1)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment has a valid result interpreter (ID first, then (something)PROV)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment has a valid end exam date/time
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment has a corresponding ORC segment (ORC listed directly before OBR, with same date/time)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment only appears once per message
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment has a valid Control Code (only letters, numbers, and spaces)
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment has a valid ordering provider (ID and/or a name, and final field ends with PROV)
+E, [2014-03-19T14:47:42.531034 #3224] ERROR -- : Failed for 1 records. See C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/logs/radhas_a_valid_ordering_provider.log.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment has a valid Result Status
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.531034 #3224]  INFO -- : Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment has a valid observation date/time
+I, [2014-03-19T14:47:42.546662 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.546662 #3224]  INFO -- : Ohio Health Rad HL7 OBX segmentS have the correct value type (TX)
+I, [2014-03-19T14:47:42.562285 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.562285 #3224]  INFO -- : Ohio Health Rad HL7 OBX segmentS have a valid Observation ID (one of &GDT, &IMP, &ADT)
+I, [2014-03-19T14:47:42.562285 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.562285 #3224]  INFO -- : Ohio Health Rad HL7 PID segment behaves like a normal PID segment has a valid patient name
+I, [2014-03-19T14:47:42.562285 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PID segment behaves like a normal PID segment has a valid patient ID (begins with digits and ends with characters + "01")
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PID segment behaves like a normal PID segment has a valid patient birthdate
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PID segment behaves like a normal PID segment has a valid patient sex
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PID segment behaves like a normal PID segment has a valid SSN (9 digits without dashes)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment has a valid patient location ('ED' if patient class is 'E', and no other information)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment has a valid Patient Class (one of Outpatient, Emergency, Inpatient, Observation, Q, O)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment does not have a VIP Indicator
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment has a Patient Type (a number in a list)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment behaves like the PV1 visit number and PID account number have the correct format (an optional capital letter and numbers)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment behaves like the PV1 visit number and PID account number are the same
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment provider type is correct for the attending physician (appears twice for each provider)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment provider type is correct for the referring physician (appears twice for each provider)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment provider type is correct for the consulting physician (appears twice for each provider)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Ohio Health Rad HL7 PV1 segment provider type is correct for the admitting physician (appears twice for each provider)
+I, [2014-03-19T14:47:42.577911 #3224]  INFO -- : Passed for all records.
+
