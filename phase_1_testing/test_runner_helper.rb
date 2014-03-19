@@ -5,16 +5,14 @@ require 'run_record_comparer'
 
 # set up and prettify the $logger
 def set_up_logger( file )
-  $stdout.reopen(file, "w")
+  # $stdout.reopen(file, "w")
   Logger.new file
 end
 
 def get_records( files )
   if files.empty?
-    $logger.info "No new files found in #{FTP}."
-    $logger.info "Exiting."  
+    $logger.info "No new files found."
     $logger.close
-    exit 0
   else
     $logger.info "Found #{files.size} new file(s):\n  " + files.join("\n  ") + "\n"
   end

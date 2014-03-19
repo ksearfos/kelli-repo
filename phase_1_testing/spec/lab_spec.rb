@@ -43,18 +43,18 @@ describe "Ohio Health Lab HL7" do
         obx.field(:component_id)[-1].should == 'LA01'
       end
 
-      it "has an observation value of the appropriate type", :pattern => "a #{obx.value}" do
+      it "has an observation value of the appropriate type", :pattern => "a #{obx.value_type}" do
         HL7Test.has_correct_format?(obx.value,obx.value_type).should be_true
       end
     
       context "with value type of SN or NM" do
         if obx.value_type != 'TX'
-          it "has valid Units", :pattern => "OBX.6" do
+          it "has valid Units" do
             u = obx.units
             HL7Test::UNITS.should include u unless u.empty? 
           end
 
-          it "has a valid reference range", :pattern => "OBX.7" do
+          it "has a valid reference range", :pattern => "number - number" do
             range = obx.reference_range
             nums = range.split('-')
             
@@ -63,7 +63,7 @@ describe "Ohio Health Lab HL7" do
             HL7Test.is_numeric?(nums.last).should be_true
           end
 
-          it "has a valid Abnormal Flag", :pattern => "OBX.8" do
+          it "has a valid Abnormal Flag" do
             flag = obx.abnormal_flag
             HL7Test::ABNORMAL_FLAGS.should include flag unless flag.empty?
           end

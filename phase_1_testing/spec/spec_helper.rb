@@ -2,20 +2,14 @@ require 'lib/hl7module/HL7'
 require 'rspec'
 require 'rspec/expectations'
 
-def flag_record
-   $flagged_records << $message unless $flagged_records.include?( $message )
-   $errors = true
-end
-
 def flag_example_exception( example, message )
-  # exception_message = example.exception.to_s.split("Diff:")[0].chomp
-
   patt = example.metadata[:pattern]
   error_message = "#{example.metadata[:full_description]}"
   error_message << " (" + patt + ")" if patt
 
-  $errors[error_message] = patient_details( message ) unless $errors.has_key?( error_message )
-  $found_error = true
+  $errors << error_message
+  # $errors[error_message] = patient_details( message ) unless $errors.has_key?( error_message )
+  # $found_error = true
 end
 
 def patient_details( message )
