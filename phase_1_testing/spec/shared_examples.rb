@@ -170,10 +170,10 @@ end
 shared_examples "the PV1 visit number and PID account number" do  
   it "have the correct format", :pattern => 'an optional capital letter and numbers' do
     logic = Proc.new{ |msg|
-      pv1_visit = msg[:PV1].field(:visit_number).first
-      pid_acct = msg[:PID].field(:account_number).first
+      pv1_visit = msg[:PV1].field(:visit_number)
+      pid_acct = msg[:PID].field(:account_number)
       beg = /^[A-Z]?\d+/    
-      pid_acct =~ beg && pv1_visit =~ beg
+      pv1_visit && pid_acct && pid_acct =~ beg && pv1_visit =~ beg
     }
     @failed = pass?( messages, logic )
     @failed.should be_empty
@@ -181,9 +181,13 @@ shared_examples "the PV1 visit number and PID account number" do
   
   it "are the same" do
     logic = Proc.new{ |msg|
-      pv1_visit = msg[:PV1].field(:visit_number).first
-      pid_acct = msg[:PID].field(:account_number).first 
-      pid_acct == pv1_visit
+      pv1_visit = msg[:PV1].field(:visit_number)
+      pid_acct = msg[:PID].field(:account_number)  
+      if pv1_visit.nil? && pid_acct.nil?
+        true   # there aren't any values, but they are the same!
+      else
+        pv1_visit && pid_acct && pid_acct.first == pv1_visit.first
+      end
     }
     @failed = pass?( messages, logic )
     @failed.should be_empty

@@ -35,7 +35,8 @@ LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
 `mkdir "#{$LOG_DIR}"` unless File.exists?( $LOG_DIR )
 
 # test_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
-test_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
+# test_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
+test_file = "C:/Users/Owner/Documents/enc_post.dat"  # testing only
 hl7_files = [test_file]  # testing only  
 # hl7_files = Dir.entries( FTP ).select{ |f| File.file? "#{FTP}/#{f}" }
 
