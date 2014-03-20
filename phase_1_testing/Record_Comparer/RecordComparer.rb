@@ -10,7 +10,7 @@ class RecordComparer
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
     @type = type
-    @details = [:PT_NAME,:PT_ID,:PT_ACCT,:DOB]
+    @details = [:PT_ID,:PT_NAME,:DOB,:PT_ACCT]
     @details += ( @type == :adt ? [:VISIT_DATE] : [:PROC_NAME,:PROC_DATE] )
     
     # items for tracking criteria
@@ -72,9 +72,9 @@ class RecordComparer
   def get_used
     hdr = [ "MRN", "PATIENT NAME", "DOB" ]
     hdr += ( @type = :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )    
-    rec_ary = [ hdr ]
-    @use.each{ |rec| rec_ary << record_details(rec) }
-    rec_ary
+    other_ary = @use.clone
+    other_ary.sort_by!{ |_,name| name }
+    other_ary.unshift( hdr )
   end
   
   private
@@ -158,7 +158,7 @@ class RecordComparer
   end
   
   def fetch_details(rec)
-    rec.details(@details)
+    rec.get_details(@details)
   end
 
   def pick_random( amt )

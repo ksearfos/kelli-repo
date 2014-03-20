@@ -189,15 +189,13 @@ module HL7Test
     end
 
     # NAME: details
-    # DESC: displays crucial information about the message, clearly labelled
-    # ARGS: none
+    # DESC: returns a hash with a variety of record details
+    # ARGS: 0+
+    #  all [Symbol] - the specific details to return; returns them all by default
+    #           ==>   :ID, :TYPE, :DATE, :PT_NAME, :PT_ID, :PT_ACCT, :DOB, :VISIT_DATE, :PROC_NAME, :PROC_DATE
     # RETURNS: nothing; writes to stdout
     # EXAMPLE:
-    #  message.view_details => Message ID: 12345
-    #                          Sent at: 05/15/2013 11:45 AM
-    #                          Patient Name: John W Smith
-    #                          Account #: 123456789
-    #                          Visit Number: 12345
+    #  message.details(:ID,:PT_NAME) => {:ID=>1234567,:PT_NAME=>"John W Smith Jr" }
     def details( *all )
       all.flatten!
       h = {}
@@ -221,7 +219,29 @@ module HL7Test
       h.keep_if{ |key,_| all.include?(key) }
       h
     end
-    
+
+    # NAME: get_details
+    # DESC: returns an array with the given details, in the order provided
+    # ARGS: 0+
+    #  all [Symbol] - the specific details to return
+    #           ==>   :ID, :TYPE, :DATE, :PT_NAME, :PT_ID, :PT_ACCT, :DOB, :VISIT_DATE, :PROC_NAME, :PROC_DATE
+    #           ==>   NOTE: will return the details in the order of the arguments, or details.values by default
+    # RETURNS: nothing; writes to stdout
+    # EXAMPLE:
+    #  message.details(:ID,:PT_NAME) => [1234567,"John W Smith Jr"]
+    def get_details( *all )
+      all.flatten!
+      ary = []
+      dets = details( *all )
+      
+      return dets.values if all.empty?
+      
+      # theoretically, the next part is unnecessary, since dets.values should be in the desired order
+      # but in case it isn't, since the return order matters....
+      all.each{ |key| ary << dets[key] }
+      ary
+    end
+        
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment
     # ARGS: none

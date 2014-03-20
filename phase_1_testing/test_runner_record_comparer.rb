@@ -27,8 +27,9 @@ end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-FTP = TESTING ? "C:/Users/Owner/Documents" : "d:/FTP"
-FPATT = TESTING ? /[a-z]{3}_pre\.dat/ : /^\w+_pre_\d+\.dat$/
+TYPE = :enc
+FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
+FPATT = TESTING ? /#{TYPE}_pre\.dat/ : /^\w+_pre_\d+\.dat$/
 $LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
 LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
 
