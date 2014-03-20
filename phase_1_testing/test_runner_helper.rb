@@ -57,9 +57,9 @@ def remove_files( files )
 end
 
 def make_csv( ary, file )
-  # CSV.open( file, "wb" ) do |csv|
-    # ary.each{ |row| csv.puts row }
-  # end
-  puts ary
-  $logger.info "See #{file}"
+  CSV.open( file, "wb" ) do |csv|
+    ary.each{ |row| csv.puts row }
+  end
+
+  $logger.info "See #{file}\n"
 end

@@ -4,13 +4,13 @@ require "#{proj_dir}/Record_Comparer/OHProcs.rb"
 class RecordComparer
   include OHProcs
   
-  attr_reader :records, :matches, :use, :recs_to_use
+  attr_reader :records, :matches, :use
   
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
     @type = type
-    @details = [:PT_NAME,:PT_ID,:PT_ACCT]
+    @details = [:PT_NAME,:PT_ID,:PT_ACCT,:DOB]
     @details += ( @type == :adt ? [:VISIT_DATE] : [:PROC_NAME,:PROC_DATE] )
     
     # items for tracking criteria
@@ -60,23 +60,21 @@ class RecordComparer
     str = "I have successfully matched #{how_many_matches?} of #{@total} criteria, for a total of #{@use.size} records."
   end
   
-  def unmatched  
+  def get_unmatched  
     @unmatched.sort.join( "\n" )
   end
   
-  def matched
+  def get_matched
     m = @criteria.keys - @unmatched
     m.sort.join( "\n" )  
   end
   
-  def used_records
-    recs = [ "MRN", "PATIENT NAME" ]
-    recs += ( @type = :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )
-    @use.map{ |rec| record_details(rec) }
-    recs += @use
-    full_ary = []
-    recs.each{ |r| full_ary << r }
-    full_ary
+  def get_used
+    hdr = [ "MRN", "PATIENT NAME", "DOB" ]
+    hdr += ( @type = :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )    
+    rec_ary = [ hdr ]
+    @use.each{ |rec| rec_ary << record_details(rec) }
+    rec_ary
   end
   
   private
@@ -171,25 +169,8 @@ class RecordComparer
   end  
   
   def record_details(rec)
-    my_data = [ rec[:PT_NAME], rec[:PT_ID], rec[:PT_ACCT] ]
+    my_data = [ rec[:PT_ID], rec[:PT_NAME], rec[:DOB], rec[:PT_ACCT] ]
     my_data += ( @type = :adt ? [ rec[:VISIT_DATE] ] : [ rec[:PROC_NAME], rec[:PROC_DATE] ] )    
     my_data
-  end
-  
-  def old_record_details(rec)
-    str = <<STR
-NAME: #{rec[:PT_NAME]}
-MRN: #{rec[:PT_ID]}
-ACCOUNT #: #{rec[:PT_ACCT]}
-STR
-    
-    if @type == :adt
-      str << "DATE/TIME: #{rec[:VISIT_DATE]}\n"
-    else
-      str << "PROCEDURE: #{rec[:PROC_NAME]}\n"
-      str << "DATE/TIME: #{rec[:PROC_DATE]}\n"
-    end
-    
-    str
   end
 end #class  

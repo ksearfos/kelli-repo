@@ -76,7 +76,8 @@ module HL7Test
     data = []
     messages.each{ |msg| data << msg.fetch_field(field) }
     data.flatten!(1)   # only flatten arrays; don't flatten Fields
-    data.uniq
+    data.uniq!
+    data.keep_if{ |e| !e.to_s.empty? }
   end
 
 # ---------------------------- Methods to add formatting ---------------------------- #

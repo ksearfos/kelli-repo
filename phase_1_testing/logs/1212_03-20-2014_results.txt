@@ -8,8 +8,6 @@ admitting_doctor_listed
 attending_doctor_listed
 consulting_doctor_listed
 discharge_date_listed
-discharge_disposition_of_
-financial_class_of_
 hospital_service_of_CAR
 hospital_service_of_CMC
 hospital_service_of_ERM

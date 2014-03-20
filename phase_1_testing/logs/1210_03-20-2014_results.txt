@@ -8,8 +8,6 @@ admitting_doctor_listed
 attending_doctor_listed
 consulting_doctor_listed
 discharge_date_listed
-discharge_disposition_of_
-financial_class_of_
 hospital_service_of_CAR
 hospital_service_of_CMC
 hospital_service_of_ERM
@@ -42,23 +40,3 @@ sex_of_O
 sex_of_U
 visit_id_listed_twice
 
-==========RECORDS==========
-NAME: Beverly A Cole
-ACCOUNT #: 1114830271
-DATE/TIME: 05/28/2011 5:50 PM
-
-NAME: Carolyn I Jackson
-ACCOUNT #: 1113831018
-DATE/TIME: 05/18/2011 11:04 AM
-
-NAME: Eloise D Cowgill
-ACCOUNT #: 1112532767
-DATE/TIME: 05/05/2011 5:21 PM
-
-NAME: Joyce Y Eddy
-ACCOUNT #: 1113332009
-DATE/TIME: 05/13/2011 3:00 PM
-
-NAME: Riley Andrews JR
-ACCOUNT #: 1113331605
-DATE/TIME: 05/13/2011 1:31 PM

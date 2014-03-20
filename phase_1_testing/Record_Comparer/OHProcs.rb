@@ -106,6 +106,12 @@ module OHProcs
            :consulting_doctor_listed => PV19, :admitting_doctor_listed => PV117, :visit_id_listed_twice => PID18_AND_PV119 }                 
   ALL_CORE = CORE + PID8_VALS
   
+  # fields to add with value lists pulled from current records
+  ADT_FIELDS_TO_ADD = { hospital_service:"pv110", admit_source:"pv114", patient_type:"pv118",
+                        financial_class:"pv120", discharge_disposition:"pv136" }   
+  LAB_FIELDS_TO_ADD = { procedure_id:"obr4", amalyte:"obx4" }
+  RAD_FIELDS_TO_ADD = { procedure_id:"pbr4" }  
+  
   public
   
   @lab = ALL_CORE + ALL_ORDERS + ALL_LAB

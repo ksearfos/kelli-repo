@@ -7,13 +7,13 @@ require 'test_runner_helper'
 case ARGV[0]
 when '-d'   # non-delete mode
   DELETE = false
-  RUN = true
+  run = true
 when '-t'   # test mode
   DELETE = false
-  RUN = false 
+  run = false 
 when '-r'   # full run
   DELETE = true
-  RUN = true
+  run = true
 when '--help'
   puts "test_runner_record_comparer.rb takes one optional commandline argument:"
   puts "   -r: [r]un full script (deletes processed files)"
@@ -46,8 +46,8 @@ hl7_files.map!{ |f| "#{FTP}/#{f}" }
 # now turn those files into parsable hl7 messages
 all_recs = get_records( hl7_files )
 
-RUN &&= !all_recs.empty?     # avoid running setup for record comparer if there are no records to compare
-if RUN
+run &&= !all_recs.empty?     # avoid running setup for record comparer if there are no records to compare
+if run
   recs = run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs )
   make_csv( recs, "#{$LOG_DIR}/#{dt}_records.csv" )
   remove_files( hl7_files ) if DELETE
