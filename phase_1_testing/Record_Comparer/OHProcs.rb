@@ -9,8 +9,6 @@ module OHProcs
     
   IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
-  PT_CLASSES = %w( Emergency Outpatient Inpatient Observation Q O E )
-  PT_LOCS = %w( ED ISD EDO 7N 5W CSD 5OC 4DE EPY AEC 5DE )
   OBS_TYPES = %w( TX NM SN TS )
   RAD_OBS_IDS = %w( &GDT &IMP &ADT )
   
@@ -24,17 +22,11 @@ module OHProcs
   MSH11_24 = Proc.new{ |rec| is_val?(rec,"msh11",'2.4') }
   
   # PV1
-  define_group( "pv12", PT_CLASSES, :patient_class )    # PV12_VALS
-  PV12_NOT_NULL = Proc.new{ |rec| rec[:PV1][2].to_s != "Null value detected" }
-  define_group( "pv13", PT_LOCS, :patient_location )    # PV13_VALS
   PV17 = Proc.new{ |rec| has_val?(rec,"pv17") }
   PV18 = Proc.new{ |rec| has_val?(rec,"pv18") }
   PV19 = Proc.new{ |rec| has_val?(rec,"pv19") }
   PV117 = Proc.new{ |rec| has_val?(rec,"pv117") }
   PV17_AND_PV18 = Proc.new{ |rec| PV17.call(rec) && PV18.call(rec) }
-  PV118 = Proc.new{ |rec| has_val?(rec,"pv118") }
-  PV120 = Proc.new{ |rec| has_val?(rec,"pv120") }
-  PV136 = Proc.new{ |rec| has_val?(rec,"pv136") }
   PV144 = Proc.new{ |rec| has_val?(rec,"pv144") }
   PV145 = Proc.new{ |rec| has_val?(rec,"pv145") }
   
@@ -100,13 +92,11 @@ module OHProcs
             
   RAD = { :matching_ORC_segment => Proc.new{ |rec| rec.segment_before(:OBX) == :ORC }, :exam_end_date_listed => OBR27,
           :reason_for_study_listed => OBR31, :observation_value_is_impression => OBX5_IMP, :observation_value_is_addendum => OBX5_ADT  }
-  ALL_RAD = RAD + OBX3_VALS + PV12_VALS + PV13_VALS
+  ALL_RAD = RAD + OBX3_VALS
   
   ADT = { :message_event_not_encounter => MSH9_NOT_ADT, :EVN_segment_present => EVN, :patient_language_listed => PID15,
-          :valid_patient_class => PV12_NOT_NULL, :patient_race_listed => PID10, :patient_religion_listed => PID17,
-          :patient_marital_status_listed => PID16, :country_codes_match => PID12_AND_11_7, :admission_date_listed => PV144,
-          :discharge_date_listed => PV145, :patient_type_listed => PV118, :financial_class_listed => PV120,
-          :discharge_disposition_listed => PV136 }
+          :patient_race_listed => PID10, :patient_religion_listed => PID17, :patient_marital_status_listed => PID16,
+          :country_codes_match => PID12_AND_11_7, :admission_date_listed => PV144, :discharge_date_listed => PV145 }
   
   ORDERS = { :message_event_not_order => MSH9_NOT_ORD, :result_date_is_not_collection_date => OBR7_AND_OBR22 } 
   ALL_ORDERS = ORDERS + OBR25_VALS

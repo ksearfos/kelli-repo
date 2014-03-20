@@ -1,0 +1,9 @@
+C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/lib/hl7module/MessageHandler.rb:142:in `initialize': No such file or directory - enc_pre.dat (Errno::ENOENT)
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/lib/hl7module/MessageHandler.rb:142:in `open'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/lib/hl7module/MessageHandler.rb:142:in `read_message'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/lib/hl7module/MessageHandler.rb:62:in `initialize'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:34:in `new'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:34:in `block in get_records'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:32:in `each'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:32:in `get_records'
+	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_record_comparer.rb:42:in `<main>'

@@ -93,12 +93,15 @@ module OHProcs
   
   # creates group of procs all checking for a field to have one of the values in the given list (vals)
   # stores the whole group of procs as an array called [FIELD]_VALS
+  # returns the new hash
   def self.define_group( field, vals, name )   
     all_procs = {}
     vals.each{ |s| 
       key = "#{name}_of_#{s}".to_sym    # :some_val_of_x
       all_procs[key] = Proc.new{ |rec| is_val?(rec,field,s) }
     }
-    self.const_set( "#{field.upcase}_VALS", all_procs )
+    const_name = "#{field.upcase}_VALS"
+    self.const_set( const_name, all_procs )
+    return self.const_get( const_name )  # just so there's no ambiguity about why there's a const_get here    
   end
 end

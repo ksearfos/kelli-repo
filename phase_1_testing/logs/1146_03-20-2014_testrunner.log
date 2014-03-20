@@ -1,0 +1,8 @@
+C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_record_comparer.rb:49: warning: already initialized constant RUN
+28/2011 5:50 PM"}
+{:PT_NAME=>"Riley Andrews JR", :PT_ID=>"00013880", :PT_ACCT=>"1113331605", :VISIT_DATE=>"05/13/2011 1:31 PM"}
+{:PT_NAME=>"Eloise D Cowgill", :PT_ID=>"00014838", :PT_ACCT=>"1112532767", :VISIT_DATE=>"05/05/2011 5:21 PM"}
+{:PT_NAME=>"Joyce Y Eddy", :PT_ID=>"00015115", :PT_ACCT=>"1113332009", :VISIT_DATE=>"05/13/2011 3:00 PM"}
+{:PT_NAME=>"Carolyn I Jackson", :PT_ID=>"00014054", :PT_ACCT=>"1113831018", :VISIT_DATE=>"05/18/2011 11:04 AM"}
+Code/kelli-repo/phase_1_testing/logs/1146_03-20-2014_records.csv
+2014-03-20 11:46:33 -0400 INFO: Exiting...

@@ -1,4 +1,0 @@
-C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:50:in `block in remove_files': undefined method `close' for File:Class (NoMethodError)
-	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:49:in `each'
-	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner_helper.rb:49:in `remove_files'
-	from C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/test_runner.rb:59:in `<main>'

@@ -9,7 +9,9 @@ class RecordComparer
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
-    @details = ( type == :adt ? [:PT_NAME,:PT_ACCT,:VISIT_DATE] : [:PT_NAME,:PT_ACCT,:PROC_NAME,:PROC_DATE] )
+    @type = type
+    @details = [:PT_NAME,:PT_ID,:PT_ACCT]
+    @details += ( @type == :adt ? [:VISIT_DATE] : [:PROC_NAME,:PROC_DATE] )
     
     # items for tracking criteria
     @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
@@ -68,8 +70,13 @@ class RecordComparer
   end
   
   def used_records
-    recs = @use.map{ |rec| record_details(rec) }
-    recs.sort.join("\n")
+    recs = [ "MRN", "PATIENT NAME" ]
+    recs += ( @type = :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )
+    @use.map{ |rec| record_details(rec) }
+    recs += @use
+    full_ary = []
+    recs.each{ |r| full_ary << r }
+    full_ary
   end
   
   private
@@ -164,12 +171,19 @@ class RecordComparer
   end  
   
   def record_details(rec)
+    my_data = [ rec[:PT_NAME], rec[:PT_ID], rec[:PT_ACCT] ]
+    my_data += ( @type = :adt ? [ rec[:VISIT_DATE] ] : [ rec[:PROC_NAME], rec[:PROC_DATE] ] )    
+    my_data
+  end
+  
+  def old_record_details(rec)
     str = <<STR
 NAME: #{rec[:PT_NAME]}
+MRN: #{rec[:PT_ID]}
 ACCOUNT #: #{rec[:PT_ACCT]}
 STR
     
-    if @details.include?(:VISIT_DATE)
+    if @type == :adt
       str << "DATE/TIME: #{rec[:VISIT_DATE]}\n"
     else
       str << "PROCEDURE: #{rec[:PROC_NAME]}\n"
