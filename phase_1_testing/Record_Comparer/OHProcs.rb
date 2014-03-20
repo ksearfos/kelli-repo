@@ -69,7 +69,7 @@ module OHProcs
   RAD = { has_orc_segment: ORC, exam_end_shown: OBR27, study_reason_shown: OBR31,
           value_is_impression: OBX5_IMP, value_is_addendum: OBX5_ADT } + OBS_IDS 
   
-  ADT = { language_shown:PID8, race_shown: PID10, religion_shown: PID17, marital_status_shown: PID16,
+  ADT = { language_shown:PID15, race_shown: PID10, religion_shown: PID17, marital_status_shown: PID16,
           country_code_shown_twice: PID12_AND_11_7, admit_date_shown: PV144,
           discharge_date_shown: PV145 } + SEXES
   

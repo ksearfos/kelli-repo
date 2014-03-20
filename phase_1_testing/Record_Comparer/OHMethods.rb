@@ -13,7 +13,7 @@ module OHProcs
   
   # do both of the given fields of the record have values?
   # returns true if both have values, false otherwise
-  def self.both_have_val?( record, field1, field2 )
+  def self.both_have_vals?( record, field1, field2 )
     res1 = has_val?( record, field1 )
     res2 = has_val?( record, field2 )
     res1 && res2
