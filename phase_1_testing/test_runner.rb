@@ -5,24 +5,36 @@ require 'test_runner_helper'
 
 # command-line argument assignment
 case ARGV[0]
-when '-c'
-  RUN_RCOMP = true
-  RUN_RSPEC = false
-when '-s'
-  RUN_RSPEC = true
-  RUN_RCOMP = false
-when '-r'
-  RUN_RSPEC = true
-  RUN_RCOMP = true
-when '-t'
-  RUN_RSPEC = false
-  RUN_RCOMP = false  
+when '-d'   # non-delete mode
+  DELETE = false
+  RUN = true
+when '-t'   # test mode
+  DELETE = false
+  RUN = false
+when '-r'   # full run
+  DELETE = true
+  RUN = true
+when '--rspec'
+  DELETE = true
+  RUN = :rspec
+when '--rspec-test'
+  DELETE = false
+  RUN = :rspec
+when '--comparer'
+  DELETE = true
+  RUN = :comparer
+when '--comparer-test'
+  DELETE = false
+  RUN = :comparer
 when '--help'
-  puts "test_runner.rb requires one commandline argument:"
-  puts "   -c: run record [c]omparer only"
-  puts "   -s: run r[s]pec only"
-  puts "   -r: run both"
-  puts "   -t: run in [t]est mode (basic output only)"
+  puts "test_runner_record_comparer.rb takes one commandline argument:"
+  puts "   -r: [r]un full script (runs rspec and comparer, and deletes processed files)"
+  puts "   -d: run in non-[d]elete mode (runs full script but doed not delete files)"
+  puts "   -t: run in [t]est mode (basic output only, does not delete files)"
+  puts "--rspec: run in rspec mode (basic output and rspec results, deletes files)"
+  puts "--comparer: run in comparer mode (basic output and comparer results, deletes files)"
+  puts "--rspec-test: run rspec in test mode (basic output and rspec results, but does not delete files)"
+  puts "--comparer-test: run comparer in test mode (basic output and comparer results, does not delete files)"
   exit 0
 else
   raise "Unrecognized argument '#{ARGV[0]}' in test_runner.rb"
@@ -30,33 +42,33 @@ else
 end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
-FTP = $LOAD_PATH[0]  # testing  
-# FTP = "d:/FTP"
-$LOG_DIR = "#{FTP}/logs"
-NEW_DIR = "#{FTP}/tested"
-LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
+TESTING = true  # make some changes if this is being run for testing
+TYPE = :rad
+FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
+FPATT = TESTING ? /#{TYPE}_pre/ : /^\w+_pre_\d+\.dat$/
+$LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
+PFX = "#{$LOG_DIR}/#{dt}_"
+LOG_FILE = PFX + "testrunner.log"
 
 # create the directory, if needed
 `mkdir "#{$LOG_DIR}"` unless File.exists?( $LOG_DIR )
-`mkdir "#{NEW_DIR}"` unless File.exists?( NEW_DIR )
-
-lab_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
-rad_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
-enc_file = "C:/Users/Owner/Documents/enc_post.dat"  # testing only
-test_file = "enc_test.dat"  # testing only
-hl7_files = [ test_file ]  # testing only  
-# hl7_files = Dir.entries( FTP ).select{ |f| File.file? "#{FTP}/#{f}" }
 
 # set up - create logger and read in records from files
-$logger = set_up_logger(LOG_FILE)
+$logger = set_up_logger( LOG_FILE )
+$logger.info "Checking #{FTP} for files..."
+
+# find files, store in hl7_files with full pathname
+hl7_files = Dir.entries( FTP ).select{ |f| File.file?("#{FTP}/#{f}") && f =~ FPATT }
+hl7_files.map!{ |f| "#{FTP}/#{f}" }
+
+# now turn those files into parsable hl7 messages
 all_recs = get_records( hl7_files )
-
-unless all_recs.empty?   # if there are no records, don't want useless and confusing logger output
-  run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
-  run_rspec( "#{$LOG_DIR}/#{dt}_rspec.log", all_recs ) if RUN_RSPEC
+   
+unless !RUN || all_recs.empty?   # avoid running setup if we won't be running anything else
+  run_record_comparer( PFX + "records.csv", all_recs ) unless RUN == :rspec
+  run_rspec( PFX + "rspec.log", PFX + "flagged_recs.csv", all_recs ) unless RUN == :comparer
+  remove_files( hl7_files ) if DELETE
 end
-
-remove_files( hl7_files )
 
 $logger.info "Exiting..."
 $logger.close

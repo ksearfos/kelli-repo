@@ -4,7 +4,7 @@ require "Record_Comparer/RecordComparer.rb"
 require "Record_Comparer/OHProcs.rb"
 require 'logger'
 
-def run_record_comparer( results_file, messages )
+def run_record_comparer( csv_file, messages )
   type = messages[0].type  
   fields = OHProcs.const_get( "#{type.upcase}_FIELDS_TO_ADD" )
 
@@ -17,19 +17,13 @@ def run_record_comparer( results_file, messages )
   # make new record comparer
   comparer = RecordComparer.new( messages, type )
   comparer.analyze
-
-  # the following goes into results_file
-  File.open( results_file, "w" ) { |f|
-    f.puts "==========MATCHED=========="
-    f.puts comparer.get_matched
-    f.puts ""
-    f.puts "==========UNMATCHED=========="
-    f.puts comparer.get_unmatched
-    f.puts ""
-  }
+  matched = comparer.get_matched.unshift( "==========MATCHED==========" )
+  unmatched = comparer.get_unmatched.unshift( "==========UNMATCHED==========" )
 
   # log completion in the logger
   $logger.info comparer.summary
-  $logger.info "Record search completed."  
-  comparer.get_used
+  $logger.info "Criteria checked:\n#{[matched,unmatched].make_table}\n"  
+  
+  CSV.make_spreadsheet_from_array( csv_file, comparer.get_used )
+  $logger.info "See #{csv_file}\n"
 end

@@ -61,19 +61,19 @@ class RecordComparer
   end
   
   def get_unmatched  
-    @unmatched.sort.join( "\n" )
+    @unmatched.sort
   end
   
   def get_matched
     m = @criteria.keys - @unmatched
-    m.sort.join( "\n" )  
+    m.sort 
   end
   
   def get_used
     hdr = [ "MRN", "PATIENT NAME", "DOB" ]
-    hdr += ( @type = :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )    
+    hdr += ( @type == :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )    
     other_ary = @use.clone
-    other_ary.sort_by!{ |_,name| name }
+    other_ary.sort_by!{ |mrn,name,dob,acct,proc_visit| [name, acct, proc_visit] }
     other_ary.unshift( hdr )
   end
   

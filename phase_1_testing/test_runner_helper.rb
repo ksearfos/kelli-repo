@@ -2,7 +2,6 @@
 
 require 'run_rspec'
 require 'run_record_comparer'
-require 'CSV'
 
 # set up and prettify the $logger
 def set_up_logger( file )
@@ -56,10 +55,3 @@ def remove_files( files )
   end
 end
 
-def make_csv( ary, file )
-  CSV.open( file, "wb" ) do |csv|
-    ary.each{ |row| csv.puts row }
-  end
-
-  $logger.info "See #{file}\n"
-end

@@ -1,5 +1,21 @@
 # last updated 2/28/14 3:35pm
 
+require 'CSV'
+
+class CSV
+  def self.make_spreadsheet_from_array( file, array )
+    CSV.open( file, "wb" ) do |csv|
+      array.each{ |row| csv.puts row }
+    end
+  end
+  
+  def self.make_spreadsheet_from_string( file, string, delim = "\n" )
+    ary = []
+    string.split(delim).each{ |line| ary << line.parse_csv }
+    make_spreadsheet_from_array( file, ary )
+  end
+end
+
 class Object
   def self.subclasses
     ObjectSpace.each_object(::Class).select{ |klass| klass < self }
@@ -59,6 +75,24 @@ class Array
     new.keep_if{ |val| (val && !val.empty?) }   # remove all empty values
     !new.empty?                        # is there anything left?
   end
+
+  def make_table   # should be an array of arrays
+    num_cols = self.size
+    max_rows = 0
+    width = 0
+    self.each{ |col|
+      max_rows = col.size if col.size > max_rows      
+      col.each{ |e| width = e.size if e.size > width }
+    }
+    
+    str = ""
+    for row_i in 0...max_rows
+      self.each{ |col| str << "\t" + col[row_i].to_s.ljust(width) }
+      str << "\n"
+    end
+    
+    str
+  end  
 end
 
 class Hash
