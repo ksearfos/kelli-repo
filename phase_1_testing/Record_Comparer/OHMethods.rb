@@ -11,6 +11,14 @@ module OHProcs
     res.has_value?
   end
   
+  # do both of the given fields of the record have values?
+  # returns true if both have values, false otherwise
+  def self.both_have_val?( record, field1, field2 )
+    res1 = has_val?( record, field1 )
+    res2 = has_val?( record, field2 )
+    res1 && res2
+  end
+  
   # is the value of the given field in the record the value we desire?
   # returns true if at least one field matches the given value, false otherwise
   def self.is_val?( record, field, value )
@@ -100,8 +108,9 @@ module OHProcs
       key = "#{name}_of_#{s}".to_sym    # :some_val_of_x
       all_procs[key] = Proc.new{ |rec| is_val?(rec,field,s) }
     }
-    const_name = "#{field.upcase}_VALS"
-    self.const_set( const_name, all_procs )
-    return self.const_get( const_name )  # just so there's no ambiguity about why there's a const_get here    
+    all_procs
+    #const_name = "#{field.upcase}_VALS"
+    #self.const_set( const_name, all_procs )
+    #return self.const_get( const_name )  # just so there's no ambiguity about why there's a const_get here    
   end
 end

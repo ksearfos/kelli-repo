@@ -14,109 +14,83 @@ module OHProcs
   
   # -------------Define the Procs------------ #
   # MSH
-  MSH9_NOT_ORD = Proc.new{ |rec| rec.header[9] != 'ORU^R01' }
-  MSH9_NOT_ADT = Proc.new{ |rec| rec.header[9] != 'ADT^A08' }
   MSH10_P = Proc.new{ |rec| is_val?(rec,"msh10",'P') }
   MSH10_T = Proc.new{ |rec| is_val?(rec,"msh10",'T') }
   MSH11_23 = Proc.new{ |rec| is_val?(rec,"msh11",'2.3') }
   MSH11_24 = Proc.new{ |rec| is_val?(rec,"msh11",'2.4') }
-  
+
+  # PID  
+  SEXES = define_group( "pid8", HL7Test::SEXES, :sex )
+  PID10 = Proc.new{ |rec| has_val?(rec,"pid10") }
+  PID12_AND_11_7 = Proc.new{ |rec| comp_has_val?(rec,"pid11",7) && has_val?(rec,"pid12") }
+  PID15 = Proc.new{ |rec| has_val?(rec,"pid15") } 
+  PID16 = Proc.new{ |rec| has_val?(rec,"pid16") }  
+  PID17 = Proc.new{ |rec| has_val?(rec,"pid17") } 
+  PID18_AND_PV119 = Proc.new{ |rec| both_have_vals?(rec,"pid18","pv119") }  
+    
   # PV1
   PV17 = Proc.new{ |rec| has_val?(rec,"pv17") }
   PV18 = Proc.new{ |rec| has_val?(rec,"pv18") }
   PV19 = Proc.new{ |rec| has_val?(rec,"pv19") }
-  PV117 = Proc.new{ |rec| has_val?(rec,"pv117") }
-  PV17_AND_PV18 = Proc.new{ |rec| PV17.call(rec) && PV18.call(rec) }
+  PV117 = Proc.new{ |rec| has_val?(rec,"pv117") }  
+  PV17_AND_PV18 = Proc.new{ |rec| both_have_vals?(rec,"pv17","pv18") }
   PV144 = Proc.new{ |rec| has_val?(rec,"pv144") }
   PV145 = Proc.new{ |rec| has_val?(rec,"pv145") }
+
+  # ORC  
+  ORC = Proc.new{ |rec| rec[:ORC] }  # if there is no ORC, then rec[:ORC] == nil
+  ORC1 = Proc.new{ |rec| has_val?(rec,"orc1") }
   
-  # OBX
-  define_group( "obx2", OBS_TYPES, :observation_type )    # OBX2_VALS
+  # OBR
+  OBR7_AND_OBR22 = Proc.new{ |rec| both_have_vals?(rec,"obr7","obr22") }
+  OBR_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obr_result_status ) 
+  OBR27 = Proc.new{ |rec| has_val?(rec,"obr27") } 
+  OBR31 = Proc.new{ |rec| has_val?(rec,"obr31") }
+    
+  # OBX  
+  VAL_TYPES = define_group( "obx2", OBS_TYPES, :observation_type )
   OBX3 = Proc.new{ |rec| has_val?(rec,"obx3") }
-  OBX3_3_NOT_LA01 = Proc.new{ |rec| 
-    obx3s = rec.fetch_field("obx3")
-    obx3s.each{ |f| return true if f[3] != "LA01" }
-    return false  #otherwise
-  }
-  define_group( "obx3", RAD_OBS_IDS, :observation_id )    # OBX3_VALS
+  OBS_IDS = define_group( "obx3", RAD_OBS_IDS, :observation_ID )
   OBX5_IMP = Proc.new{ |rec| matches?(rec,"obx5",IMP_PROC) }
   OBX5_ADT = Proc.new{ |rec| matches?(rec,"obx5",ADT_PROC) }
   OBX5_SN = Proc.new{ |rec| is_type?( rec,"obx5",:SN ) }
   OBX5_NM = Proc.new{ |rec| is_type?( rec,"obx5",:NM ) }
   OBX5_TX = Proc.new{ |rec| is_type?( rec,"obx5",:TX ) }
   OBX5_TS = Proc.new{ |rec| is_type?( rec,"obx5",:TS ) }
-  define_group( "obx11", HL7Test::ABNORMAL_FLAGS, :abnormal_flag )    # OBX11_VALS
-  
-  # PID
-  PID3 = Proc.new{ |rec| has_val?(rec,"pid3") } 
-  PID5 = Proc.new{ |rec| has_val?(rec,"pid5") }
-  PID7 = Proc.new{ |rec| has_val?(rec,"pid7") }
-  define_group( "pid8", HL7Test::SEXES, :sex )    # PID8_VALS
-  PID10 = Proc.new{ |rec| has_val?(rec,"pid10") }
-  PID11 = Proc.new{ |rec| has_val?(rec,"pid11") }  
-  PID11_7 = Proc.new{ |rec| comp_has_val?(rec,"pid11",7) }  
-  PID12 = Proc.new{ |rec| has_val?(rec,"pid12") } 
-  PID12_AND_11_7 = Proc.new{ |rec| PID11_7.call(rec) && PID12.call(rec) }
-  PID15 = Proc.new{ |rec| has_val?(rec,"pid15") }
-  PID16 = Proc.new{ |rec| has_val?(rec,"pid16") }  
-  PID17 = Proc.new{ |rec| has_val?(rec,"pid17") } 
-  PID18_AND_PV119 = Proc.new{ |rec| has_val?(rec,"pid18") && has_val?(rec,"pv119") }  
-  PID19 = Proc.new{ |rec| has_val?(rec,"pid19") }
-   
-  # ORC
-  ORC = Proc.new{ |rec| rec[:ORC] }  # if there is no ORC, then rec[:ORC] == nil, which is always false
-  ORC1 = Proc.new{ |rec| has_val?(rec,"orc1") }
-  
-  # OBR
-  OBR7 = Proc.new{ |rec| has_val?(rec,"obr7") } 
-  OBR7_AND_OBR22 = Proc.new{ |rec| 
-    obr7 = rec[:OBR].field(7).as_date          # it's important to convert to dates because rad
-    obr22 = rec[:OBR].field(22).as_date        #+ includes time, but we don't need times to be the same
-    obr7 != obr22
-  }
-  OBR22 = Proc.new{ |rec| has_val?(rec,"obr22") }
-  define_group( "obr25", HL7Test::RESULT_STATUS, :result_status )    # OBR25_VALS  
-  OBR27 = Proc.new{ |rec| has_val?(rec,"obr27") } 
-  OBR31 = Proc.new{ |rec| has_val?(rec,"obr31") }
-  
-  # OTHER
-  EVN = Proc.new{ |rec| rec[:EVN] }
-  
+  ABN_FLAGS = define_group( "obx11", HL7Test::ABNORMAL_FLAGS, :abnormal_flag )
+  OBX_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obx_result_status ) 
+
   #-------------Group Procs for Quick Access-------------- #
 
-  # LAB
-  LAB = { :observation_value_is_structured_numeric => OBX5_SN, :observation_value_is_numeric => OBX5_NM,
-          :observation_value_is_text => OBX5_TX, :attending_and_referring_doctors_listed => PV17_AND_PV18,
-          :order_control_id_listed => ORC1 }
-  ALL_LAB = LAB + OBX2_VALS + OBX11_VALS
+  LAB = { value_is_structured_numeric: OBX5_SN, value_id_numeric: OBX5_NM, value_is_text: OBX5_TX,
+          value_is_timestamp: OBX5_TS, attending_and_referring_shown: PV17_AND_PV18,
+          has_order_control: ORC1 } + VAL_TYPES + OBX_RES_STATS + ABN_FLAGS
             
-  RAD = { :matching_ORC_segment => Proc.new{ |rec| rec.segment_before(:OBX) == :ORC }, :exam_end_date_listed => OBR27,
-          :reason_for_study_listed => OBR31, :observation_value_is_impression => OBX5_IMP, :observation_value_is_addendum => OBX5_ADT  }
-  ALL_RAD = RAD + OBX3_VALS
+  RAD = { has_orc_segment: ORC, exam_end_shown: OBR27, study_reason_shown: OBR31,
+          value_is_impression: OBX5_IMP, value_is_addendum: OBX5_ADT } + OBS_IDS 
   
-  ADT = { :message_event_not_encounter => MSH9_NOT_ADT, :EVN_segment_present => EVN, :patient_language_listed => PID15,
-          :patient_race_listed => PID10, :patient_religion_listed => PID17, :patient_marital_status_listed => PID16,
-          :country_codes_match => PID12_AND_11_7, :admission_date_listed => PV144, :discharge_date_listed => PV145 }
+  ADT = { language_shown:PID8, race_shown: PID10, religion_shown: PID17, marital_status_shown: PID16,
+          country_code_shown_twice: PID12_AND_11_7, admit_date_shown: PV144,
+          discharge_date_shown: PV145 } + SEXES
   
-  ORDERS = { :message_event_not_order => MSH9_NOT_ORD, :result_date_is_not_collection_date => OBR7_AND_OBR22 } 
-  ALL_ORDERS = ORDERS + OBR25_VALS
+  ORDERS = { result_and_collection_date_shown: OBR7_AND_OBR22 } + OBR_RES_STATS
   
-  CORE = { :processing_id_of_T => MSH10_T, :message_version_2_3 => MSH11_23, :processing_id_of_P => MSH10_P,
-           :message_version_2_4 => MSH11_24, :attending_doctor_listed => PV17, :referring_doctor_listed => PV18,
-           :consulting_doctor_listed => PV19, :admitting_doctor_listed => PV117, :visit_id_listed_twice => PID18_AND_PV119 }                 
-  ALL_CORE = CORE + PID8_VALS
+  CORE = { processing_ID_of_T: MSH10_T, processing_ID_of_P: MSH10_P, hl7_version_2_3: MSH11_23,
+           hl7_version_2_4: MSH11_24, attending_doctor_shown: PV17, referring_doctor_shown: PV18,
+           consulting_doctor_shown: PV19, admitting_doctor_shown: PV117, visit_ID_shown_twice: PID18_AND_PV119 }                 
   
   # fields to add with value lists pulled from current records
+  # added at runtime by run_record_comparer
   ADT_FIELDS_TO_ADD = { hospital_service:"pv110", admit_source:"pv114", patient_type:"pv118",
-                        financial_class:"pv120", discharge_disposition:"pv136" }   
-  LAB_FIELDS_TO_ADD = { procedure_id:"obr4", amalyte:"obx4" }
-  RAD_FIELDS_TO_ADD = { procedure_id:"pbr4" }  
+                        financial_class:"pv120", discharge_disposition:"pv136", patient_class:"pv12" }   
+  LAB_FIELDS_TO_ADD = { analyte:"obx4", procedure_ID:"obr4" }
+  RAD_FIELDS_TO_ADD = { procedure_ID:"obr4" }
   
   public
   
-  @lab = ALL_CORE + ALL_ORDERS + ALL_LAB
-  @rad = ALL_CORE + ALL_ORDERS + ALL_RAD
-  @adt = ALL_CORE + ADT
+  @lab = CORE + ORDERS + LAB
+  @rad = CORE + ORDERS + RAD
+  @adt = CORE + ADT
   class << self
     attr_reader :lab, :rad, :adt
   end
