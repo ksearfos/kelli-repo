@@ -14,11 +14,15 @@ when '-s'
 when '-r'
   RUN_RSPEC = true
   RUN_RCOMP = true
+when '-t'
+  RUN_RSPEC = false
+  RUN_RCOMP = false  
 when '--help'
   puts "test_runner.rb requires one commandline argument:"
   puts "   -c: run record [c]omparer only"
   puts "   -s: run r[s]pec only"
   puts "   -r: run both"
+  puts "   -t: run in [t]est mode (basic output only)"
   exit 0
 else
   raise "Unrecognized argument '#{ARGV[0]}' in test_runner.rb"
