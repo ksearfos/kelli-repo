@@ -1,8 +1,0 @@
-Ohio Health Rad HL7 OBR segment behaves like a normal OBR segment has a valid ordering provider (ID and/or a name, and final field ends with PROV)
-
-Message Date: 02/26/2014 12:33:10 AM
-Patient: 03330897 - Kionna M Hale Mankins
-Account: 1114110184
-Date of Birth: 07/26/1982      
-Procedure: IMG181^CT HEAD OR BRAIN WITHOUT CONTRAST on 05/21/2011 7:07 PM
-

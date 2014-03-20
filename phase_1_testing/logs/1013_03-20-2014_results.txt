@@ -1,0 +1,58 @@
+==========MATCHED==========
+EVN_segment_present
+admission_date_listed
+admitting_doctor_listed
+attending_doctor_listed
+consulting_doctor_listed
+discharge_date_listed
+hostpial_service_of_CAR
+hostpial_service_of_CMC
+hostpial_service_of_ERM
+hostpial_service_of_IMG
+hostpial_service_of_LAB
+message_event_not_encounter
+message_version_2_4
+patient_type_listed
+processing_id_of_T
+referring_doctor_listed
+sex_of_F
+sex_of_M
+valid_patient_class
+
+==========UNMATCHED==========
+country_codes_match
+discharge_disposition_listed
+financial_class_listed
+message_version_2_3
+patient_language_listed
+patient_marital_status_listed
+patient_race_listed
+patient_religion_listed
+processing_id_of_P
+sex_of_A
+sex_of_C
+sex_of_N
+sex_of_O
+sex_of_U
+visit_id_listed_twice
+
+==========RECORDS==========
+NAME: Beverly A Cole
+ACCOUNT #: 1114830271
+DATE/TIME: 05/28/2011 5:50 PM
+
+NAME: Carolyn I Jackson
+ACCOUNT #: 1113831018
+DATE/TIME: 05/18/2011 11:04 AM
+
+NAME: Eloise D Cowgill
+ACCOUNT #: 1112532767
+DATE/TIME: 05/05/2011 5:21 PM
+
+NAME: Joyce Y Eddy
+ACCOUNT #: 1113332009
+DATE/TIME: 05/13/2011 3:00 PM
+
+NAME: Riley Andrews JR
+ACCOUNT #: 1113331605
+DATE/TIME: 05/13/2011 1:31 PM

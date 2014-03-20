@@ -11,7 +11,7 @@ module OHProcs
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   PT_CLASSES = %w( Emergency Outpatient Inpatient Observation Q O E )
   PT_LOCS = %w( ED ISD EDO 7N 5W CSD 5OC 4DE EPY AEC 5DE )
-  OBS_TYPES = %w( TX NM SN )
+  OBS_TYPES = %w( TX NM SN TS )
   RAD_OBS_IDS = %w( &GDT &IMP &ADT )
   
   # -------------Define the Procs------------ #
@@ -52,6 +52,7 @@ module OHProcs
   OBX5_SN = Proc.new{ |rec| is_type?( rec,"obx5",:SN ) }
   OBX5_NM = Proc.new{ |rec| is_type?( rec,"obx5",:NM ) }
   OBX5_TX = Proc.new{ |rec| is_type?( rec,"obx5",:TX ) }
+  OBX5_TS = Proc.new{ |rec| is_type?( rec,"obx5",:TS ) }
   define_group( "obx11", HL7Test::ABNORMAL_FLAGS, :abnormal_flag )    # OBX11_VALS
   
   # PID

@@ -30,19 +30,21 @@ else
 end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
-ftp = $LOAD_PATH[0]  # testing  
-# ftp = "d:/FTP"
-$LOG_DIR = "#{ftp}/logs"
+FTP = $LOAD_PATH[0]  # testing  
+# FTP = "d:/FTP"
+$LOG_DIR = "#{FTP}/logs"
+NEW_DIR = "#{FTP}/tested"
 LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
 
 # create the directory, if needed
 `mkdir "#{$LOG_DIR}"` unless File.exists?( $LOG_DIR )
+`mkdir "#{NEW_DIR}"` unless File.exists?( NEW_DIR )
 
 lab_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
 rad_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
 enc_file = "C:/Users/Owner/Documents/enc_post.dat"  # testing only
-bad_file = "C:/Users/Owner/Documents/dinosaur.txt"  # testing only
-hl7_files = [ rad_file ]  # testing only  
+test_file = "enc_test.dat"  # testing only
+hl7_files = [ test_file ]  # testing only  
 # hl7_files = Dir.entries( FTP ).select{ |f| File.file? "#{FTP}/#{f}" }
 
 # set up - create logger and read in records from files
@@ -53,6 +55,8 @@ unless all_recs.empty?   # if there are no records, don't want useless and confu
   run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
   run_rspec( "#{$LOG_DIR}/#{dt}_rspec.log", all_recs ) if RUN_RSPEC
 end
+
+remove_files( hl7_files )
 
 $logger.info "Exiting..."
 $logger.close

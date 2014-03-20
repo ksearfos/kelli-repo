@@ -139,11 +139,13 @@ module HL7Test
     def read_message( file )
       chars = ""
 
-      File.open( file, "r" ).each_char{ |ch| 
+      f = File.open( file, "r" )
+      f.each_char{ |ch| 
         if ch == "\r" then chars << @@eol
         else chars << ch
         end
       }
+      f.close
 
       chars.gsub!( '\\r', @@eol )
       chars.squeeze!( @@eol )                # only need one line break at a time
