@@ -36,7 +36,7 @@ def organize_results( flagged, type )
   flagged.each{ |msg,errs|
     msg_ary = msg.get_details( fields )
     all_errs.each{ |err|
-      msg_ary << errs.include?(err)   # should be a series of [true,false,false,true,true,...]
+      msg_ary << ( errs.include?(err) ? "FAILED" : "PASSED" )
     }
     ary << msg_ary
   } 

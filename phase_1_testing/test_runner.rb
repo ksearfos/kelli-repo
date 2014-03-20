@@ -1,5 +1,10 @@
 #!/bin/env ruby
 
+#adding support to write rsec results to csv;
+#prelim test runs for rad; 
+#standardize formatting in test script and take out of record comparer
+#also sort results before adding header
+
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'test_runner_helper'
 
@@ -43,7 +48,7 @@ end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :rad
+TYPE = :enc
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 FPATT = TESTING ? /#{TYPE}_pre/ : /^\w+_pre_\d+\.dat$/
 $LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
