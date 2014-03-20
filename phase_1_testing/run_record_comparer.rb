@@ -14,15 +14,6 @@ def run_record_comparer( results_file, messages )
     OHProcs.define_group( "obr4", HL7Test.get_data(messages,"obr4"), :procedure_id )   
     var.merge!( OHProcs::OBR4_VALS )
   end
-  
-  # $logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-  # $logger.formatter = Proc.new{ |severity,datetime,prog,msg|
-    # str = "#{datetime} #{severity}"
-    # str << "(#{prog})" if prog
-    # str << ":\n"
-    # str << " #{msg}\n\n"
-    # str
-  # }
 
   comparer = RecordComparer.new( messages, type )
   comparer.analyze
@@ -41,6 +32,6 @@ def run_record_comparer( results_file, messages )
 
   # log completion in the logger
   $logger.info comparer.summary
-  $logger.info "Record search completed.\n Results can be viewed in #{results_file}."
+  $logger.info "Record search completed. See #{results_file}.\n"
   
 end

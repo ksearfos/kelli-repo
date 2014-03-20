@@ -173,7 +173,7 @@ shared_examples "the PV1 visit number and PID account number" do
       pv1_visit = msg[:PV1].field(:visit_number)
       pid_acct = msg[:PID].field(:account_number)
       beg = /^[A-Z]?\d+/    
-      pv1_visit && pid_acct && pid_acct =~ beg && pv1_visit =~ beg
+      pv1_visit && pid_acct && pid_acct.first =~ beg && pv1_visit.first =~ beg
     }
     @failed = pass?( messages, logic )
     @failed.should be_empty

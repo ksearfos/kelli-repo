@@ -138,8 +138,7 @@ module HL7Test
     # changes coding to end in \n for easier parsing
     def read_message( file )
       chars = ""
-     
-      puts "Reading #{file}..."
+
       File.open( file, "r" ).each_char{ |ch| 
         if ch == "\r" then chars << @@eol
         else chars << ch

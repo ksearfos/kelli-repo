@@ -6,7 +6,16 @@ require 'run_record_comparer'
 # set up and prettify the $logger
 def set_up_logger( file )
   $stdout.reopen(file, "w")
-  Logger.new file
+  $stderr.reopen(file, "w")
+  logger = Logger.new file
+  
+  logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
+  logger.formatter = Proc.new{ |severity,datetime,prog,msg|
+    str = "#{datetime} #{severity}: #{msg}\n"
+    str
+  }
+  
+  logger
 end
 
 def get_records( files )
@@ -18,9 +27,13 @@ def get_records( files )
   end
   
   # now break into records - sets all_recs
+  $logger.info "Beginning file input..."
   msg_list = []
-  hdlers = files.map{ |f| HL7Test::MessageHandler.new(f) }
-  hdlers.each{ |mh| msg_list << mh.records }
+  files.each{ |f| 
+    $logger.info "Opening #{f}"
+    mh = HL7Test::MessageHandler.new(f)
+    msg_list << mh.records
+  }
   
   msg_list.flatten!(1) unless msg_list.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.
   $logger.info "Found #{msg_list.size} messages to test\n"

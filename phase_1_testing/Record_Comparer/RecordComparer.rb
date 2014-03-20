@@ -32,13 +32,11 @@ class RecordComparer
     # if we need all of the records we were given, go ahead and use the whole list
     num_recs = @records.size
     if num_recs <= @min_size           # we're going the need all the records
-      puts "We will use all #{num_recs} records."
       @recs_to_use = @records.clone    # weird things happen if you don't clone an instance variable!
       return
     end
       
     # now look for records  
-    puts "Searching #{num_recs} records for test cases...\n"  
     find_me_some_records
 
     # if that is not enough records, supplement with a random sample set
