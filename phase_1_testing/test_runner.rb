@@ -41,17 +41,20 @@ LOG_FILE = "#{$LOG_DIR}/#{dt}_testrunner.log"
 # test_file = "C:/Users/Owner/Documents/manifest_lab_out.txt"  # testing only
 # test_file = "C:/Users/Owner/Documents/manifest_rad_out.txt"  # testing only
 test_file = "C:/Users/Owner/Documents/enc_post.dat"  # testing only
-hl7_files = [test_file]  # testing only  
+hl7_files = [ test_file ]  # testing only  
 # hl7_files = Dir.entries( FTP ).select{ |f| File.file? "#{FTP}/#{f}" }
 
 # set up - create logger and read in records from files
 $logger = set_up_logger(LOG_FILE)
 all_recs = get_records( hl7_files )
 
-# find records to manually validate, if RUN_RCOMP is true
-run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
+unless all_recs.empty?   # if there are no records, don't want useless and confusing logger output
+  # find records to manually validate, if RUN_RCOMP is true
+  run_record_comparer( "#{$LOG_DIR}/#{dt}_results.txt", all_recs ) if RUN_RCOMP
 
-# test all records, if RUN_RSPEC is true
-run_rspec( "#{$LOG_DIR}/#{dt}_rspec.log", all_recs ) if RUN_RSPEC
+  # test all records, if RUN_RSPEC is true
+  run_rspec( "#{$LOG_DIR}/#{dt}_rspec.log", all_recs ) if RUN_RSPEC
+end
 
+$logger.info "Exiting..."
 $logger.close

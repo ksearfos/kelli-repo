@@ -15,14 +15,14 @@ def run_record_comparer( results_file, messages )
     var.merge!( OHProcs::OBR4_VALS )
   end
   
-  $logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-  $logger.formatter = Proc.new{ |severity,datetime,prog,msg|
-    str = "#{datetime} #{severity}"
-    str << "(#{prog})" if prog
-    str << ":\n"
-    str << " #{msg}\n\n"
-    str
-  }
+  # $logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
+  # $logger.formatter = Proc.new{ |severity,datetime,prog,msg|
+    # str = "#{datetime} #{severity}"
+    # str << "(#{prog})" if prog
+    # str << ":\n"
+    # str << " #{msg}\n\n"
+    # str
+  # }
 
   comparer = RecordComparer.new( messages, type )
   comparer.analyze

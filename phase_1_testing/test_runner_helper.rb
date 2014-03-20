@@ -11,8 +11,8 @@ end
 
 def get_records( files )
   if files.empty?
-    $logger.info "No new files found."
-    $logger.close
+    $logger.info "No new files found.\n"
+    return []
   else
     $logger.info "Found #{files.size} new file(s):\n  " + files.join("\n  ") + "\n"
   end
