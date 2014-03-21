@@ -1,7 +1,7 @@
 require 'shared_examples'
 require 'spec_helper'
 
-describe "Ohio Health Lab HL7" do
+describe "OhioHealth Lab record" do
   before(:all) do
     @messages = $messages
   end 
@@ -10,156 +10,110 @@ describe "Ohio Health Lab HL7" do
     log_example( example )
     @failed = []
   end 
-      
-  # == General message tests
-  it_behaves_like "every HL7 message" do
+  
+  it_behaves_like "every record" do
     let(:messages){ @messages }
   end
-
-  # == MSH tests
-  context "MSH segment" do
-    it_behaves_like "a normal MSH segment" do
-      let(:messages){ @messages }
-    end
-    
-    it "has a valid Message Control ID", :pattern => 'T' do
-    logic = Proc.new{ |msg| msg[:MSH][10] == 'T' }
-    
-    @failed = pass?( @messages, logic )
-    @failed.should be_empty
-  end
-  end
   
-  # == ORC tests
-  context "ORC segment" do
-    it "has a Control ID of two characters" do
-      logic = Proc.new{ |msg| msg[:ORC].order_control.size == 2 }
+  it_behaves_like "lab and rad records" do
+    let(:messages){ @messages }
+  end  
+
+  context "when converted to HL7" do  
+    it "has the correct message processing ID", :pattern => "T for MGH, P otherwise" do
+      logic = Proc.new{ |msg| 
+        msh = msg.header
+        prid = msh.processing_id
+        msh[3] == 'MGH' ? prid == 'T' : prid == 'P'
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
+         
+    it "has the correct HL7 version", :pattern => "2.4 for MGH, 2.3 otherwise" do
+      logic = Proc.new{ |msg| 
+        msh = msg.header
+        vsn = msh.version
+        msh[3] == 'MGH' ? vsn == '2.3' : vsn == '2.4'
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
+  end
+
+  context "the order" do
+    it "has a valid control ID", :pattern => "RE, for order [re]sults" do
+      logic = Proc.new{ |msg| msg[:ORC].order_control == 'RE' }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
     end
   end
-
-  # == OBR tests    
-  context "OBR segments" do
-    it_behaves_like "a normal OBR segment" do
-      let(:messages){ @messages }
-    end
-
-    it "has a valid procedure ID", :pattern => 'capital letters + numbers' do
-      logic = Proc.new{ |msg| msg[:OBR].field(:procedure_id).first =~ /[A-Z0-9]+/ }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty
-    end
-
-    it "has the same observation date and result status date" do
+   
+  context "the order request" do
+    it "has a valid specimen source",
+    :pattern => 'all letters, but only required if there are results' do
       logic = Proc.new{ |msg|
-        obr = msg[:OBR]
-        obr.field(:result_date_time).as_date == obr.field(:observation_date_time).as_date
+        obx = msg[:OBX]
+        return true if obx.nil?
+        msg[:OBR].specimen_source !~ /[^A-z]/
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
     end
   end 
 
-  # == OBX tests
-  context "OBX segments" do
-    it "have the correct component ID", :pattern => 'LA01' do
-      logic = Proc.new{ |obx| obx.field(:component_id)[-1] == 'LA01' }
+  context "the observation/results" do
+    it "have a valid component ID", :pattern => "ends with LA01" do
+      logic = Proc.new{ |obx| obx.field(:component_id).last == 'LA01' }
       @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end
 
-    it "has an observation value of the appropriate type" do
+    it "has an observation value of the correct type",
+    :pattern => "either numeric, structured numeric, textual, or a timestamp" do
       logic = Proc.new{ |obx| HL7Test.has_correct_format?(obx.value,obx.value_type) }
       @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end
     
-    context "with SN or NM values" do
-      it "have valid Units" do
-        logic = Proc.new{ |obx|
-          if obx.type[0] == 'T'   # not a TX or TS, e.g. a NM or SN
-            true
-          else
-            u = obx.units
-            u.empty? || HL7Test::UNITS.include?(u)
-          end
-        }
-        @failed = pass_for_each?( @messages, logic, :OBX )
-        @failed.should be_empty
-      end
-
-      it "have a valid reference range", :pattern => "number - number" do
-        logic = Proc.new{ |obx|
-          if obx.type[0] == 'T'   # not a TX or TS, e.g. a NM or SN
-            true
-          else
-            range = obx.reference_range
-            nums = range.split('-')
-            nums.size == 2 && HL7Test.is_numeric?(nums.first) && HL7Test.is_numeric?(nums.last)
-          end
-        }
-        @failed = pass_for_each?( @messages, logic, :OBX )
-        @failed.should be_empty
-      end
-
-      it "have a valid Abnormal Flag" do
-        logic = Proc.new{ |obx|
-          if obx.type[0] == 'T'   # not a TX or TS, e.g. a NM or SN
-            true
-          else
-           flag = obx.abnormal_flag
-           flag.empty? || HL7Test::ABNORMAL_FLAGS.include?(flag)
-          end    
-        }
-        @failed = pass_for_each?( @messages, logic, :OBX )
-        @failed.should be_empty
-      end
-    end #context - SN or NM
-  end
-
-  # == PID tests
-  context "PID segment" do
-    it_behaves_like "a normal PID segment" do 
-      let(:messages){ @messages }
-    end
-  end
-  
-  # == PV1 tests
-  context "PV1 segment" do
-    it_behaves_like "the PV1 visit number and PID account number" do
-      let(:messages){ @messages }
+    list = HL7Test::RESULT_STATUS
+    it "has a valid result status", :pattern => "one of #{list.join(', ')}" do
+      logic = Proc.new{ |msg| list.include? msg[:OBX].result_status }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
     end
     
-    it_behaves_like "a PV1 segment in Lab/ADT messages" do
-      let(:messages){ @messages }
-    end
+    context "with discrete values" do   # NM/SN types
+      discrete = ['NM','SN']
+      
+      it "have valid Units" do
+        logic = Proc.new{ |obx|
+          return true unless discrete.include?(obx.type)
+          HL7Test::UNITS.include?(obx.units)
+        }
+        @failed = pass_for_each?( @messages, logic, :OBX )
+        @failed.should be_empty
+      end
 
-    it "has a valid attending doctor", :pattern => 'begins with an optional P + digits, ends with (something)PROV' do
-      logic = Proc.new{ |msg|
-        att = msg[:PV1].field(:attending_doctor).components
-        att.first =~ /^P?\d+/ && HL7Test.is_name?(att[1..4]) && att[-1] =~ /\w+PROV$/
-      }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty   
-    end
+      it "have valid reference ranges", :pattern => "a numeric range, e.g. 'X-Y'" do
+        logic = Proc.new{ |obx|
+          return true unless discrete.include?(obx.type)
+          range = obx.reference_range
+          nums = range.split('-')
+          nums.size == 2 && HL7Test.is_numeric?(nums.first) && HL7Test.is_numeric?(nums.last)
+        }
+        @failed = pass_for_each?( @messages, logic, :OBX )
+        @failed.should be_empty
+      end
 
-    it "has a valid patient class", :pattern => 'not a single-digit number' do
-      logic = Proc.new{ |msg| msg[:PV1].patient_class !~ /^\d{1}$/ }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end
-
-    it "has a valid Patient Type", :pattern => 'one or two digits' do
-      logic = Proc.new{ |msg| msg[:PV1].patient_type =~ /^\d{1,2}$/ }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end
-
-    it "does not have a VIP Indicator" do
-      logic = Proc.new{ |msg| msg[:PV1][16].empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
+      it "have valid Abnormal Flags" do
+        logic = Proc.new{ |obx|
+          return true unless discrete.include?(obx.type)
+          HL7Test::ABNORMAL_FLAGS.include? obx.abnormal_flag  
+        }
+        @failed = pass_for_each?( @messages, logic, :OBX )
+        @failed.should be_empty
+      end
     end
   end
 

@@ -44,15 +44,15 @@ module HL7CSV
   end
     
   # takes a list of HL7Test::Message files and prints them out as rows in a spreadsheet
-  def self.record_to_spreadsheet( file, *recs )
+  def self.records_to_spreadsheet( file, *recs )
     recs.flatten!(1)
     t = recs[0].type
     hdr = get_header( t )
     rows = [ hdr ]
     recs.each{ |rec| rows << rec.to_row }
-
+    
     # now rows looks like [ [hdr1], [rec1], [rec2] ... ] 
-    make_spreadsheet_from_array( file, rows )
+    make_spreadsheet_from_array( file, csv_sort(rows) )
   end
     
   def self.get_header( type )

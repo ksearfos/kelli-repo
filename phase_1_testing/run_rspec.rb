@@ -40,15 +40,3 @@ def organize_results( flagged, type )
   
   ary 
 end
-
-def details_wanted(type)
-  d = [:PT_ID,:PT_NAME,:DOB,:PT_ACCT]
-  d += ( type == :adt ? [:VISIT_DATE] : [:PROC_NAME,:PROC_DATE] )
-  d
-end
-
-def headers(type)
-  hdr = [ "MRN", "PATIENT NAME", "DOB" ]
-  hdr += ( type == :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] ) 
-  hdr
-end

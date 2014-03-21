@@ -1,5 +1,4 @@
-proj_dir = File.expand_path("../../",__FILE__)
-require "#{proj_dir}/Record_Comparer/OHProcs.rb"
+require 'lib/OHmodule/OHProcs'
 
 class RecordComparer
   include OHProcs
@@ -10,8 +9,6 @@ class RecordComparer
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
     @type = type
-    @details = [:PT_ID,:PT_NAME,:DOB,:PT_ACCT]
-    @details += ( @type == :adt ? [:VISIT_DATE] : [:PROC_NAME,:PROC_DATE] )
     
     # items for tracking criteria
     @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
@@ -52,8 +49,9 @@ class RecordComparer
     
     # now @recs_to_use has all the records we want, but some of these may be for the same person/encounter
     # so get rid of those
-    @use = @recs_to_use.map{ |rec| fetch_details(rec) }
-    @use.uniq!
+    rec_details = {}
+    @recs_to_use.each{ |rec| rec_details[rec] = rec.to_row }
+    @use = rec_details.invert.values    # all records, minus those with duplicate sets of details    
   end
   
   def summary
@@ -67,14 +65,6 @@ class RecordComparer
   def get_matched
     m = @criteria.keys - @unmatched
     m.sort 
-  end
-  
-  def get_used
-    hdr = [ "MRN", "PATIENT NAME", "DOB" ]
-    hdr += ( @type == :adt ? [ "VISIT #", "VISIT DATE/TIME" ] : [ "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] )    
-    other_ary = @use.clone
-    other_ary.sort_by!{ |mrn,name,dob,acct,proc_visit| [name, acct, proc_visit] }
-    other_ary.unshift( hdr )
   end
   
   private
@@ -157,20 +147,11 @@ class RecordComparer
     @total - @unmatched.size      # total number of criteria, minus those we haven't matched yet
   end
   
-  def fetch_details(rec)
-    rec.get_details(@details)
-  end
-
   def pick_random( amt )
     r = @records.clone
     r -= @recs_to_use  # only take unchosen records
     r.shuffle!         # randomize!
     r.take( amt )
   end  
-  
-  def record_details(rec)
-    my_data = [ rec[:PT_ID], rec[:PT_NAME], rec[:DOB], rec[:PT_ACCT] ]
-    my_data += ( @type = :adt ? [ rec[:VISIT_DATE] ] : [ rec[:PROC_NAME], rec[:PROC_DATE] ] )    
-    my_data
-  end
+
 end #class  

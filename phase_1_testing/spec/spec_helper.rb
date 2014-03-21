@@ -55,16 +55,3 @@ def example_summary( example )
   message << " (" + patt + ")" if patt
   message  
 end 
-
-def patient_details( message )
-  det = message.details
-  str = <<END
-Message Date: #{message.header.field(:date_time).as_datetime}
-Patient: #{det[:PT_ID]} - #{det[:PT_NAME]}
-Account: #{det[:PT_ACCT]}
-Date of Birth: #{det[:DOB]}      
-END
-
-  str << "Procedure: #{det[:PROC_NAME]} on #{det[:PROC_DATE]}\n" if message.type != :adt  
-  str
-end

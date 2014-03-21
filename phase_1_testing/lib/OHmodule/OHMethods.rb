@@ -1,6 +1,5 @@
-proj_dir = File.expand_path( "../..", __FILE__ )
-require "#{proj_dir}/lib/extended_base_classes.rb"
-require "#{proj_dir}/lib/hl7module/HL7.rb"
+require 'lib/extended_base_classes'
+require 'lib/hl7module/HL7'
 
 module OHProcs
   
@@ -90,6 +89,7 @@ module OHProcs
     when :SN then method = :is_struct_num?
     when :NM then method = :is_numeric?
     when :TX then method = :is_text?
+    when :TS then method = :is_timestamp?
     else
       puts "I do not recognize type #{type}."
       return false

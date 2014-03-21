@@ -1,0 +1,60 @@
+2014-03-21 16:31:00 -0400 INFO: Checking C:/Users/Owner/Documents/script_input for files...
+2014-03-21 16:31:00 -0400 INFO: Found 1 new file(s):
+  C:/Users/Owner/Documents/script_input/shortened_lab_pre.txt
+
+2014-03-21 16:31:00 -0400 INFO: Beginning file input...
+2014-03-21 16:31:00 -0400 INFO: Opening C:/Users/Owner/Documents/script_input/shortened_lab_pre.txt
+2014-03-21 16:31:00 -0400 INFO: Found 2 messages to test
+
+2014-03-21 16:31:00 -0400 INFO: I have successfully matched 12 of 56 criteria, for a total of 2 records.
+2014-03-21 16:31:00 -0400 INFO: Criteria checked:
+	========== MATCHED ==========   	========== UNMATCHED ========== 
+	analyte_of_1                    	abnormal_flag_of_A              
+	attending_doctor_shown          	abnormal_flag_of_C              
+	has_order_control               	abnormal_flag_of_CH             
+	hl7_version_2_3                 	abnormal_flag_of_CL             
+	obr_result_status_of_F          	abnormal_flag_of_H              
+	observation_type_of_NM          	abnormal_flag_of_I              
+	observation_type_of_SN          	abnormal_flag_of_L              
+	obx_result_status_of_F          	abnormal_flag_of_N              
+	procedure_ID_of_46124           	abnormal_flag_of_U              
+	procedure_ID_of_46504           	admitting_doctor_shown          
+	value_id_numeric                	attending_and_referring_shown   
+	value_is_structured_numeric     	consulting_doctor_shown         
+	                                	hl7_version_2_4                 
+	                                	obr_result_status_of_C          
+	                                	obr_result_status_of_D          
+	                                	obr_result_status_of_I          
+	                                	obr_result_status_of_N          
+	                                	obr_result_status_of_O          
+	                                	obr_result_status_of_P          
+	                                	obr_result_status_of_R          
+	                                	obr_result_status_of_S          
+	                                	obr_result_status_of_U          
+	                                	obr_result_status_of_W          
+	                                	obr_result_status_of_X          
+	                                	observation_type_of_TS          
+	                                	observation_type_of_TX          
+	                                	obx_result_status_of_C          
+	                                	obx_result_status_of_D          
+	                                	obx_result_status_of_I          
+	                                	obx_result_status_of_N          
+	                                	obx_result_status_of_O          
+	                                	obx_result_status_of_P          
+	                                	obx_result_status_of_R          
+	                                	obx_result_status_of_S          
+	                                	obx_result_status_of_U          
+	                                	obx_result_status_of_W          
+	                                	obx_result_status_of_X          
+	                                	processing_ID_of_P              
+	                                	processing_ID_of_T              
+	                                	referring_doctor_shown          
+	                                	result_and_collection_date_shown
+	                                	value_is_text                   
+	                                	value_is_timestamp              
+	                                	visit_ID_shown_twice            
+
+
+2014-03-21 16:31:00 -0400 INFO: See C:/Users/Owner/Documents/Code/kelli-repo/phase_1_testing/logs/1631_03-21-2014_records.csv
+
+2014-03-21 16:31:00 -0400 INFO: Exiting...

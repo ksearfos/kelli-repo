@@ -1,10 +1,5 @@
 #!/bin/env ruby
 
-#adding support to write rsec results to csv;
-#prelim test runs for rad; 
-#standardize formatting in test script and take out of record comparer
-#also sort results before adding header
-
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'test_runner_helper'
 
@@ -53,8 +48,8 @@ FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 
 if TESTING
   case RUN
-  when :comparer then FPATT = /^#{TYPE}_pre/
-  when :rspec then FPATT = /^shortened_#{TYPE}_post/
+  when :comparer then FPATT = /^shortened_#{TYPE}_pre/ #########
+  when :rspec then FPATT = /^#{TYPE}_post/
   else FPATT = /^#{TYPE}_[a-z]+/
   end
 else
