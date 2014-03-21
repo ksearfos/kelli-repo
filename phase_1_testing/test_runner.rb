@@ -43,12 +43,12 @@ end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :lab
+TYPE = :enc
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 
 if TESTING
   case RUN
-  when :comparer then FPATT = /^shortened_#{TYPE}_pre/ #########
+  when :comparer then FPATT = /^#{TYPE}_pre/
   when :rspec then FPATT = /^#{TYPE}_post/
   else FPATT = /^#{TYPE}_[a-z]+/
   end

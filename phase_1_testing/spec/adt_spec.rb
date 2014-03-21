@@ -70,7 +70,7 @@ describe "OhioHealth Encounter record" do
     it "has the correct country code", :pattern => "if there is one" do
       logic = Proc.new{ |msg|
         pid = msg[:PID]
-        pid[12] == pid.field(11)[8]
+        pid[12].to_s == pid.field(11)[8].to_s
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty  

@@ -23,7 +23,7 @@ shared_examples "every record" do
         name = msg[:PID].field(:patient_name)
         sfx = name[4]
         ok = HL7Test.is_name? name.to_s
-        sfx ? ok && sfx == '.' : ok
+        sfx ? ok && sfx.last == '.' : ok
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty
@@ -55,8 +55,9 @@ shared_examples "every record" do
     it "have the same account number", :pattern => "an optional capital letter and numbers" do
       logic = Proc.new{ |msg|
         beg = /^[A-Z]?\d+/ 
-        acct = msg[:PID].field(:account_number).first   
-        acct =~ beg && acct == pv1_acct = msg[:PV1].visit_number
+        acct = msg[:PID].field(:account_number).first
+        visit = msg[:PV1].visit_number 
+        visit.empty? ? acct =~ beg : acct =~ beg && acct == visit
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty
@@ -67,7 +68,7 @@ shared_examples "every record" do
     it "has a patient type", :pattern => "one or two digits" do
       logic = Proc.new{ |msg| 
         pv1 = msg[:PV1]
-        pv1[18] =~ /^\d{1,2}$/ && pv1[16].is_empty?
+        pv1[18] =~ /^\d{1,2}$/ && pv1[16].empty?
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty

@@ -5,6 +5,7 @@ require 'rspec'
 require 'rspec/expectations'
 
 def is_physician?( field )
+  return true if field.nil?
   id = field.first
   name = field.components[1..6]
   prov = field[9]
@@ -39,10 +40,9 @@ def log_result( ary, example )
   if ary.empty?
     $logger.info "Passed for all records.\n"
   else
-    filename = example.metadata[:description].gsub(" ", "_")
     $logger.error "!! Failed for #{ary.size} records !!\n".upcase
-    
-    ex = example.metadata[:description]
+   
+    ex = example.description
     ary.each{ |msg|
       $flagged[msg] ? $flagged[msg] << ex : $flagged[msg] = [ex]
     }
