@@ -168,7 +168,7 @@ module HL7Test
     date = datetime[0...8]
     time = datetime[8..-1]
   
-    make_date( date ) + " " + make_time( time )
+    make_date( date ) + " " + make_time( time, true )
   end
 
   # NAME: make_name
@@ -209,16 +209,16 @@ module HL7Test
 
   def self.is_name?( val )
     parts = val.is_a?(Array) ? val.flatten : val.split(HL7Test.separators[:comp]) 
-    return if parts.empty?
+    return false if parts.empty?
 
     first_last = /^[A-Z][A-z \-]*/
     return false unless parts[0] =~ first_last       # last name - required
     return false unless parts[1] =~ first_last       # first name - required
-    return false unless parts[2].to_s.empty? || parts[2] =~ /^[A-Z]/  # middle name/initial - optional
-    
-    if !parts[3].to_s.empty? then is_suffix?( parts[3] )              # suffix - also optional
-    else true
-    end
+    return false unless parts[2].to_s.empty? || parts[2] =~ /^[A-Z]/    # middle name/initial - optional    
+    return false unless parts[3].to_s.empty? || is_suffix?(parts[3])    # suffix - optional
+    return false unless parts[4].to_s.empty? || parts[4] =~ /^[A-Z]/    # prefix - optional  
+    return false unless parts[5].to_s.empty? || parts[5] =~ /^[A-Z]/    # degree - optional   
+    true   
   end
     
   # NAME: is_suffix?

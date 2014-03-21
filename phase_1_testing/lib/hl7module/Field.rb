@@ -168,7 +168,7 @@ module HL7Test
     #  [String] the value of the field reformatted as a date + a time
     # EXAMPLE:
     #  field.as_datetime => 4/15/1983 7:23:56 AM
-    def as_datetime( delim = "/" )
+    def as_datetime
       HL7Test.make_datetime( @original_text )
     end
 

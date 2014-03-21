@@ -1,21 +1,5 @@
 # last updated 2/28/14 3:35pm
 
-require 'CSV'
-
-class CSV
-  def self.make_spreadsheet_from_array( file, array )
-    CSV.open( file, "wb" ) do |csv|
-      array.each{ |row| csv.puts row }
-    end
-  end
-  
-  def self.make_spreadsheet_from_string( file, string, delim = "\n" )
-    ary = []
-    string.split(delim).each{ |line| ary << line.parse_csv }
-    make_spreadsheet_from_array( file, ary )
-  end
-end
-
 class Object
   def self.subclasses
     ObjectSpace.each_object(::Class).select{ |klass| klass < self }

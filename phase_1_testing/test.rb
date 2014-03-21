@@ -1,13 +1,10 @@
 #!/bin/env ruby
 
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
-require 'lib/hl7module/HL7'
-require 'lib/extended_base_classes'
+require 'lib/HL7CSV'
 
-FILE = "C:/Users/Owner/Documents/enc_post.dat"
+FILE = "C:/Users/Owner/Documents/script_input/enc_post.dat"
+OUTFILE = $LOAD_PATH.first + "/testcsv.csv"
 
-col1 = [ "BOOKS", "Harry Potter", "The Domesday Book", "Snuff" ]
-col2 = [ "MUSIC", "Les Mis", "Chess", "Yellow Submarine", "Hair" ]
-t = [col1,col2].make_table
-puts t
-
+mh = HL7Test::MessageHandler.new( FILE )
+HL7CSV.record_to_spreadsheet( OUTFILE, mh.records )

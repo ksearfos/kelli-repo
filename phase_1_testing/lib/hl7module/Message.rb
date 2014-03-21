@@ -209,9 +209,9 @@ module HL7Test
       
       if @type != :adt
         h[:PROC_NAME] = @segments[:OBR].procedure_id
-        h[:PROC_DATE] = @segments[:OBR].field(7).as_datetime(true)
+        h[:PROC_DATE] = @segments[:OBR].field(7).as_datetime
       else
-        h[:VISIT_DATE] = @segments[:PV1].field(:admit_date_time).as_datetime(true)
+        h[:VISIT_DATE] = @segments[:PV1].field(:admit_date_time).as_datetime
       end
       
       return h if all.empty?
@@ -220,27 +220,6 @@ module HL7Test
       h
     end
 
-    # NAME: get_details
-    # DESC: returns an array with the given details, in the order provided
-    # ARGS: 0+
-    #  all [Symbol] - the specific details to return
-    #           ==>   :ID, :TYPE, :DATE, :PT_NAME, :PT_ID, :PT_ACCT, :DOB, :VISIT_DATE, :PROC_NAME, :PROC_DATE
-    #           ==>   NOTE: will return the details in the order of the arguments, or details.values by default
-    # RETURNS: nothing; writes to stdout
-    # EXAMPLE:
-    #  message.details(:ID,:PT_NAME) => [1234567,"John W Smith Jr"]
-    def get_details( *all )
-      all.flatten!
-      ary = []
-      dets = details( *all )
-      
-      return dets.values if all.empty?
-      
-      # theoretically, the next part is unnecessary, since dets.values should be in the desired order
-      # but in case it isn't, since the return order matters....
-      all.each{ |key| ary << dets[key] }
-      ary
-    end
         
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment

@@ -21,6 +21,13 @@ describe "Ohio Health Lab HL7" do
     it_behaves_like "a normal MSH segment" do
       let(:messages){ @messages }
     end
+    
+    it "has a valid Message Control ID", :pattern => 'T' do
+    logic = Proc.new{ |msg| msg[:MSH][10] == 'T' }
+    
+    @failed = pass?( @messages, logic )
+    @failed.should be_empty
+  end
   end
   
   # == ORC tests

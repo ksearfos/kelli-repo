@@ -1,17 +1,17 @@
 require 'lib/hl7module/HL7'
+require 'lib/OHmodule/OHProcs'
+require 'lib/extended_base_classes'
 require 'rspec'
 require 'rspec/expectations'
 
-RSpec.configure do |config|
-  config.before(:suite) do
-    # stuff
-  end
-  
-  config.after(:suite) do
-    # stuff
-  end  
+def is_physician?( field )
+  id = field.first
+  name = field.components[1..6]
+  prov = field[9]
+  ok = ( id =~ /^\d+$/ && prov =~ /\w+PROV$/ )
+  name.has_value? ? ok && HL7Test.is_name?( name ) : ok
 end
-  
+
 def pass?( messages, logic )
   failed = []
   messages.each{ |msg| failed << msg unless logic.call(msg) }
@@ -20,8 +20,11 @@ end
 
 def pass_for_each?( messages, logic, segment )
   p = Proc.new{ |msg|
+    seg_obj = msg[segment]
+    return true if seg_obj.nil?
+    
     ok = true
-    msg[segment].each{ |seg| ok &&= logic.call(seg) }        
+    seg_obj.each{ |seg| ok &&= logic.call(seg) }        
     ok
   }
   
@@ -37,15 +40,9 @@ def log_result( ary, example )
     $logger.info "Passed for all records.\n"
   else
     filename = example.metadata[:description].gsub(" ", "_")
-    # file = "#{$LOG_DIR}/#{ary[0].type}_#{filename}.log"
-    # File.open( file, "w" ) do |f|
-      # f.puts "#{example_summary(example)}\n\n"
-      # ary.each{ |rec| f.puts patient_details( rec ) + "\n" }
-    # end
-
     $logger.error "!! Failed for #{ary.size} records !!\n".upcase
     
-    ex = example.metadata[:full_description]
+    ex = example.metadata[:description]
     ary.each{ |msg|
       $flagged[msg] ? $flagged[msg] << ex : $flagged[msg] = [ex]
     }

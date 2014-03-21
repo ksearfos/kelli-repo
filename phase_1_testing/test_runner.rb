@@ -48,9 +48,23 @@ end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :enc
+TYPE = :lab
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
-FPATT = TESTING ? /#{TYPE}_pre/ : /^\w+_pre_\d+\.dat$/
+
+if TESTING
+  case RUN
+  when :comparer then FPATT = /^#{TYPE}_pre/
+  when :rspec then FPATT = /^shortened_#{TYPE}_post/
+  else FPATT = /^#{TYPE}_[a-z]+/
+  end
+else
+  case RUN
+  when :comparer then FPATT = /^\w+_pre_\d+\.dat$/
+  when :rspec then FPATT = /^\w+_post_\d+\.dat$/
+  else FPATT = /^\w+_[a-z]+_\d+\.dat$/
+  end
+end
+
 $LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
 PFX = "#{$LOG_DIR}/#{dt}_"
 LOG_FILE = PFX + "testrunner.log"

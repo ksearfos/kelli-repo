@@ -1,207 +1,162 @@
-# == General tests
-shared_examples "every HL7 message" do   
-  it "has only one PID segment", :pattern => "only one PID line" do
-    logic = Proc.new{ |msg| msg[:PID].size == 1 }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
+# == shared among all record types
+shared_examples "every record" do
+  context "when converted to HL7" do   
+    it "has the correct event type", :pattern => HL7Test::ENCOUNTER_MESSAGE_TYPE do
+      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::ENCOUNTER_MESSAGE_TYPE }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
   end
   
-  it "has only one PV1 segment", :pattern => "only one PV1 line"  do
-    logic = Proc.new{ |msg| msg[:PV1].size == 1 }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end 
+  context "the patient" do   # PID segment
+    it "has a valid MRN", :pattern => "numbers, ending with (something)01" do
+      logic = Proc.new{ |msg|
+        ptid = msg[:PID].field(:patient_id)
+        ptid.first !~ /\D/ && ptid.last =~ /\w+01$/
+      }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+  
+    it "has a real name", :pattern => "JR/SR ends with a period" do
+      logic = Proc.new{ |msg|
+        name = msg[:PID].field(:patient_name)
+        sfx = name[4]
+        ok = HL7Test.is_name? name.to_s
+        sfx ? ok && sfx == '.' : ok
+      }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+
+    it "has a birthdate" do
+      logic = Proc.new{ |msg| HL7Test.is_date? msg[:PID].dob }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+
+    list = HL7Test::SEXES
+    it "has a sex", :pattern => "one of #{list.join(', ')}" do
+      logic = Proc.new{ |msg| list.include? msg[:PID].sex }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+
+    it "has a SSN", :pattern => "9 digits without dashes" do
+      logic = Proc.new{ |msg| msg[:PID].ssn =~ /^\d{9}$/ }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end  
+  end
+  
+  context "the patient and encounter both" do
+    # PID - account number and PV1 - visit number are the same thing, except
+    #+ the PID verion might add a bunch of empty components and (something)ACC
+    it "have the same account number", :pattern => "an optional capital letter and numbers" do
+      logic = Proc.new{ |msg|
+        beg = /^[A-Z]?\d+/ 
+        acct = msg[:PID].field(:account_number).first   
+        acct =~ beg && acct == pv1_acct = msg[:PV1].visit_number
+      }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+  end
+  
+  context "the encounter" do   # PV1 segment
+    it "has a patient type", :pattern => "one or two digits" do
+      logic = Proc.new{ |msg| 
+        pv1 = msg[:PV1]
+        pv1[18] =~ /^\d{1,2}$/ && pv1[16].is_empty?
+      }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+  
+    types = [ :attending, :referring, :consulting, :admitting ]
+    types.each{ |type|
+      it "has a valid #{type} physician", :pattern => "ID, name, and (something)PROV" do
+        logic = Proc.new{ |msg| is_physician? msg[:PV1].field(type) }
+        @failed = pass?( @messages, logic )
+        @failed.should be_empty
+      end
+    }  
+  end
 end
 
-# == MSH tests
-shared_examples "a normal MSH segment" do
-  it "has a valid Message Control ID", :pattern => 'P if the sender is MGH, T otherwise' do
-    logic = Proc.new{ |msg|
-      msh = msg[:MSH]
-      if msh[3].to_s =~ /MGH/ then msh[10] == 'P'
-      else msh[10] == 'T'
-      end
-    }
+# shared by encounters and rad    
+shared_examples "ADT and rad records" do  
+  context "when converted to HL7" do   
+    it "has the correct processing ID", :pattern => "T" do
+      logic = Proc.new{ |msg| msg[:MSH].processing_id == "T" }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
+  end
     
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
+  context "the encounter" do
+    list = ['Outpatient','Emergency','Inpatient','Observation','Q','O']
+    it "has a valid patient class", :pattern => "one of #{list.join(', ')}" do
+      logic = Proc.new{ |msg| list.include? msg[:PV1].patient_class }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end
+  end
+end
+
+# shared by lab and rad
+shared_examples "lab and rad records" do
+  context "the encounter" do
+    it "has the same attending and referring physicians" do
+      logic = Proc.new{ |msg|
+        pv1 = msg[:PV1]
+        pv1.attending == pv1.referring
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty
+    end   
   end
   
-  it "has the correct event type", :pattern => 'ORU^R01 for orders, ADT^A08 otherwise' do
-    logic = Proc.new{ |msg|
-      msh = msg[:MSH]
-      if msg.type == :adt then msh.event == 'ADT^A08'
-      else msh.event == 'ORU^R01'
-      end
-    }
-    
-    @failed = pass?( messages, logic )
-    @failed.should be_empty    
-  end 
-end
+  context "the order request" do   # OBR segment 
+    it "has a valid accession number", :pattern => "letters, numbers, and spaces" do
+      logic = Proc.new{ |msg| msg[:OBR][3] !~ /[^A-Z0-9 ]/ }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty    
+    end
 
-# == ORC tests (orders only)
-shared_examples "a normal ORC segment" do  
-  it "only appears once per message" do
-    logic = Proc.new{ |msg| msg[:OBR].size == 1  }
-    @failed = pass?( @messages, logic )
-    @failed.should be_empty
-  end
-end
-    
-# == OBR tests (orders only)
-shared_examples "a normal OBR segment" do  
-  it "only appears once per message" do
-    logic = Proc.new{ |msg| msg[:OBR].size == 1  }
-    @failed = pass?( @messages, logic )
-    @failed.should be_empty
-  end
+    it "has a valid service ID", :pattern => "letters, numbers, and spaces" do
+      logic = Proc.new{ |msg| msg[:OBR][4] !~ /[^A-Z0-9 ]/ }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty    
+    end 
   
-  it "has a valid Control Code", :pattern => "only letters, numbers, and spaces" do
-    logic = Proc.new{ |msg| msg[:OBR].control_code =~ /^[A-z0-9][A-z0-9 ]*/ }   
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-      
-  it "has a valid ordering provider", :pattern => 'ID and/or a name, and final field ends with PROV' do
-    logic = Proc.new{ |msg|
-      prov = msg[:OBR].field(:ordering_provider)
-      id = prov[1]      
-      if id =~ /\d/
-        prov[-1] =~ /\w+PROV$/ && id =~ /^[A-Z]?\d+/
-      else
-        prov[-1] =~ /\w+PROV$/ && HL7Test.is_name?( prov.components[2..5] )
-      end
-    }    
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-  
-  it "has a valid Result Status" do
-    logic = Proc.new{ |msg| HL7Test::RESULT_STATUS.include? msg[:OBR].result_status }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
+    it "has a date/time" do
+      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:OBR].observation_date_time }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty    
+    end  
 
-  it "has a valid observation date/time" do
-    logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:OBR].observation_date_time }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-end
+    it "has a valid ordering provider" do
+      logic = Proc.new{ |msg| is_physician? msg[:OBR].field(:ordering_provider) }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty    
+    end   
 
-# == PID tests
-shared_examples "a normal PID segment" do |pid|
-  it "has a valid patient name" do
-    logic = Proc.new{ |msg| HL7Test.is_name? msg[:PID].patient_name }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
+    it "has a result date/time", :pattern => "the same as the observation date/time" do
+      logic = Proc.new{ |msg|
+        obr = msg[:OBR]
+        dt = obr.result_date_time
+        HL7Test.is_datetime?(dt) && dt == obr.observation_date_time
+      }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty    
+    end 
 
-  it "has a valid patient ID", :pattern => 'begins with digits and ends with characters + "01"' do
-    logic = Proc.new{ |msg|
-      ptid = msg[:PID].field(:patient_id)
-      ptid[1] !~ /\D/ && ptid[-1] =~ /\w+01$/
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-
-  it "has a valid patient birthdate" do
-    logic = Proc.new{ |msg| HL7Test.is_date? msg[:PID].dob }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-
-  it "has a valid patient sex" do
-    logic = Proc.new{ |msg| HL7Test::SEXES.include? msg[:PID].sex }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-
-  it "has a valid SSN", :pattern => '9 digits without dashes' do
-    logic = Proc.new{ |msg| msg[:PID].ssn =~ /^\d{9}$/ }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end  
-end
-
-# == ADT PID tests
-shared_examples "a PID segment in ADT messages" do |pid|
-  it "has a valid race", :pattern => "a number corresponding to a list item" do
-    logic = Proc.new{ |msg|
-      race = msg[:PID].race
-      race.empty? || race =~ /^\d$/
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty 
-  end
-
-  it "has a Country Code that matches the Address" do
-    logic = Proc.new{ |msg|
-      pid = msg[:PID]
-      ccd = pid.country_code
-      ccd.empty? || ccd == pid.field(:address)[7]
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-
-  it "has a valid Language", :pattern => "a three character language code" do
-    logic = Proc.new{ |msg|
-      lang = msg[:PID].language
-      lang.empty? || lang =~ /^[A-z]{3}$/
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-
-  it "has a valid Marital Status", :pattern => "a single character" do
-    logic = Proc.new{ |msg|
-      mar = msg[:PID].marital_status
-      mar.empty? || mar =~ /^[A-Z]$/
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-end
-
-# == PV1 tests
-shared_examples "the PV1 visit number and PID account number" do  
-  it "have the correct format", :pattern => 'an optional capital letter and numbers' do
-    logic = Proc.new{ |msg|
-      pv1_visit = msg[:PV1].field(:visit_number)
-      pid_acct = msg[:PID].field(:account_number)
-      beg = /^[A-Z]?\d+/    
-      pv1_visit && pid_acct && pid_acct.first =~ beg && pv1_visit.first =~ beg
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-  
-  it "are the same" do
-    logic = Proc.new{ |msg|
-      pv1_visit = msg[:PV1].field(:visit_number)
-      pid_acct = msg[:PID].field(:account_number)  
-      if pv1_visit.nil? && pid_acct.nil?
-        true   # there aren't any values, but they are the same!
-      else
-        pv1_visit && pid_acct && pid_acct.first == pv1_visit.first
-      end
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
-end
-
-shared_examples "a PV1 segment in Lab/ADT messages" do
-  it "has the same Attending and Referring Doctor", :pattern => 'fields should match unless Referring Doctor is empty' do
-    logic = Proc.new{ |msg|
-      pv1 = msg[:PV1]
-      ref = pv1.referring_doctor
-      ref.empty? || pv1.attending_doctor == ref
-    }
-    @failed = pass?( messages, logic )
-    @failed.should be_empty
-  end
+    list = HL7Test::RESULT_STATUS
+    it "has a valid result status", :pattern => "one of #{list.join(', ')}" do
+      logic = Proc.new{ |msg| list.include? msg[:OBR].result_status }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
+  end      
 end

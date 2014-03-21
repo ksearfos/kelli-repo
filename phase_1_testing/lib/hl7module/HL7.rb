@@ -55,13 +55,14 @@ module HL7Test
                  :hospital_service => 10, :admit_source => 14, :admitting_doctor => 17, :patient_type => 18,
                  :visit_number => 19, :financial_class => 20, :diet_type => 38, :bed_status => 40,
                  :admit_date_time => 44, :discharge_date_time => 45, :current_balance => 46,
-                 :total_charges => 47, :total_payments => 49, :visit_indicator => 51, :discharge_disposition => 36 }
+                 :total_charges => 47, :total_payments => 49, :visit_indicator => 51, :discharge_disposition => 36,
+                 :attending => 7, :referring => 8, :consulting => 9, :admitting => 17 }
                  
   # full list of OBR fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-obr-segment
   OBR_FIELDS = { :set_id => 1, :place_order_number => 2, :filler_order_number => 3, :control_code => 3,
                  :service_id => 4, :procedure_id => 4, :priority => 5, :observation_date_time => 7,
                  :speciment_received_date_time => 14, :specimen_source => 15, :ordering_provider => 16,
-                 :order_callback_number => 17, :result_date_time => 22, :result_status => 25 }  
+                 :order_callback_number => 17, :result_date_time => 22, :result_status => 25, :accession_number => 3 }  
                  
   # full list of ORC fields can be found at http://www.mexi.be/documents/hl7/ch400009.htm
   ORC_FIELDS = { :order_control => 1, :place_order_number => 2, :filler_order_number => 3,
