@@ -23,7 +23,7 @@ shared_examples "every record" do
         name = msg[:PID].field(:patient_name)
         sfx = name[4]
         ok = HL7Test.is_name? name.to_s
-        sfx ? ok && sfx.last == '.' : ok
+        sfx ? ok && sfx[-1] == '.' : ok
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty

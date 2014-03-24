@@ -84,9 +84,9 @@ unless !RUN || hl7_files.empty?   # avoid running setup if we won't be running a
   unless RUN == :comparer
     ct = 1
     hl7_files.each{ |f|
-      fdt = "f.match( /\d+/ )[0]    # date/time from this file
+      fdt = f.match( /\d+/ )[0]    # date/time from this file
       pfx = "#{$LOG_DIR}/#{fdt}_"
-      all_recs = get_records( f )
+      all_recs = get_records( [f] )
       run_rspec( pfx + "rspec.log", pfx + "flagged_recs.csv", all_recs )
       ct += 1
     }

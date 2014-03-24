@@ -37,11 +37,11 @@ describe "OhioHealth Encounter record" do
   end
   
   context "the patient" do 
-    it "has a race" do
-      logic = Proc.new{ |msg| !msg[:PID].race.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end
+    # it "has a race" do
+      # logic = Proc.new{ |msg| !msg[:PID].race.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty  
+    # end
     
     it "has an address" do
       logic = Proc.new{ |msg| !msg[:PID].address.empty? }
@@ -49,23 +49,23 @@ describe "OhioHealth Encounter record" do
       @failed.should be_empty  
     end
     
-    it "has a language" do
-      logic = Proc.new{ |msg| !msg[:PID].language.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end
+    # it "has a language" do
+      # logic = Proc.new{ |msg| !msg[:PID].language.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty  
+    # end
     
-    it "has a marital status" do
-      logic = Proc.new{ |msg| !msg[:PID].marital_status.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end
+    # it "has a marital status" do
+      # logic = Proc.new{ |msg| !msg[:PID].marital_status.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty  
+    # end
     
-    it "has a religion" do
-      logic = Proc.new{ |msg| !msg[:PID].religion.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty  
-    end  
+    # it "has a religion" do
+      # logic = Proc.new{ |msg| !msg[:PID].religion.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty  
+    # end  
     
     it "has the correct country code", :pattern => "if there is one" do
       logic = Proc.new{ |msg|
@@ -114,17 +114,17 @@ describe "OhioHealth Encounter record" do
       @failed.should be_empty 
     end
 
-    it "has a financial class" do
-      logic = Proc.new{ |msg| !msg[:PV1].financial_class.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty 
-    end
+    # it "has a financial class" do
+      # logic = Proc.new{ |msg| !msg[:PV1].financial_class.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty 
+    # end
 
-    it "has a discharge disposition" do
-      logic = Proc.new{ |msg| !msg[:PV1].discharge_disposition.empty? }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty 
-    end
+    # it "has a discharge disposition" do
+      # logic = Proc.new{ |msg| !msg[:PV1].discharge_disposition.empty? }
+      # @failed = pass?( @messages, logic )
+      # @failed.should be_empty 
+    # end
   end
 
   after(:each) do

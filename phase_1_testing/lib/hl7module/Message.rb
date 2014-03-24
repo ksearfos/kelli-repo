@@ -205,7 +205,8 @@ module HL7Test
       h[:PT_NAME] = @segments[:PID].field(:patient_name).as_name
       h[:PT_ID] = @segments[:PID].field(:mrn).first
       h[:PT_ACCT] = @segments[:PID].field(:account_number).first
-      h[:DOB] = @segments[:PID].field(:dob).as_date
+      dob = @segments[:PID].field(:dob)
+      h[:DOB] = dob ? dob.as_date : ""
       
       if @type != :adt
         h[:PROC_NAME] = @segments[:OBR].procedure_id
