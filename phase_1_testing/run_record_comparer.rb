@@ -26,7 +26,7 @@ def run_record_comparer( file, messages, final )
   else
     $logger.info "Finished running record comparer. Writing to #{file}...\n"
     f = File.open( file, "a+" )
-    f.puts comparer.recs_to_use.each{ |r| f.puts r.to_s }
+    comparer.recs_to_use.each{ |r| f.puts r.to_s }
     f.close
   end
 end

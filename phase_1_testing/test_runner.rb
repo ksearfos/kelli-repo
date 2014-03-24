@@ -44,12 +44,12 @@ end
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 MAX_RECS = 10
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :lab
+TYPE = :enc
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 
 if TESTING
   case run
-  when :comparer then FPATT = /^#{TYPE}_pre.txt/ #_\d/
+  when :comparer then FPATT = /^#{TYPE}_pre/ #_\d/
   when :rspec then FPATT = /^#{TYPE}_post/
   else FPATT = /^#{TYPE}_[a-z]+/
   end
@@ -85,7 +85,7 @@ else   # no subset
 end
 
 if run
-    $logger.info "Using the first #{MAX_RECS}:\n  " + file_subset.join("\n  ") + "\n"
+  $logger.info "Using the first #{MAX_RECS}:\n  " + file_subset.join("\n  ") + "\n"
 
   unless !run || run == :rspec   
     tmp = PFX + "temp_results"

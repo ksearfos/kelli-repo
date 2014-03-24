@@ -21,9 +21,11 @@ end
 def get_records( file ) 
   $logger.info "Opening #{file}"
   mh = HL7Test::MessageHandler.new( file )
-  msg_list = mh.records
+  $logger.info "File read. Parsing out records..."
   
+  msg_list = mh.records  
   msg_list.flatten!(1) unless msg_list.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.
+  $logger.info "Found #{msg_list} record(s)\n"
   msg_list
 end
 
