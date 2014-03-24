@@ -74,25 +74,25 @@ $logger.info "Checking #{FTP} for files..."
 # find files, store in hl7_files with full pathname
 hl7_files = Dir.entries( FTP ).select{ |f| File.file?("#{FTP}/#{f}") && f =~ FPATT }
 hl7_files.map!{ |f| "#{FTP}/#{f}" }
+file_subset = hl7_files[0...MAX_RECS]
 
 # now turn those files into parsable hl7 messages
-# all_recs = get_records( hl7_files )
+# all_recs = get_records( file_subset )
    
 unless !RUN || hl7_files.empty?   # avoid running setup if we won't be running anything else
   run_record_comparer( PFX + "records.csv", all_recs ) unless RUN == :rspec
   
   unless RUN == :comparer
     ct = 1
-    hl7_files.each{ |f|
+    file_subset.each{ |f|
       fdt = f.match( /\d+/ )[0]    # date/time from this file
       pfx = "#{$LOG_DIR}/#{fdt}_"
       all_recs = get_records( [f] )
       run_rspec( pfx + "rspec.log", pfx + "flagged_recs.csv", all_recs )
       ct += 1
     }
+    remove_files( file_subset ) if DELETE
   end
-  
-  remove_files( hl7_files ) if DELETE
 end
 
 $logger.info "Exiting..."
