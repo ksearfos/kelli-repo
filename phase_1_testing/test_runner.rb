@@ -7,25 +7,25 @@ require 'test_runner_helper'
 case ARGV[0]
 when '-d'   # non-delete mode
   DELETE = false
-  RUN = true
+  run = true
 when '-t'   # test mode
   DELETE = false
-  RUN = false
+  run = false
 when '-r'   # full run
   DELETE = true
-  RUN = true
+  run = true
 when '--rspec'
   DELETE = true
-  RUN = :rspec
+  run = :rspec
 when '--rspec-test'
   DELETE = false
-  RUN = :rspec
+  run = :rspec
 when '--comparer'
   DELETE = true
-  RUN = :comparer
+  run = :comparer
 when '--comparer-test'
   DELETE = false
-  RUN = :comparer
+  run = :comparer
 when '--help'
   puts "test_runner_record_comparer.rb takes one commandline argument:"
   puts "   -r: [r]un full script (runs rspec and comparer, and deletes processed files)"
@@ -42,18 +42,19 @@ else
 end
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
+MAX_RECS = 10
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :enc
+TYPE = :lab
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 
 if TESTING
-  case RUN
-  when :comparer then FPATT = /^#{TYPE}_pre/
+  case run
+  when :comparer then FPATT = /^#{TYPE}_pre.txt/ #_\d/
   when :rspec then FPATT = /^#{TYPE}_post/
   else FPATT = /^#{TYPE}_[a-z]+/
   end
 else
-  case RUN
+  case run
   when :comparer then FPATT = /^\w+_pre_\d+\.dat$/
   when :rspec then FPATT = /^\w+_post_\d+\.dat$/
   else FPATT = /^\w+_[a-z]+_\d+\.dat$/
@@ -73,28 +74,43 @@ $logger.info "Checking #{FTP} for files..."
 
 # find files, store in hl7_files with full pathname
 hl7_files = Dir.entries( FTP ).select{ |f| File.file?("#{FTP}/#{f}") && f =~ FPATT }
-hl7_files.map!{ |f| "#{FTP}/#{f}" }
 file_subset = hl7_files[0...MAX_RECS]
+file_subset.map!{ |f| "#{FTP}/#{f}" }
 
-if hl7_files.empty?
+if file_subset
+  $logger.info "Found #{hl7_files.size} new file(s)\n"
+else   # no subset
   $logger.info "No new files found.\n"
-else
-  $logger.info "Found #{hl7_files.size} new file(s)."
-  $logger.info "Using the first #{MAX_RECS}:\n  " + file_subset.join("\n  ") + "\n"
+  run = false  
 end
+
+if run
+    $logger.info "Using the first #{MAX_RECS}:\n  " + file_subset.join("\n  ") + "\n"
+
+  unless !run || run == :rspec   
+    tmp = PFX + "temp_results"
+      
+    # first time: reads each file, finds best records, saves all chosen records to temp file
+    file_subset.each{ |f|  
+      all_recs = get_records( f )
+      run_record_comparer( tmp, all_recs, false )
+    }
+    remove_files( file_subset ) if DELETE
+    
+    # now: read tmp to get all chosen records, compare those to eliminate duplication, save results to csv
+    all_recs = get_records( tmp )
+    run_record_comparer( PFX + "records.csv", all_recs, true )
+    remove_files( [tmp] ) if DELETE
+  end
   
-# now turn those files into parsable hl7 messages
-# all_recs = get_records( file_subset )
-   
-unless !RUN || hl7_files.empty?   # avoid running setup if we won't be running anything else
-  run_record_comparer( PFX + "records.csv", all_recs ) unless RUN == :rspec
-  
-  unless RUN == :comparer
+  unless !run || run == :comparer
     ct = 1
     file_subset.each{ |f|
-      fdt = f.match( /\d+/ )[0]    # date/time from this file
+      m = f.match( /\d+/ )    # date/time from this file
+      fdt = m ? m[0] : dt
       pfx = "#{$LOG_DIR}/#{fdt}_"
-      all_recs = get_records( [f] )
+      
+      all_recs = get_records( f )
       run_rspec( pfx + "rspec.log", pfx + "flagged_recs.csv", all_recs )
       ct += 1
     }

@@ -1,9 +1,12 @@
 require 'lib/OHmodule/OHProcs'
 
+# @recs_to_use stores all chosen records as HL7::Message objects
+# @use stores all chosen records as Arrays, ready to be input into CSV
+
 class RecordComparer
   include OHProcs
   
-  attr_reader :records, :matches, :use
+  attr_reader :records, :matches, :use, :recs_to_use
   
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared

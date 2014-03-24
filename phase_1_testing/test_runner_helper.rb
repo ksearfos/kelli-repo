@@ -18,18 +18,12 @@ def set_up_logger( file )
   logger
 end
 
-def get_records( files ) 
-  # now break into records - sets all_recs
-  $logger.info "Beginning file input..."
-  msg_list = []
-  files.each{ |f| 
-    $logger.info "Opening #{f}"
-    mh = HL7Test::MessageHandler.new(f)
-    msg_list << mh.records
-  }
+def get_records( file ) 
+  $logger.info "Opening #{file}"
+  mh = HL7Test::MessageHandler.new( file )
+  msg_list = mh.records
   
   msg_list.flatten!(1) unless msg_list.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.
-  $logger.info "Found #{msg_list.size} messages to test\n"
   msg_list
 end
 
