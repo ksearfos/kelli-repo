@@ -10,7 +10,7 @@ FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
 FPATT = ( TESTING ? /^#{TYPE}_pre_\d/ : /^\w+_pre_\d+\.dat$/ )
 
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
-PFX = "#{$LOG_DIR}/#{dt}_"
+PFX = "#{LOG_DIR}/#{dt}_"
 LOG_FILE = PFX + "comparer_parse_testrunner.log"
 
 # create the directory, if needed
@@ -42,11 +42,11 @@ else
     recs = all_recs.shift( 20000 )
     run_record_comparer( tmp, recs, false )
   end until all_recs.empty?
-
   remove_files( [file] ) unless TESTING
   
   all_recs = get_records( tmp )
   run_record_comparer( outfile, recs, false )
+  remove_files( [tmp] )  
 end
 
 $logger.info "Exiting..."
