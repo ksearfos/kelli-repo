@@ -25,7 +25,7 @@ def get_records( file )
   
   msg_list = mh.records  
   msg_list.flatten!(1) unless msg_list.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.
-  $logger.info "Found #{msg_list} record(s)\n"
+  $logger.info "Found #{msg_list.size} record(s)\n"
   msg_list
 end
 

@@ -93,7 +93,11 @@ if run
     # first time: reads each file, finds best records, saves all chosen records to temp file
     file_subset.each{ |f|  
       all_recs = get_records( f )
-      run_record_comparer( tmp, all_recs, false )
+      
+      begin
+        recs = all_recs.shift( 20000 )
+        run_record_comparer( tmp, recs, false )
+      end until all_recs.empty?
     }
     remove_files( file_subset ) if DELETE
     
