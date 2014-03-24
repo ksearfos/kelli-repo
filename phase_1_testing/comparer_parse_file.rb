@@ -40,13 +40,14 @@ else
       
   begin
     recs = all_recs.shift( 20000 )
+    $logger.info "Comparing #{recs.size} record(s)"
     run_record_comparer( tmp, recs, false )
   end until all_recs.empty?
-  remove_files( [file] ) unless TESTING
   
   all_recs = get_records( tmp )
   run_record_comparer( outfile, recs, false )
   remove_files( [tmp] )  
+  remove_files( [file] ) unless TESTING  
 end
 
 $logger.info "Exiting..."
