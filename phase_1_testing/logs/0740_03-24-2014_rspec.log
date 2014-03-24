@@ -1,0 +1,68 @@
+..F.............F.FFF.......FF
+
+Failures:
+
+  1) OhioHealth Encounter record behaves like every record the patient has a real name
+     Failure/Error: sfx ? ok && sfx.last == '.' : ok
+     NoMethodError:
+       undefined method `last' for "JR.":String
+     Shared Example Group: "every record" called from ./spec/adt_spec.rb:14
+     # ./spec/shared_examples.rb:26:in `block (4 levels) in <top (required)>'
+     # ./spec/shared_examples.rb:28:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  2) OhioHealth Encounter record the patient has a race
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:43:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  3) OhioHealth Encounter record the patient has a language
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:55:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  4) OhioHealth Encounter record the patient has a marital status
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:61:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  5) OhioHealth Encounter record the patient has a religion
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:67:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  6) OhioHealth Encounter record the encounter has a financial class
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:120:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+  7) OhioHealth Encounter record the encounter has a discharge disposition
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/adt_spec.rb:126:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:12:in `run_rspec'
+     # ./test_runner.rb:83:in `<main>'
+
+Finished in 0.01563 seconds
+30 examples, 7 failures
+
+Failed examples:
+
+rspec ./spec/shared_examples.rb:21 # OhioHealth Encounter record behaves like every record the patient has a real name
+rspec ./spec/adt_spec.rb:40 # OhioHealth Encounter record the patient has a race
+rspec ./spec/adt_spec.rb:52 # OhioHealth Encounter record the patient has a language
+rspec ./spec/adt_spec.rb:58 # OhioHealth Encounter record the patient has a marital status
+rspec ./spec/adt_spec.rb:64 # OhioHealth Encounter record the patient has a religion
+rspec ./spec/adt_spec.rb:117 # OhioHealth Encounter record the encounter has a financial class
+rspec ./spec/adt_spec.rb:123 # OhioHealth Encounter record the encounter has a discharge disposition

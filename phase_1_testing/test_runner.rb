@@ -29,7 +29,7 @@ when '--comparer-test'
 when '--help'
   puts "test_runner_record_comparer.rb takes one commandline argument:"
   puts "   -r: [r]un full script (runs rspec and comparer, and deletes processed files)"
-  puts "   -d: run in non-[d]elete mode (runs full script but doed not delete files)"
+  puts "   -d: run in non-[d]elete mode (runs full script but does not delete files)"
   puts "   -t: run in [t]est mode (basic output only, does not delete files)"
   puts "--rspec: run in rspec mode (basic output and rspec results, deletes files)"
   puts "--comparer: run in comparer mode (basic output and comparer results, deletes files)"
@@ -76,11 +76,22 @@ hl7_files = Dir.entries( FTP ).select{ |f| File.file?("#{FTP}/#{f}") && f =~ FPA
 hl7_files.map!{ |f| "#{FTP}/#{f}" }
 
 # now turn those files into parsable hl7 messages
-all_recs = get_records( hl7_files )
+# all_recs = get_records( hl7_files )
    
-unless !RUN || all_recs.empty?   # avoid running setup if we won't be running anything else
+unless !RUN || hl7_files.empty?   # avoid running setup if we won't be running anything else
   run_record_comparer( PFX + "records.csv", all_recs ) unless RUN == :rspec
-  run_rspec( PFX + "rspec.log", PFX + "flagged_recs.csv", all_recs ) unless RUN == :comparer
+  
+  unless RUN == :comparer
+    ct = 1
+    hl7_files.each{ |f|
+      fdt = "f.match( /\d+/ )[0]    # date/time from this file
+      pfx = "#{$LOG_DIR}/#{fdt}_"
+      all_recs = get_records( f )
+      run_rspec( pfx + "rspec.log", pfx + "flagged_recs.csv", all_recs )
+      ct += 1
+    }
+  end
+  
   remove_files( hl7_files ) if DELETE
 end
 
