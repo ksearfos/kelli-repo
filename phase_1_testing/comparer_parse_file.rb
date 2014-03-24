@@ -39,7 +39,7 @@ else
   $logger.info "Comparing records..."
       
   begin
-    recs = all_recs.shift( 20000 )
+    recs = all_recs.shift( 10000 )
     $logger.info "Comparing #{recs.size} record(s)"
     run_record_comparer( tmp, recs, false )
   end until all_recs.empty?

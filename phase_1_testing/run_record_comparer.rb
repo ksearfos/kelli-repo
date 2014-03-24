@@ -13,6 +13,7 @@ def run_record_comparer( file, messages, final )
   # make new record comparer
   comparer = RecordComparer.new( messages, type )
   comparer.analyze
+  $logger.info "Finished running record comparer. #{comparer.recs_to_use.size} records required."   
   
   if final  
     fluff = '=' * 10
@@ -22,9 +23,9 @@ def run_record_comparer( file, messages, final )
     # log completion in the logger
     $logger.info comparer.summary
     $logger.info "Criteria checked:\n#{[matched,unmatched].make_table}\n"  
-    save_results( file, comparer.use)
+    save_results( file, comparer.use )
   else
-    $logger.info "Finished running record comparer. Writing to #{file}...\n"
+    $logger.info "Writing to #{file}...\n"
     f = File.open( file, "a+" )
     comparer.recs_to_use.each{ |r| f.puts r.to_s }
     f.close

@@ -6,7 +6,7 @@ require 'lib/OHmodule/OHProcs'
 class RecordComparer
   include OHProcs
   
-  attr_reader :records, :matches, :use, :recs_to_use
+  attr_reader :records, :matches, :recs_to_use
   
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared
@@ -48,14 +48,15 @@ class RecordComparer
     if ( needed > 0 && num_found < num_recs )   # not enough records, and there are others
       @recs_to_use << pick_random(needed)
       @recs_to_use.flatten!
-    end
-    
-    # now @recs_to_use has all the records we want, but some of these may be for the same person/encounter
-    # so get rid of those
+    end  
+  end
+
+  def use
+    # some records may be for the same person/encounter, so get rid of those
     rec_details = {}
     @recs_to_use.each{ |rec| rec_details[rec] = rec.to_row }
-    @use = rec_details.invert.values    # all records, minus those with duplicate sets of details    
-  end
+    rec_details.invert.values    # all records, minus those with duplicate sets of details  
+  end  
   
   def summary
     str = "I have successfully matched #{how_many_matches?} of #{@total} criteria, for a total of #{@use.size} records."
