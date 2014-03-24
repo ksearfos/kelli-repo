@@ -76,6 +76,13 @@ hl7_files = Dir.entries( FTP ).select{ |f| File.file?("#{FTP}/#{f}") && f =~ FPA
 hl7_files.map!{ |f| "#{FTP}/#{f}" }
 file_subset = hl7_files[0...MAX_RECS]
 
+if hl7_files.empty?
+  $logger.info "No new files found.\n"
+else
+  $logger.info "Found #{hl7_files.size} new file(s)."
+  $logger.info "Using the first #{MAX_RECS}:\n  " + file_subset.join("\n  ") + "\n"
+end
+  
 # now turn those files into parsable hl7 messages
 # all_recs = get_records( file_subset )
    

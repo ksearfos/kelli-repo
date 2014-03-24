@@ -18,14 +18,7 @@ def set_up_logger( file )
   logger
 end
 
-def get_records( files )
-  if files.empty?
-    $logger.info "No new files found.\n"
-    return []
-  else
-    $logger.info "Found #{files.size} new file(s):\n  " + files.join("\n  ") + "\n"
-  end
-  
+def get_records( files ) 
   # now break into records - sets all_recs
   $logger.info "Beginning file input..."
   msg_list = []
