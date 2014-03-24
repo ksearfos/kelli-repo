@@ -96,9 +96,8 @@ shared_examples "ADT and rad records" do
   end
     
   context "the encounter" do
-    list = ['Outpatient','Emergency','Inpatient','Observation','Q','O']
-    it "has a valid patient class", :pattern => "one of #{list.join(', ')}" do
-      logic = Proc.new{ |msg| list.include? msg[:PV1].patient_class }
+    it "has a patient class" do
+      logic = Proc.new{ |msg| msg[:PV1].patient_class !~ /[^A-z ]/ }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
     end

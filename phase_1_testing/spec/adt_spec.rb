@@ -78,8 +78,8 @@ describe "OhioHealth Encounter record" do
   end
 
   context "the encounter" do
-    it "has a valid patient location", :pattern => "a 4-letter abbreviation" do
-      logic = Proc.new{ |msg| msg[:PV1].patient_location =~ /^[A-z]{4}$/ }
+    it "has a valid patient location", :pattern => "a 3- or 4-letter abbreviation" do
+      logic = Proc.new{ |msg| msg[:PV1].patient_location =~ /^[A-Z]{3,4}$/ }
       @failed = pass?( @messages, logic )
       @failed.should be_empty 
     end
