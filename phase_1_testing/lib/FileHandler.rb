@@ -43,7 +43,7 @@ module HL7
   
   class FileHandler
 
-    attr_reader :messages, :file_text
+    attr_reader :records, :file_text
 
     # NAME: new
     # DESC: creates a new HL7::FileHandler object from a text file
@@ -57,15 +57,15 @@ module HL7
     def initialize( file, recs_num = false )
       raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
       
-      @message = ""
+      @file_text = ""
       @records = []
       @max_records = recs_num
  
       read_message( file )    # updates @message
       get_separators          # updates HL7Test::@separators
       
-      @headers = @message.scan( HDR )           # all headers
-      @bodies = @message.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
+      @headers = @file_text.scan( HDR )           # all headers
+      @bodies = @file_text.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
       set_records
     end
 
@@ -89,7 +89,7 @@ module HL7
     # EXAMPLE:
     #  message_handler[2] => Message3    
     def []( index )
-      @messages[index]
+      @records[index]
     end
 
     # NAME: each
@@ -100,7 +100,7 @@ module HL7
     # EXAMPLE:
     #  message_handler.each{ |rec| print rec.id + " & " } => 12345 & 12458 & 12045 
     def each
-      @messages.each{ |rec| yield(rec) }
+      @records.each{ |rec| yield(rec) }
     end
 
     # NAME: method_missing
@@ -110,7 +110,7 @@ module HL7
     #  *args - all arguments passed to the method call
     #  [code block] - optional code block passed to the method call
     # RETURNS: depends on handling
-    #     ==>  first checks @messages for a matching method
+    #     ==>  first checks @records for a matching method
     #     ==>  second checks @file_text for a matching method
     #     ==>  then gives up and throws an Exception
     # EXAMPLE:
@@ -119,7 +119,7 @@ module HL7
     #  message_handler.fake_method => throws NoMethodError    
     def method_missing( sym, *args, &block )
       if Array.method_defined?( sym )
-        @messages.send( sym, *args )
+        @records.send( sym, *args )
       elsif String.method_defined?( sym )
         @file_text.send( sym, *args )
       else
@@ -163,12 +163,12 @@ module HL7
       ary = chars.split( @@eol )
       ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines
       
-      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
+      @file_text = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
     end 
     
     def get_separators
       eol = @file_text.index( SEG_DELIM )
-      line = @file_text[0...eol]         # looks something like: MSH|^~\&|info|info|info
+      line = @file_text[0...eol]       # looks something like: MSH|^~\&|info|info|info
       
       i = line.index( "MSH" )          # index marking the beginning of the first occurrence of 'MSH'
       i += 3                           # i was index of the M in MSH; need index of first character after H
@@ -184,14 +184,14 @@ module HL7
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
     def set_records
       all_recs = records_by_text
-      @messages = all_recs.map{ |msg| Message.new( msg ) }
+      @records = all_recs.map{ |msg| Message.new( msg ) }
       @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
     end
         
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
       all_recs = []
-      iterations = ( @number_of_records ? @number_of_records : @headers.size )
+      iterations = ( @number_of_records ? @max_records : @headers.size )
       iterations.times{
         h = @headers.shift
         b = @bodies.shift

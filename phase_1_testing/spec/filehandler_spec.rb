@@ -22,7 +22,7 @@ describe "HL7" do
     end
     
     it "allows access to individual records" do
-      @hdler.messages.should_not be_empty  
+      @hdler.records.should_not be_empty  
     end
     
     it "allows access to the list of separators" do
@@ -48,7 +48,7 @@ describe "HL7" do
           count += 1
           rec.should be_a HL7::Message
         }
-        count.should == @hdler.messages.size
+        count.should == @hdler.records.size
       end
     end
     
