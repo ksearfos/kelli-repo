@@ -191,7 +191,7 @@ module HL7
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
       all_recs = []
-      iterations = ( @number_of_records ? @max_records : @headers.size )
+      iterations = ( @max_records ? @max_records : @headers.size ) 
       iterations.times{
         h = @headers.shift
         b = @bodies.shift
