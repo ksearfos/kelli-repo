@@ -76,6 +76,24 @@ describe "HL7" do
         put.should_not be_empty  
       end
     end  
-    
+
+    describe "next" do
+      it "changes the value of @records" do
+        old = @hdler.records
+        @hdler.next
+        old.should_not == @hdler.records
+      end
+      
+      it "iterates through a large number of records" do
+        file = "C:/Users/Owner/Documents/script_input/rad_post.txt"
+        hdlr = HL7::FileHandler.new( file, 10 )
+        hdlr.records.size.should eq 10
+        hdlr.next
+        hdlr.records.should_not be_empty
+        
+        @hdler.next
+        @hdler.records.should be_empty
+      end   
+    end    
   end
 end

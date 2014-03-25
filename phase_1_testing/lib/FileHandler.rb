@@ -31,6 +31,7 @@
 #    method_missing: tries to call method on @messages (Array)
 #                    then tries to call method on @file_text (String)
 #                    then gives up and throws exception
+#    next: gets the next @max_records records and stores them in @records - @records will be empty if there were no more
 #
 # CREATED BY: Kelli Searfos
 #
@@ -53,15 +54,19 @@ module HL7
     #  [HL7::FileHandler] newly-created FileHandler
     # EXAMPLE:
     #  HL7::FileHandler.new( "C:\records.txt", 2 ) => new FileHandler pointed to records.txt, with 2 records total  
-    def initialize( file )
+    def initialize( file, recs_num = false )
       raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
       
-      @file_text = ""
-      @messages = []
+      @message = ""
+      @records = []
+      @max_records = recs_num
+ 
+      read_message( file )    # updates @message
+      get_separators          # updates HL7Test::@separators
       
-      read_message( file )    # updates @file_text
-      get_separators          # updates HL7::@separators
-      break_into_records      # updates @messages
+      @headers = @message.scan( HDR )           # all headers
+      @bodies = @message.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
+      set_records
     end
 
     # NAME: to_s
@@ -129,7 +134,11 @@ module HL7
     def separators
       HL7.separators.values
     end
-    
+
+    def next
+      set_records  
+    end
+        
     private
 
     @@eol = "\n"             # the end of line character we are using
@@ -138,20 +147,24 @@ module HL7
     # changes coding to end in \n for easier parsing
     def read_message( file )
       chars = ""
-     
-      puts "Reading #{file}..."
-      File.open( file, "r" ).each_char do |ch|
-        if ch == "\r" then chars << @@eol   # convert to useful character
+
+      f = File.open( file, "r" )
+      f.each_char{ |ch| 
+        if ch == "\r" then chars << @@eol
         else chars << ch
         end
-      end
-      
-      chars.squeeze!( @@eol )               # only need one line break at a time
-      ary = chars.split( @@eol )
-      ary.delete_if{ |line| line !~ /\S/}   # remove any lines that are empty
+      }
+      f.close
 
-      @file_text = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
-    end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
+      chars.gsub!( '\\r', @@eol )
+      chars.squeeze!( @@eol )                # only need one line break at a time
+      
+      chars.gsub!( "'MSH", "#{@@eol}MSH" )
+      ary = chars.split( @@eol )
+      ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines
+      
+      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
+    end 
     
     def get_separators
       eol = @file_text.index( SEG_DELIM )
@@ -169,20 +182,23 @@ module HL7
     # sets @messages to contain all HL7 messages contained within @file_text, as HL7::Message objects
     # can access segments as @messages[index][segment_name]
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
-    def break_into_records
+    def set_records
       all_recs = records_by_text
       @messages = all_recs.map{ |msg| Message.new( msg ) }
+      @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
     end
         
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
-      hdrs = @file_text.scan( HDR )           # all headers (will be needed later)
-      recs = @file_text.split( HDR )[1..-1]   # split across headers, yielding individual records
-      
       all_recs = []
-      for i in 0...hdrs.size
-        all_recs << ( hdrs[i] + recs[i] )
-      end
+      iterations = ( @number_of_records ? @number_of_records : @headers.size )
+      iterations.times{
+        h = @headers.shift
+        b = @bodies.shift
+        break unless h && b      # ran out of records
+        
+        all_recs << ( h + b )    # h and b are Strings
+      }
       
       all_recs
     end

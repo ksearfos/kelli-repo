@@ -1,20 +1,9 @@
-<<<<<<< HEAD:phase_1_testing/lib/HL7.rb
 require 'Methods'
 require 'FileHandler'
 require 'Message'
 require 'Segment'
 require 'TypedSegment'
 require 'Field'
-=======
-#
-dir = File.dirname(__FILE__)
-require "#{dir}/Methods.rb"
-require "#{dir}/MessageHandler.rb"
-require "#{dir}/Message.rb"
-require "#{dir}/Segment.rb"
-require "#{dir}/Field.rb"
-require "#{dir}/SegmentEigenclass.rb"
->>>>>>> 5f37949... module changes only:phase_1_testing/lib/hl7module/HL7.rb
 
 module HL7
  

@@ -65,7 +65,7 @@ RAD
 $lab_message = HL7::Message.new( $lab_str )
 $rad_message = HL7::Message.new( $rad_str )
 
-file = "C:/Users/Owner/Documents/manifest_rad_out_shortened.txt"
+file = "C:/Users/Owner/Documents/script_input/rad_post.txt"
 $file_handler = HL7::FileHandler.new( file )
 
 RSpec.configure do |c|
