@@ -42,9 +42,10 @@
 module HL7
   
   class FileHandler
-
-    attr_reader :records, :file_text
-
+    
+    @@eol = "\n"    # the end-of-line character we are using
+    attr_reader :records, :file_text, :file
+    
     # NAME: new
     # DESC: creates a new HL7::FileHandler object from a text file
     # ARGS: 1-2
@@ -54,15 +55,15 @@ module HL7
     #  [HL7::FileHandler] newly-created FileHandler
     # EXAMPLE:
     #  HL7::FileHandler.new( "C:\records.txt", 2 ) => new FileHandler pointed to records.txt, with 2 records total  
-    def initialize( file, recs_num = false )
+    def initialize( file, *recs_num )
       raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
       
+      @file = file
       @file_text = ""
       @records = []
-      @max_records = recs_num
+      @max_records = recs_num.first
  
-      read_message( file )    # updates @message
-      get_separators          # updates HL7Test::@separators
+      read_message        # updates @message
       
       @headers = @file_text.scan( HDR )           # all headers
       @bodies = @file_text.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
@@ -126,58 +127,41 @@ module HL7
         super
       end
     end
-    
-    def view_separators
-      HL7.separators.each{ |type,val| puts type.to_s + ": " + val }
-    end
-
-    def separators
-      HL7.separators.values
-    end
 
     def next
       set_records  
     end
         
     private
-
-    @@eol = "\n"             # the end of line character we are using
         
     # reads in a HL7 message as a text file from the given filepath and stores it in @file_text
     # changes coding to end in \n for easier parsing
-    def read_message( file )
-      chars = ""
-
-      f = File.open( file, "r" )
-      f.each_char{ |ch| 
-        if ch == "\r" then chars << @@eol
-        else chars << ch
+    def read_message
+      unless File.zero?( @file )
+        read_text
+        polish_text     
+      end
+    end
+    
+    def read_text
+      # have to read the file one character at a time in order to handle \r
+      file = File.open( @file, "r" )
+      file.each_char{ |char| 
+        if char == "\r" then @file_text << @@eol
+        else @file_text << char
         end
       }
-      f.close
+      file.close
+    end    
 
-      chars.gsub!( '\\r', @@eol )
-      chars.squeeze!( @@eol )                # only need one line break at a time
-      
-      chars.gsub!( "'MSH", "#{@@eol}MSH" )
-      ary = chars.split( @@eol )
-      ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines
-      
-      @file_text = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
-    end 
-    
-    def get_separators
-      eol = @file_text.index( SEG_DELIM )
-      line = @file_text[0...eol]       # looks something like: MSH|^~\&|info|info|info
-      
-      i = line.index( "MSH" )          # index marking the beginning of the first occurrence of 'MSH'
-      i += 3                           # i was index of the M in MSH; need index of first character after H
-      HL7.separators[:field] = line[i]
-      HL7.separators[:comp] = line[i+1]
-      HL7.separators[:subcomp] = line[i+2]
-      HL7.separators[:subsub] = line[i+3]
-      HL7.separators[:sub_subsub] = line[i+4]  
-    end
+    def polish_text
+      @file_text.gsub!( '\\r', @@eol )
+      # @file_text.squeeze!( @@eol )                # only need one line break at a time      
+      @file_text.gsub!( "MSH", "#{@@eol}MSH" )
+      ary = @file_text.split( @@eol )
+      ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines      
+      @file_text = ary.join( SEG_DELIM )    # now glue the pieces back together, ready to be read as HL7 segments
+    end                                     # @@eol and SEG_DELIM are probably the same, but there's no guarantee          
         
     # sets @messages to contain all HL7 messages contained within @file_text, as HL7::Message objects
     # can access segments as @messages[index][segment_name]
@@ -191,18 +175,12 @@ module HL7
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
       all_recs = []
-      iterations = ( @max_records ? @max_records : @headers.size ) 
-      iterations.times{
-        h = @headers.shift
-        b = @bodies.shift
-        break unless h && b      # ran out of records
-        
-        all_recs << ( h + b )    # h and b are Strings
-      }
-      
+      end_index = ( @max_records ? @max_records : @headers.size ) 
+      for i in (0...end_index) 
+        all_recs << ( @headers[i] + @bodies[i] )
+      end      
       all_recs
     end
-
   end
 
 end

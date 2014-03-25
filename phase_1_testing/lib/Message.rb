@@ -69,7 +69,8 @@ module HL7
       @original_text = message_text
       @lines = []            # list of lines by their segment types => [ :MSH, :PID, :PV1, :OBX, :OBX, :OBX ]
       @segments = {}         # { :SEG_TYPE => Segment object }
-
+      @separators = {}
+      
       break_into_segments    # sets @lines, @segments
       
       @id = header.message_control_id.to_s
@@ -287,33 +288,13 @@ module HL7
     private
     
     def break_into_segments    
-      segs = @original_text.split( SEG_DELIM )    # all segments, including the type found in field 0
-      text = {}
-  
-      segs.each{ |seg|
-        end_of_type = seg.index( HL7.separators[:field] )   # first occurrence of delimiter => end of the type field
-        type = seg[0...end_of_type]
-        body = seg[end_of_type+1..-1]
-        is_hdr = ( type =~ HDR )                  # is this a header line?        
-        type = ( is_hdr ? :MSH : type.upcase.to_sym )
-        
-        # save order of original segments as @lines
-        #+  e.g. [:MSH, :PID, :PV1, :OBR, :OBX, :NTE]
-        @lines << type
-        
-        text[type] ? text[type] << body : text[type] = [body]
-      }
-
-      @lines.uniq!
+      lines = @original_text.split( SEG_DELIM )
+      parse_out_separators( lines.first )     # first line is always the header    
+      lines_by_type = break_apart( lines )    # => { "type" => [ "body1", "body2", "body3", ... ] }
+      @lines = lines_by_type.keys.uniq
       
       # now convert text into segment object of specific type (child class) and add to @segments
-      #+  e.g. { :MSH => mshObj, :PID => pidObj, :OBX => obxObj }
-      # let objects track multiple occurrences -- 7 obx segments is still 1 OBX object
-      text.each{ |type,body|
-        line = body.join( SEG_DELIM )
-        cl = HL7.typed_segment( type )
-        @segments[type] = cl.new( line )  
-      }
+      @lines.each{ |type| add_segment( type, lines_by_type[type] ) }
     end
     
     def set_message_type
@@ -326,6 +307,30 @@ module HL7
       else
         @type = :adt
       end
+    end
+    
+    def parse_out_separators( header_line )    
+      i = header_line.index( "MSH" ) + 3       # index of the first character after 'MSH'
+      @separators = { field:header_line[i], comp:header_line[i+1], subcomp:header_line[i+2],
+                      subsub:header_line[i+3], sub_subsub:header_line[i+4] } 
+    end
+
+    # type is a string, body is an array of strings
+    def add_segment( type, body )
+      clazz = HL7.typed_segment( type )
+      @segments[type] = clazz.new( @separators.clone, *body )  
+    end
+  
+    # returns a hash: { "type" => [ "body1", "body2", "body3", ... ] }
+    def break_apart( lines )
+      type_to_body = {}
+      lines.each{ |line|
+        type, *body = line.split( @separators[:field] )    
+        type = :MSH if type.include?( 'MSH' )
+        type_to_body[type.to_sym] ||= []    # initialize to empty array if it hasn't been initialized yet
+        type_to_body[type.to_sym] << body.join( @separators[:field] ) 
+      }    
+      type_to_body
     end
   end
 end

@@ -54,9 +54,9 @@ module HL7
     #  [HL7::Field] newly-created Field
     # EXAMPLE:
     #  HL7::Field.new( "a^b^c" ) => new Field with text "a^b^c" and components ["a","b","c"]
-    def initialize( field_text )
+    def initialize( field_text, component_delim='^' )
       @original_text = field_text
-      @components = field_text.split( HL7.separators[:comp] )    # an array of strings
+      @components = field_text.split( component_delim )    # an array of strings
     end 
     
     # NAME: to_s

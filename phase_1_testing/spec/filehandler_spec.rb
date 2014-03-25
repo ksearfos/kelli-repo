@@ -1,4 +1,4 @@
-# last run: 3/13/14 16:01
+# last run: 3/25/14 at 13:44
 
 require 'spec_helper.rb'
 
@@ -23,10 +23,6 @@ describe "HL7" do
     
     it "allows access to individual records" do
       @hdler.records.should_not be_empty  
-    end
-    
-    it "allows access to the list of separators" do
-      @hdler.separators.sort.should == HL7.separators.values.sort 
     end
     
     describe "to_s" do
@@ -68,14 +64,7 @@ describe "HL7" do
       it "looks for a match in the Array class first" do
         @hdler.reverse.should be_a Array
       end
-    end
-    
-    describe "view_separators" do
-      it "writes a list of separators to stdout" do
-        put = capture_stdout{ @hdler.view_separators }
-        put.should_not be_empty  
-      end
-    end  
+    end 
 
     describe "next" do
       it "changes the value of @records" do

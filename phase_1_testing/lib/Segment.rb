@@ -57,7 +57,7 @@
 module HL7
 
   class Segment    
-   
+    @@no_index_val = -1
     attr_reader :lines, :original_text, :size, :fields
     
     # NAME: new
@@ -68,19 +68,17 @@ module HL7
     #  [HL7::Segment] newly-created Segment
     # EXAMPLE:
     #  HL7::Segment.new( "PID|a|b|c" ) => new Segment with text "a|b|c" and fields ["a","b","c"]
-    def initialize( segment_text )
-      @original_text = segment_text      
+    def initialize( separators, *segment_text )
+      @lines = segment_text
+      @original_text = segment_text.join( SEG_DELIM )      
+      @separators = separators
       remove_name_field if self.class.is_eigenclass?  # can't remove type if there is no type
-
-      @lines = @original_text.split( SEG_DELIM )      # an array of strings
+      
       @size = @lines.size
-
-      @fields_by_line = []     # all fields in each line, as objects, e.g. [ [f1,nil,f2,nil,f3], [f1,f2,f3,nil,f4] ]
+      @fields_by_line = []     # all fields in each line, as Field objects
       break_into_fields        # sets @fields_by_line 
-      @fields = []
-      @fields_by_line.each{ |line|
-        line.each{ |f| @fields << f }
-      }   # flatten will call Flatten for each individual Field, which will separate into components and not fields
+      
+      @fields = @fields_by_line.flatten(1)   # flatten Arrays, but not Field objects
     end
 
     # NAME: to_s
@@ -225,8 +223,6 @@ module HL7
     end
     
     private
-    
-    @@no_index_val = -1
 
     # NAME: break_into_fields
     # DESC: creates array of Field objects (@fields_by_line) from an array of text (@lines)
@@ -235,9 +231,9 @@ module HL7
     # EXAMPLE:
     #  @lines = [ "a|b|c", "a2|b2|c2" ] ==> @fields_by_line = [ [Field(a),Field(b),Field(c)], [Field(a2),Field(b2),Field(c2)] ]         
     def break_into_fields
-      @lines.each{ |l|
-        field_ary = l.split( HL7.separators[:field] )
-        @fields_by_line << field_ary.map{ |f| f.empty? ? nil : Field.new( f ) }   # an array of arrays
+      @lines.each{ |line|
+        field_ary = line.split( @separators[:field] )
+        @fields_by_line << field_ary.map{ |field_text| Field.new(field_text,@separators[:comp]) }   # array of arrays
       }
     end
 
@@ -249,14 +245,10 @@ module HL7
     #  "MSH|a|b|c" => "a|b|c"
     #  "d|e|f" => "d|e|f" (no change)
     def remove_name_field
-        lines = @original_text.split( SEG_DELIM )
-        new_text = []
-        lines.each{ |l|
-          i = l.index( /^#{type}\|/ )
-          new_text << ( i ? l[4..-1] : l )
+        @lines.map!{ |line|
+          after_name = line.split( /#{type}\|/ )[1]   # want second index, not last index!
+          line = ( after_name ? after_name : line ) 
         }
-
-        @original_text.replace( new_text.join(SEG_DELIM) )
     end
     
     # NAME: field_index

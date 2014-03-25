@@ -17,6 +17,7 @@ $time_str_as_24hr = "14:11:43"
 $date_time_str = $date_str + $time_str
 
 # field
+delim = '^'
 $field = HL7::Field.new($str)
 $date_field = HL7::Field.new($date_str)
 $time_field = HL7::Field.new($time_str)
