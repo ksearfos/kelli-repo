@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-# last run: 3/12/14 13:22
-# outcome: success
-
-=======
 # last run: 3/13/14 16:02
->>>>>>> hl7
+
 require 'spec_helper.rb'
 
 describe "HL7" do
@@ -37,22 +32,14 @@ describe "HL7" do
     
     it "can access a segment by name" do   
       @message[:PID].class.should eq $pid_cl
-<<<<<<< HEAD
-      @message[:PID].class.superclass.should eq HL7Test::Segment
-=======
       @message[:PID].class.superclass.should eq HL7::Segment
->>>>>>> hl7
     end
     
     context "iteration" do    
       it "can be forced to happen by segment" do
         count = 0
         @message.each_segment{ |f|
-<<<<<<< HEAD
-          count += 1 if f.is_a?( HL7Test::Segment )
-=======
           count += 1 if f.is_a?( HL7::Segment )
->>>>>>> hl7
         }
 
         count.should == @message.segments.size
@@ -61,11 +48,7 @@ describe "HL7" do
       it "will look through all segments and types by default" do
         count = 0
         @message.each{ |t,f|
-<<<<<<< HEAD
-          count += 1 if t.is_a?( Symbol ) && f.is_a?( HL7Test::Segment ) && f.type == t
-=======
           count += 1 if t.is_a?( Symbol ) && f.is_a?( HL7::Segment ) && f.type == t
->>>>>>> hl7
         }
         count.should == @message.segments.size
       end
