@@ -1,4 +1,4 @@
-##------------------------------------------
+#------------------------------------------
 #
 # MODULE: HL7
 #
@@ -54,10 +54,6 @@ module HL7
     # RETURNS:
     #  [HL7::FileHandler] newly-created FileHandler
     # EXAMPLE:
-<<<<<<< HEAD
-<<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
-=======
->>>>>>> hl7
     #  HL7::FileHandler.new( "C:\records.txt", 2 ) => new FileHandler pointed to records.txt, with 2 records total  
     def initialize( file, *recs_num )
       raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
@@ -67,27 +63,10 @@ module HL7
       @records = []
       @max_records = recs_num.first
  
-      read_message        # updates @message
+      read_message     # updates @file_text
       
       @headers = @file_text.scan( HDR )           # all headers
       @bodies = @file_text.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
-<<<<<<< HEAD
-=======
-    #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
-    def initialize( file, recs_num = false )
-      @message = ""
-      @records = []
-      @number_of_records = recs_num
- 
-      read_message( file )    # updates @message
-      get_separators          # updates HL7Test::@separators
-      
-      @headers = @message.scan( HDR )           # all headers
-      @bodies = @message.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
->>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
-=======
->>>>>>> hl7
-      set_records
     end
 
     # NAME: to_s
@@ -151,67 +130,16 @@ module HL7
     def next
       set_records  
     end
-<<<<<<< HEAD
-<<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
-=======
-
-    def next
-      set_records  
-    end
->>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
-=======
->>>>>>> hl7
         
     private
         
     # reads in a HL7 message as a text file from the given filepath and stores it in @file_text
     # changes coding to end in \n for easier parsing
-<<<<<<< HEAD
-<<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
-=======
->>>>>>> hl7
     def read_message
       unless File.zero?( @file )
         read_text
         polish_text     
       end
-<<<<<<< HEAD
-=======
-    def read_message( file )
-      chars = ""
-
-      f = File.open( file, "r" )
-      f.each_char{ |ch| 
-        if ch == "\r" then chars << @@eol
-        else chars << ch
-        end
-      }
-      f.close
-
-      chars.gsub!( '\\r', @@eol )
-      chars.squeeze!( @@eol )                # only need one line break at a time
-      
-      chars.gsub!( "'MSH", "#{@@eol}MSH" )
-      ary = chars.split( @@eol )
-      ary.delete_if{ |line| line !~ /^\d*[A-Z]{2}[A-Z1]{1}\|/ }  # non-segment lines
-      
-      @message = ary.join( SEG_DELIM )      # now glue the pieces back together, ready to be read as HL7 segments
-    end                                     # though @@eol and SEG_DELIM are likely the same, they don't have to be!
-
-    def get_separators
-      eol = @message.index( SEG_DELIM )
-      line = @message[0...eol]         # looks something like: MSH|^~\&|info|info|info
-      
-      i = line.index( "MSH" )          # index marking the beginning of the first occurrence of 'MSH'
-      i += 3                           # i was index of the M in MSH; need index of first character after H
-      HL7Test.separators[:field] = line[i]
-      HL7Test.separators[:comp] = line[i+1]
-      HL7Test.separators[:subcomp] = line[i+2]
-      HL7Test.separators[:subsub] = line[i+3]
-      HL7Test.separators[:sub_subsub] = line[i+4]  
->>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
-=======
->>>>>>> hl7
     end
     
     def read_text
@@ -240,24 +168,12 @@ module HL7
     def set_records
       all_recs = records_by_text
       @records = all_recs.map{ |msg| Message.new( msg ) }
-<<<<<<< HEAD
-<<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
       @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
-=======
-      @records.flatten!(1) unless @records.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.      
->>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
-=======
-      @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
->>>>>>> hl7
     end
         
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
       all_recs = []
-<<<<<<< HEAD
-<<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
-=======
->>>>>>> hl7
       iterations = ( @max_records ? @max_records : @headers.size ) 
       iterations.times {
         header = @headers.shift
@@ -266,20 +182,6 @@ module HL7
         
         all_recs << ( header + body )
       }
-<<<<<<< HEAD
-=======
-      iterations = ( @number_of_records ? @number_of_records : @headers.size )
-      iterations.times{
-        h = @headers.shift
-        b = @bodies.shift
-        break unless h && b      # ran out of records
-        
-        all_recs << ( h + b )    # h and b are Strings
-      }
-      
->>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
-=======
->>>>>>> hl7
       all_recs
     end
   end

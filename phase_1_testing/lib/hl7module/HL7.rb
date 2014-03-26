@@ -21,7 +21,6 @@ module HL7
   ID_FORMAT = /^[A-Z]?d+$/    # regex defining a medical ID
   
   # a list of all possible message types can be found at http://www.interfaceware.com/hl7-standard/hl7-messages.html
-<<<<<<< HEAD
   ORDER_MESSAGE_TYPE = "ORU^O01"
   RESULT_MESSAGE_TYPE = "ORU^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
@@ -33,34 +32,16 @@ module HL7
             'mcg/mL FEU', 'mcmol/L', 'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mm/hr', 'mmol/L',
             'ng/dL', 'ng/mL', 'ng/mL/h', 'nm', 'nmol/L', 'nmol/mL', 'pH units', 'pg/mL', 'ratio', 'seconds',
             'sqMETERS', 'titer', 'umol/L', 'unit', 'weeks', 'years' ]
-=======
-  ORDER_MESSAGE_TYPE = "ORD^O01"
-  RESULT_MESSAGE_TYPE = "ORD^R01"
-  ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
-  
-  UNITS = [ '%', '/hpf', '/lpf', '/mcL', 'IU/mL', 'K/mcL', 'M/mcL', 'PG', 'U', 'U/L', 'U/mL', 'fL', 'g/dL',
-            'h', 'lbs', 'log IU/mL', 'mIU/mL', 'mL', 'mL/min/1.73 m2', 'mcIU/mL', 'mcg/dL', 'mcg/mL FEU',
-            'mg/24 h', 'mg/L', 'mg/dL', 'mg/g crea', 'mlU/mL', 'mm Hg', 'mmHg', 'mm/hr', 'mmol/L', 'ng/dL',
-            'ng/mL', 'nmol/L', 'pH units', 'pg/mL', 'seconds', 'titer', 'weeks', 'years' ]
->>>>>>> hl7
 
   ABNORMAL_FLAGS = %w( I CH CL H L A U N C )
   
   RESULT_STATUS = %w( D F N O S W P C X R U I )
   
-<<<<<<< HEAD
   SEXES = %w( F M O U A N C )
    
   MSH_FIELDS = { :sending_application => 2, :sending_facility => 3, :receiving_application => 4,
                  :receiving_facility => 5, :date_time => 6, :security => 7, :message_type => 8,
                  :event => 8, :message_control_id => 9, :processing_id => 10, :version => 11 } 
-=======
-  SEXES = %w[ F M O U A N C ]
-   
-  MSH_FIELDS = { :sending_application => 2, :sending_facility => 3, :receiving_application => 4,
-                 :receiving_facility => 5, :date_time => 6, :security => 7, :message_type => 8,
-                 :message_control_id => 9, :processing_id => 10, :version => 11 } 
->>>>>>> hl7
 
   # full list of PID fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-pid-segment              
   PID_FIELDS = { :set_id => 1, :patient_id => 3, :mrn => 3, :patient_name => 5, :mothers_maiden_name => 6,
@@ -76,22 +57,14 @@ module HL7
                  :hospital_service => 10, :admit_source => 14, :admitting_doctor => 17, :patient_type => 18,
                  :visit_number => 19, :financial_class => 20, :diet_type => 38, :bed_status => 40,
                  :admit_date_time => 44, :discharge_date_time => 45, :current_balance => 46,
-<<<<<<< HEAD
                  :total_charges => 47, :total_payments => 49, :visit_indicator => 51, :discharge_disposition => 36,
                  :attending => 7, :referring => 8, :consulting => 9, :admitting => 17 }
-=======
-                 :total_charges => 47, :total_payments => 49, :visit_indicator => 51 }
->>>>>>> hl7
                  
   # full list of OBR fields can be found at http://www.corepointhealth.com/resource-center/hl7-resources/hl7-obr-segment
   OBR_FIELDS = { :set_id => 1, :place_order_number => 2, :filler_order_number => 3, :control_code => 3,
                  :service_id => 4, :procedure_id => 4, :priority => 5, :observation_date_time => 7,
                  :speciment_received_date_time => 14, :specimen_source => 15, :ordering_provider => 16,
-<<<<<<< HEAD
                  :order_callback_number => 17, :result_date_time => 22, :result_status => 25, :accession_number => 3 }  
-=======
-                 :order_callback_number => 17, :result_date_time => 22, :result_status => 25 }  
->>>>>>> hl7
                  
   # full list of ORC fields can be found at http://www.mexi.be/documents/hl7/ch400009.htm
   ORC_FIELDS = { :order_control => 1, :place_order_number => 2, :filler_order_number => 3,

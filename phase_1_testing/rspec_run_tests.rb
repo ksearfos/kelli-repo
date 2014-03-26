@@ -29,13 +29,8 @@ else
   $logger.info "Found #{hl7_files.size} new file(s)\n"
   hl7_files.each{ |fname|
     file = FTP + fname
-<<<<<<< HEAD
-    match = fname[/\d+/]    # date/time from the file
-    file_dt = ( match ? match[0] : dt )
-=======
     file_dt = fname[/\d+/]    # date/time from the file
     file_dt ||= dt 
->>>>>>> test-runner
     new_file_pfx = "#{LOG_DIR}/#{file_dt}_"     
     $flagged = {}  # used by rspec to track failed examples
     

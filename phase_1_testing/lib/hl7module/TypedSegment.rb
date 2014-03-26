@@ -1,4 +1,4 @@
-##------------------------------------------
+#------------------------------------------
 #
 # MODULE: HL7
 #
@@ -25,10 +25,7 @@
 #    self.add(field,index): addes new fieldname-index pair to @field_index_maps
 #
 # SEGMENT CLASS METHODS:
-<<<<<<< HEAD
 #    self.subclasses: returns Array of all instantiated subclasses of Segment
-=======
->>>>>>> hl7
 #    self.is_eigenclass?: returns false if calling class is Segment; true if it's one of the typed derivatives like PID
 #
 # SEGMENT INSTANCE METHODS:
@@ -49,7 +46,6 @@
 module HL7
   
   class Segment     
-<<<<<<< HEAD
 
     # NAME: Segment.subclasses
     # DESC: finds all subclasses created
@@ -61,8 +57,6 @@ module HL7
     def self.subclasses
       ObjectSpace.each_object(::Class).select{ |klass| klass < self }
     end
-=======
->>>>>>> hl7
     
     # NAME: Segment.is_eigenclass?
     # DESC: determines whether object is instance of Segment or one of its eigenclasses
