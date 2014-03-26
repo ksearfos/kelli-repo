@@ -1,24 +1,22 @@
-# last run: 3/13/14 16:02
-<<<<<<< HEAD
+# last run: 3/12/14 13:38
+# outcome: success
 
-=======
->>>>>>> hl7
 require 'spec_helper.rb'
 
 describe "HL7" do
   
-  describe "Lab Message" do
+  describe "Rad Message" do
     
     before(:each) do
-      @message = $lab_message
+      @message = $rad_message
     end
     
     it "can be instantiated" do
       @message.should_not be_nil   
     end
     
-    it "is of type :lab" do
-      @message.type.should == :lab
+    it "is of type :rad" do
+      @message.type.should == :rad
     end
           
     it "allows access to the underlying text" do
@@ -35,14 +33,14 @@ describe "HL7" do
     
     it "can access a segment by name" do   
       @message[:PID].class.should eq $pid_cl
-      @message[:PID].class.superclass.should eq HL7::Segment
+      @message[:PID].class.superclass.should eq HL7Test::Segment
     end
     
     context "iteration" do    
       it "can be forced to happen by segment" do
         count = 0
         @message.each_segment{ |f|
-          count += 1 if f.is_a?( HL7::Segment )
+          count += 1 if f.is_a?( HL7Test::Segment )
         }
 
         count.should == @message.segments.size
@@ -51,7 +49,7 @@ describe "HL7" do
       it "will look through all segments and types by default" do
         count = 0
         @message.each{ |t,f|
-          count += 1 if t.is_a?( Symbol ) && f.is_a?( HL7::Segment ) && f.type == t
+          count += 1 if t.is_a?( Symbol ) && f.is_a?( HL7Test::Segment ) && f.type == t
         }
         count.should == @message.segments.size
       end
@@ -59,7 +57,7 @@ describe "HL7" do
             
     context "undefined method" do      
       it "will treat message as a String" do
-        @message.gsub( '*', '|^\n' ).should == $lab_str.gsub( '*', '|^\n' ) 
+        @message.gsub( '*', '|^\n' ).should == $rad_str.gsub( '*', '|^\n' ) 
       end
       
       it "will treat message as an Array" do

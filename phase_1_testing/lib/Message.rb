@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #------------------------------------------
+=======
+##------------------------------------------
+>>>>>>> hl7
 #
 # MODULE: HL7
 #
@@ -73,7 +77,11 @@ module HL7
       
       break_into_segments    # sets @lines, @segments
       
+<<<<<<< HEAD
       @id = header.message_control_id
+=======
+      @id = header.message_control_id.to_s
+>>>>>>> hl7
       set_message_type
     end  
 
@@ -97,7 +105,11 @@ module HL7
     # EXAMPLE:
     #  segment[:PID] => PID object      
     def []( key )
+<<<<<<< HEAD
       @segments.has_key?(key) ? @segments[key] : []
+=======
+      @segments[key]
+>>>>>>> hl7
     end
 
     # NAME: each
@@ -189,7 +201,10 @@ module HL7
     end
 
     # NAME: details
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/Message.rb
+=======
+>>>>>>> hl7
     # DESC: compiles crucial information about the message, clearly labelled
     # ARGS: 0+
     #  all [Symbol] - the keys of the details to return - will return all of them by default
@@ -198,6 +213,7 @@ module HL7
     #  [Hash] the requested details
     # EXAMPLE:
     #  message.details(:ID,PT_NAME) => { :ID=>"1234563", :PT_NAME=>"John Smith" } 
+<<<<<<< HEAD
 =======
     # DESC: returns a hash with a variety of record details
     # ARGS: 0+
@@ -207,6 +223,8 @@ module HL7
     # EXAMPLE:
     #  message.details(:ID,:PT_NAME) => {:ID=>1234567,:PT_NAME=>"John W Smith Jr" }
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/Message.rb
+=======
+>>>>>>> hl7
     def details( *all )
       all.flatten!
       all.map!{ |key| key = key.upcase.to_sym }
@@ -214,6 +232,7 @@ module HL7
       h = {}
       h[:ID] = @id
       h[:TYPE] = @type.to_s.capitalize
+<<<<<<< HEAD
       h[:DATE] = header.field(:date_time).as_datetime
       h[:PT_NAME] = @segments[:PID].field(:patient_name).as_name
       h[:PT_ID] = @segments[:PID].field(:mrn).first
@@ -226,6 +245,19 @@ module HL7
         h[:PROC_DATE] = @segments[:OBR].field(7).as_datetime
       else
         h[:VISIT_DATE] = @segments[:PV1].field(:admit_date_time).as_datetime
+=======
+      h[:DATE] = header.date_time.as_datetime
+      h[:PT_NAME] = @segments[:PID].patient_name.as_name
+      h[:PT_ACCT] = @segments[:PID].account_number.first
+      
+      if @type != :adt
+        procedure = @segments[:OBR].procedure_id
+        time = @segments[:OBR][7].as_datetime
+        h[:PROC_NAME] = procedure
+        h[:PROC_DATE] = time
+      else
+        h[:VISIT] = @segments[:PV1].visit_number
+>>>>>>> hl7
       end
       
       return h if all.empty?
@@ -234,10 +266,13 @@ module HL7
       h
     end
 
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/Message.rb
 =======
         
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/Message.rb
+=======
+>>>>>>> hl7
     # NAME: view_segments
     # DESC: displays readable version of the segments, headed by the type of the segment
     # ARGS: none
@@ -253,6 +288,7 @@ module HL7
         obj.lines.each{ |line| puts type.to_s + ": " + line }
       }
     end
+<<<<<<< HEAD
     
     def get_segments
       str = ""
@@ -261,6 +297,8 @@ module HL7
       }
       str
     end
+=======
+>>>>>>> hl7
 
     # NAME: fetch_field
     # DESC: returns array of fields at given index of given segment (in all segments of this type!)

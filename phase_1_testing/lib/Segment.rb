@@ -75,6 +75,7 @@ module HL7
       remove_name_field if self.class.is_eigenclass?  # can't remove type if there is no type
       
       @size = @lines.size
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/Segment.rb
       @fields_by_line = []     # all fields in each line, as Field objects
 =======
@@ -83,6 +84,9 @@ module HL7
 
       @fields_by_line = []     # all fields in each line, as objects, e.g. [ [f1,nil,f2,nil,f3], [f1,f2,f3,nil,f4] ]
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/Segment.rb
+=======
+      @fields_by_line = []     # all fields in each line, as Field objects
+>>>>>>> hl7
       break_into_fields        # sets @fields_by_line 
       
       @fields = @fields_by_line.flatten(1)   # flatten Arrays, but not Field objects
@@ -100,7 +104,11 @@ module HL7
     end
     
     # NAME: each
+<<<<<<< HEAD
     # DESC: performs actions for each object, self + all children
+=======
+    # DESC: performs actions for each line--if there are more than 1--or each field
+>>>>>>> hl7
     # ARGS: 1
     #  [code block] - the code to execute on each line
     # RETURNS: nothing, unless specified in the code block
@@ -108,9 +116,13 @@ module HL7
     #  1-line segment: segment.each{ |s| print s + ' & ' } => a & b & c
     #  2-line segment: segment.each{ |s| print s + ' & ' } => [a,b,c] & [a2,b2,c2] 
     def each(&block)
+<<<<<<< HEAD
       yield(self)
       @children.each{ |ch| yield(ch) }
       # @size == 1 ? each_field(&block) : each_line(&block)  
+=======
+      @size == 1 ? each_field(&block) : each_line(&block)  
+>>>>>>> hl7
     end
     
     # NAME: each_line
@@ -147,7 +159,11 @@ module HL7
     #  segment[:beta] => "b"  
     # ALIASES: field()  
     def [](which)
+<<<<<<< HEAD
       field(which).to_s
+=======
+      field(which)
+>>>>>>> hl7
     end
     
     # NAME: field
@@ -155,7 +171,11 @@ module HL7
     # ARGS: 1
     #  index [Integer/Symbol/String] - the index or name of the field we want -- count starts at 1
     # RETURNS:
+<<<<<<< HEAD
     #  [Field] the actual field object
+=======
+    #  [String] the value of the field
+>>>>>>> hl7
     # EXAMPLE:
     #  segment.field(2) => "b"
     #  segment.field(:beta) => "b" 
@@ -178,7 +198,11 @@ module HL7
       i = field_index(which)
 
       all = []
+<<<<<<< HEAD
       @fields_by_line.each{ |row| all << row[i].to_s } if i != @@no_index_val
+=======
+      @fields_by_line.each{ |row| all << row[i] } if i != @@no_index_val
+>>>>>>> hl7
       all
     end
     
@@ -200,7 +224,11 @@ module HL7
     #  segment.fake_method => throws NoMethodError
     def method_missing( sym, *args, &block )
       if self.class.is_eigenclass? && field_index_maps.has_key?( sym )
+<<<<<<< HEAD
         field( sym ).to_s
+=======
+        field( sym )
+>>>>>>> hl7
       elsif Array.method_defined?( sym )       # a Segment is generally a group of fields
         @fields.map{ |f| f.to_s }.send( sym, *args )
       elsif String.method_defined?( sym )      # but we might just want String stuff, like match() or gsub
@@ -271,8 +299,12 @@ module HL7
     #  segment.field_index(:beta) => 1 
     def field_index( which )
       if which.is_a?( Integer )
+<<<<<<< HEAD
         i = which < 0 ? which : which - 1
         i     # field count starts at 1, but array index starts at 0
+=======
+        which - 1     # field count starts at 1, but array index starts at 0
+>>>>>>> hl7
       elsif ( which.is_a?(String) || which.is_a?(Symbol) ) && self.class.is_eigenclass?  # @field_index_maps is defined?
         s = which.downcase.to_sym
         i = field_index_maps[s]
@@ -283,10 +315,13 @@ module HL7
       end
     end
     
+<<<<<<< HEAD
     def break_into_children
       @lines[1..-1].each{ |line| @children << self.class.new(line) }
     end
     
+=======
+>>>>>>> hl7
   end
 
 end

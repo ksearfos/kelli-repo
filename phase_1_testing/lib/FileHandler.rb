@@ -54,7 +54,10 @@ module HL7
     # RETURNS:
     #  [HL7::FileHandler] newly-created FileHandler
     # EXAMPLE:
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
+=======
+>>>>>>> hl7
     #  HL7::FileHandler.new( "C:\records.txt", 2 ) => new FileHandler pointed to records.txt, with 2 records total  
     def initialize( file, *recs_num )
       raise HL7::FileError, "No such file: #{file}" unless File.exists?(file)
@@ -68,6 +71,7 @@ module HL7
       
       @headers = @file_text.scan( HDR )           # all headers
       @bodies = @file_text.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
+<<<<<<< HEAD
 =======
     #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
     def initialize( file, recs_num = false )
@@ -81,6 +85,8 @@ module HL7
       @headers = @message.scan( HDR )           # all headers
       @bodies = @message.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
+=======
+>>>>>>> hl7
       set_records
     end
 
@@ -145,6 +151,7 @@ module HL7
     def next
       set_records  
     end
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
 =======
 
@@ -152,17 +159,23 @@ module HL7
       set_records  
     end
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
+=======
+>>>>>>> hl7
         
     private
         
     # reads in a HL7 message as a text file from the given filepath and stores it in @file_text
     # changes coding to end in \n for easier parsing
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
+=======
+>>>>>>> hl7
     def read_message
       unless File.zero?( @file )
         read_text
         polish_text     
       end
+<<<<<<< HEAD
 =======
     def read_message( file )
       chars = ""
@@ -197,6 +210,8 @@ module HL7
       HL7Test.separators[:subsub] = line[i+3]
       HL7Test.separators[:sub_subsub] = line[i+4]  
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
+=======
+>>>>>>> hl7
     end
     
     def read_text
@@ -225,17 +240,24 @@ module HL7
     def set_records
       all_recs = records_by_text
       @records = all_recs.map{ |msg| Message.new( msg ) }
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
       @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
 =======
       @records.flatten!(1) unless @records.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.      
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
+=======
+      @records.flatten!(1) unless @records.first.is_a? Message  # only flatten Arrays, not Messages/Segments etc.       
+>>>>>>> hl7
     end
         
     # returns array of strings containing hl7 message of individual records, based on @file_text
     def records_by_text
       all_recs = []
+<<<<<<< HEAD
 <<<<<<< HEAD:phase_1_testing/lib/FileHandler.rb
+=======
+>>>>>>> hl7
       iterations = ( @max_records ? @max_records : @headers.size ) 
       iterations.times {
         header = @headers.shift
@@ -244,6 +266,7 @@ module HL7
         
         all_recs << ( header + body )
       }
+<<<<<<< HEAD
 =======
       iterations = ( @number_of_records ? @number_of_records : @headers.size )
       iterations.times{
@@ -255,6 +278,8 @@ module HL7
       }
       
 >>>>>>> test-runner:phase_1_testing/lib/hl7module/MessageHandler.rb
+=======
+>>>>>>> hl7
       all_recs
     end
   end
