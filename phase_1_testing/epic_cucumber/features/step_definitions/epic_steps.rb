@@ -1,7 +1,7 @@
 require 'io/console'
 require 'rautomation'
 
-Given(/^I am on the (.+)$/) do
+Given(/^I am on the CareConnect Login Page$/) do
   # Action performed in Before of env.rb
 end
 
