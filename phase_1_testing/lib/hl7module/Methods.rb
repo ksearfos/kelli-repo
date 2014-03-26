@@ -186,20 +186,19 @@ module HL7Test
   #  HL7.as_name( "DOE^JANE^^SR." ) => JANE DOE SR.
   def self.make_name( name )
     pieces = name.split( @separators[:comp] )
-    has_id = pieces[0] =~ /\d+/     # IDs include digits, and this is either an ID or a Surname
-    pieces = pieces[1..-1] if has_id
+    pieces.shift if pieces[0] =~ /\d+/     # IDs include digits, and this is either an ID or a Surname
      
-    last = pieces[0]
-    first = pieces[1]
-    mi = pieces[2]
-    sfx = pieces[3]
-    pfx = pieces[4]
-    deg = pieces[5]
+    last = pieces[0].to_s
+    first = pieces[1].to_s
+    mi = pieces[2].to_s
+    sfx = pieces[3].to_s
+    pfx = pieces[4].to_s
+    deg = pieces[5].to_s
   
-    mi_str = ( mi && !mi.empty? ? " #{mi}" : "" )       # starts with space
-    sfx_str = ( sfx && !sfx.empty? ? " #{sfx}" : "" )   # starts with space
-    pfx_str = ( pfx && !pfx.empty? ? "#{pfx} " : "" )   # ends with space
-    deg_str = ( deg && !deg.empty? ? ", #{deg}" : "" )  # starts with comma
+    mi_str = ( !mi.empty? ? " #{mi}" : "" )      # starts with space
+    sfx_str = ( !sfx.empty? ? " #{sfx}" : "" )   # starts with space
+    pfx_str = ( !pfx.empty? ? "#{pfx} " : "" )   # ends with space
+    deg_str = ( !deg.empty? ? ", #{deg}" : "" )  # starts with comma
   
     # PFX FIRST MI LAST SFX, DEG
     pfx_str + first + mi_str + " " + last + sfx_str + deg_str
