@@ -7,7 +7,6 @@ require 'lib/HL7CSV'
 def run_rspec( log_file, messages, type )
   set_up_rspec( log_file, type )
   $messages = messages
-  $flagged = {}
   RSpec::Core::Runner.run [ "spec/#{type}_spec.rb" ]
 end
 

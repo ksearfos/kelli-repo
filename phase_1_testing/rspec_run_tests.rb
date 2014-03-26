@@ -11,7 +11,7 @@ FPATT = ( TESTING ? /^#{TYPE}_post\./ : /^\w+_post_\d+\.dat$/ )
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs/" : "#{FTP}/logs/"
 PFX = "#{LOG_DIR}/#{dt}_"
 LOG_FILE = PFX + "comparer_parse_testrunner.log"
-MAX_RECS = TESTING ? 1000 : 10000
+MAX_RECS = 10000
 
 # create the directory, if needed
 `mkdir "#{LOG_DIR}"` unless File.exists?( LOG_DIR )
@@ -32,6 +32,7 @@ else
     match = fname[/\d+/]    # date/time from the file
     file_dt = ( match ? match[0] : dt )
     new_file_pfx = "#{LOG_DIR}/#{file_dt}_"     
+    $flagged = {}  # used by rspec to track failed examples
     
     $logger.info "Reading #{file}"
     msg_hdlr = get_records( file, MAX_RECS )    

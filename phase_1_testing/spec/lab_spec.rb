@@ -78,8 +78,8 @@ describe "OhioHealth Lab record" do
     
     list = HL7Test::RESULT_STATUS
     it "has a valid result status", :pattern => "one of #{list.join(', ')}" do
-      logic = Proc.new{ |msg| list.include? msg[:OBX].result_status }
-      @failed = pass?( messages, logic )
+      logic = Proc.new{ |obx| list.include? obx.result_status }
+      @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end
     
@@ -88,8 +88,7 @@ describe "OhioHealth Lab record" do
       
       it "have valid Units" do
         logic = Proc.new{ |obx|
-          return true unless discrete.include?(obx.type)
-          HL7Test::UNITS.include?(obx.units)
+          discrete.include?(obx.type) ? HL7Test::UNITS.include?(obx.units) : true
         }
         @failed = pass_for_each?( @messages, logic, :OBX )
         @failed.should be_empty
@@ -97,10 +96,13 @@ describe "OhioHealth Lab record" do
 
       it "have valid reference ranges", :pattern => "a numeric range, e.g. 'X-Y'" do
         logic = Proc.new{ |obx|
-          return true unless discrete.include?(obx.type)
-          range = obx.reference_range
-          nums = range.split('-')
-          nums.size == 2 && HL7Test.is_numeric?(nums.first) && HL7Test.is_numeric?(nums.last)
+          if discrete.include?(obx.type)
+            range = obx.reference_range
+            nums = range.split('-')
+            nums.size == 2 && HL7Test.is_numeric?(nums.first) && HL7Test.is_numeric?(nums.last)
+          else
+            true
+          end
         }
         @failed = pass_for_each?( @messages, logic, :OBX )
         @failed.should be_empty
@@ -108,8 +110,11 @@ describe "OhioHealth Lab record" do
 
       it "have valid Abnormal Flags" do
         logic = Proc.new{ |obx|
-          return true unless discrete.include?(obx.type)
-          HL7Test::ABNORMAL_FLAGS.include? obx.abnormal_flag  
+          if discrete.include?(obx.type)
+            HL7Test::ABNORMAL_FLAGS.include? obx.abnormal_flag
+          else
+            true
+          end  
         }
         @failed = pass_for_each?( @messages, logic, :OBX )
         @failed.should be_empty

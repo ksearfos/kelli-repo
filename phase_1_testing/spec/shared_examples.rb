@@ -15,7 +15,7 @@ shared_examples "every record" do
         name = msg[:PID].field(:patient_name)
         sfx = name[4]
         ok = HL7Test.is_name? name.to_s
-        sfx ? ok && sfx[-1] == '.' : ok
+        sfx =~ /[JjSs][Rr]/ ? ok && sfx[-1] == '.' : ok
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty
@@ -147,7 +147,7 @@ shared_examples "lab and rad records" do
         obr = msg[:OBR]
         res = obr.field(:result_date_time)
         obs = obr.field(:observation_date_time)
-        HL7Test.is_datetime?(res) && res.as_date == obs.as_date
+        HL7Test.is_datetime?(res.to_s) && res.as_date == obs.as_date
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    
