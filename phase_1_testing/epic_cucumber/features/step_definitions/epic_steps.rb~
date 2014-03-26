@@ -1,8 +1,0 @@
-Given(/^I am on the CareConnect login page$/) do
-end
-
-When(/^I submit my credentials$/) do
-end
-
-Then(/^I should be logged in$/) do
-end
