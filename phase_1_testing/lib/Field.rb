@@ -90,7 +90,8 @@ module HL7
     # EXAMPLE:
     #  field[2] => "b"
     def [](index)
-      @components[index-1]
+      i = index < 0 ? index : index - 1
+      @components[i]
     end
     
     # NAME: method_missing
@@ -167,8 +168,13 @@ module HL7
     #  [String] the value of the field reformatted as a date + a time
     # EXAMPLE:
     #  field.as_datetime => 4/15/1983 7:23:56 AM
+<<<<<<< HEAD:phase_1_testing/lib/Field.rb
     def as_datetime( delim = "/" )
       HL7.make_datetime( @original_text )
+=======
+    def as_datetime
+      HL7Test.make_datetime( @original_text )
+>>>>>>> test-runner:phase_1_testing/lib/hl7module/Field.rb
     end
 
     # NAME: as_name

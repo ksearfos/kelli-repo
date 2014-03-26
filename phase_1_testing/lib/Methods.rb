@@ -6,6 +6,9 @@
 #         with HL7 messages
 #
 # CLASS-LEVEL METHODS:
+#    find_field(value) - finds segment and index of the given field, returning field string as "seg#"
+#    get_data(messages,field) - gathers a list of all values of field appearing in the messages
+#    make_hl7_date(str,delim) - takes date in standard format, and puts it into HL7 date format
 #    make_date(date,delim) - takes String representing a date and puts it into more recognizable format
 #    make_time(time,military) - takes String representing a time and puts it into more recognizable format
 #    make_datetime(datetime) - takes String representing a date and a time and puts it into more recognizable format
@@ -21,6 +24,7 @@
 #    is_datetime?(val) - determines whether value given represents a valid date + time, by HL7 formatting standards
 #    is_numeric?(val) - determines whether value given is numeric, by HL7 formatting standards
 #    is_struct_num?(val) - determines whether value given is a structured numeric, by HL7 formatting standards
+#    is_timestamp?(val) - determines whether value given is a timestamp, by HL7 formatting standards
 #    is_text?(val) - determines whether value given is (unformatted) text, by HL7 formatting standards
 #    has_correct_format?(value,format) - determines whether the value given is of the format specified
 #
@@ -33,8 +37,70 @@
 #------------------------------------------
 module HL7                         
 
+  # NAME: find_field
+  # DESC: returns given field in String form, e.g. "seg#"
+  # ARGS: 1
+  #   value [String/Symbol] - the name of the field
+  # RETURNS:
+  #   [String] segment and index where the field is located, or empty String if not found
+  #       ==>  if there are multiple occurrences of the same field, such as :set_id, uses first matching segment it finds
+  # EXAMPLE:
+  #   HL7.find_field(:patient_id) => "pid3"
+  def self.find_field( value )
+    seg = ""  
+    field = ""
+    key = value.to_sym
+    
+    HL7Test::Segment.subclasses.each{ |cl|
+      fim = cl.field_index_maps
+      if fim.has_key?(key)
+        seg = cl.to_s
+        field = fim[key].to_s    # the field's index
+        break    
+      end
+    }
+
+    seg.downcase + field         # "seg#"
+  end
+  
+  # NAME: get_values
+  # DESC: returns a list of all values appearing in the given field in the given messages
+  # ARGS: 2
+  #   messages [Array] - list of HL7::Messages
+  #   field [String] - field whose values we seek, in fetch_field() format ("seg#")
+  # RETURNS:
+  #   [Array] all unique values appearing in that field
+  # EXAMPLE:
+  #   HL7.get_values(msg_list,"pid3") => all patient IDs appearing in the messages of msg_list
+  def self.get_data( messages, field )
+    data = []
+    messages.each{ |msg| data << msg.fetch_field(field) }
+    data.flatten!(1)   # only flatten arrays; don't flatten Fields
+    data.uniq!
+    data.keep_if{ |e| !e.to_s.empty? }
+  end
+
 # ---------------------------- Methods to add formatting ---------------------------- #
 
+  # NAME: make_hl7_date
+  # DESC: returns standard date value formatted as YYYYMMDD
+  #       essentially reverses make_date()
+  # ARGS: 1-2
+  #   str [String] - date in more standard format, e.g. MM/DD/YYYY
+  #   delim [String] - delimiter to use to find the date components -- '/' by default
+  # RETURNS:
+  #   [String] the value of the field reformatted as a date HL7 will recognize
+  # EXAMPLE:
+  #   HL7.make_date( "11/05/1903" ) => 19031105
+  #   HL7.make_date( "11-05-1903", "-" ) => 19031105
+  def self.make_hl7_date( str, delim='/' )
+    parts = str.split(delim)
+    mo = parts[0]
+    day = parts[1]
+    year = parts[2]
+    year + mo + day 
+  end
+  
   # NAME: make_date
   # DESC: returns value formatted as a date
   #       HL7 dates are generally stored in the following format: YYYYMMDD
@@ -102,7 +168,7 @@ module HL7
     date = datetime[0...8]
     time = datetime[8..-1]
   
-    make_date( date ) + " " + make_time( time )
+    make_date( date ) + " " + make_time( time, true )
   end
 
   # NAME: make_name
@@ -120,27 +186,40 @@ module HL7
   #  HL7.as_name( "DOE^JANE^^SR." ) => JANE DOE SR.
   def self.make_name( name )
     pieces = name.split( @separators[:comp] )
-    has_id = pieces[0] =~ /\d+/     # IDs include digits, and this is either an ID or a Surname
-    pieces = pieces[1..-1] if has_id
+    pieces.shift if pieces[0] =~ /\d+/     # IDs include digits, and this is either an ID or a Surname
      
-    last = pieces[0]
-    first = pieces[1]
-    mi = pieces[2]
-    sfx = pieces[3]
-    pfx = pieces[4]
-    deg = pieces[5]
+    last = pieces[0].to_s
+    first = pieces[1].to_s
+    mi = pieces[2].to_s
+    sfx = pieces[3].to_s
+    pfx = pieces[4].to_s
+    deg = pieces[5].to_s
   
-    mi_str = ( mi && !mi.empty? ? " #{mi}" : "" )       # starts with space
-    sfx_str = ( sfx && !sfx.empty? ? " #{sfx}" : "" )   # starts with space
-    pfx_str = ( pfx && !pfx.empty? ? "#{pfx} " : "" )   # ends with space
-    deg_str = ( deg && !deg.empty? ? ", #{deg}" : "" )  # starts with comma
+    mi_str = ( !mi.empty? ? " #{mi}" : "" )      # starts with space
+    sfx_str = ( !sfx.empty? ? " #{sfx}" : "" )   # starts with space
+    pfx_str = ( !pfx.empty? ? "#{pfx} " : "" )   # ends with space
+    deg_str = ( !deg.empty? ? ", #{deg}" : "" )  # starts with comma
   
     # PFX FIRST MI LAST SFX, DEG
     pfx_str + first + mi_str + " " + last + sfx_str + deg_str
   end
 
 # ---------------------------- Methods to verify formatting ---------------------------- #
-  
+
+  def self.is_name?( val )
+    parts = val.is_a?(Array) ? val.flatten : val.split(HL7Test.separators[:comp]) 
+    return false if parts.empty?
+
+    first_last = /^[A-Z][A-z \-]*/
+    return false unless parts[0] =~ first_last       # last name - required
+    return false unless parts[1] =~ first_last       # first name - required
+    return false unless parts[2].to_s.empty? || parts[2] =~ /^[A-Z]/    # middle name/initial - optional    
+    return false unless parts[3].to_s.empty? || is_suffix?(parts[3])    # suffix - optional
+    return false unless parts[4].to_s.empty? || parts[4] =~ /^[A-Z]/    # prefix - optional  
+    return false unless parts[5].to_s.empty? || parts[5] =~ /^[A-Z]/    # degree - optional   
+    true   
+  end
+    
   # NAME: is_suffix?
   # DESC: determines whether the value given could represent a name suffix
   #       a suffix is either a roman numeral or Jr/Sr
@@ -152,10 +231,12 @@ module HL7
   #  HL7.is_suffix?( "III" ) => true
   #  HL7.is_suffix?( "rainbow" ) => false 
   def self.is_suffix?( val )
-    return true if val.empty?
+    return true if val.to_s.empty?
     
-    val =~ /^[XVI]+$/ ||           # roman numeral, e.g. III for The 3rd
-    val =~ /^[J|j|S|s][Rr][.]?$/   # Jr./Sr. (the period is optional)       
+    val.chomp!('.')
+    val.upcase!
+    allowed = %w( JR SR MD DO DDS DR )
+    val =~ /^[XVI]+$/ || allowed.include?( val )     # roman numeral, e.g. III for The 3rd, or value in the list      
   end
   
   # NAME: is_year?
@@ -268,9 +349,7 @@ module HL7
   # EXAMPLE:
   #  HL7.is_date?( "20041203" ) => true
   #  HL7.is_date?( "18121532" ) => false 
-  def self.is_date?( val )
-    return false if val !~ /^\d{8}$/
-    
+  def self.is_date?( val )    
     yr = val[0...4]
     mo = val[4...6]
     day = val[6...8]
@@ -373,6 +452,27 @@ module HL7
     #+ separator, and the rest is numeric, so...
     true
   end
+
+  # NAME: is_timestamp
+  # DESC: determines whether the value given is a timestamp
+  #       a HL7 timestamp is a date (with dashes) followed by a time in military time
+  # ARGS: 1
+  #   val [String] - value to be checked
+  # RETURNS:
+  #  [Boolean] true if the value is text, false otherwise
+  # EXAMPLE:
+  #  HL7.is_timestamp?( "10-18-2011 23:59" ) => true
+  #  HL7.is_timestamp?( "26" ) => false    
+  def self.is_timestamp?( str )
+    parts = str.split( " " )
+    date = parts[0]
+    time = parts[1]     # some timestamps end with a space, so don't take last index
+    
+    return false unless date =~ /^\d{2}\-\d{2}\-\d{4}$/
+    return false unless time =~ /^\d{2}:\d{2}$/
+    return false unless is_date?( make_hl7_date(date,'-') )
+    is_time?( time.tr!(':','') )     
+  end  
   
   # NAME: is_text
   # DESC: determines whether the value given is proper text
@@ -386,8 +486,8 @@ module HL7
   #  HL7.is_numeric?( "26" ) => false    
   def self.is_text?( str )
     # value is text (matches 'TX' type) if there is a value, and that value doesn't match any other type
-    is_other = ( is_numeric?(str) || is_struct_num?(str) )
-    str && !( str.empty? || is_other )
+    is_other = ( is_numeric?(str) || is_struct_num?(str) || is_timestamp?(str) )
+    !is_other
   end
   
   # NAME: has_correct_format?
@@ -403,12 +503,13 @@ module HL7
   #  HL7.has_correct_format?( "abc", "TX" ) => true
   #  HL7.has_correct_format?( "1.2", "numeric" ) => true
   #  HL7.has_correct_format?( "12/16/84", "SN" ) => false   
-  # ==> HL7.has_correct_format?( record[:OBX].value, record[:OBX].value_type )
+  # ==> most common usage: HL7.has_correct_format?( record[:OBX].value, record[:OBX].value_type )
   def self.has_correct_format?( value, format )
     case format
     when 'NM',"numeric" then is_numeric?( value )
     when 'SN',"structured numeric" then is_struct_num?( value )
     when 'TX',"text" then is_text?( value )
+    when 'TS',"timestamp" then is_timestamp?( value )
     else false    # not a valid type, so how could we match it?
     end
   end  
