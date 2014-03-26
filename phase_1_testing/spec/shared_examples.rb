@@ -48,8 +48,8 @@ shared_examples "every record" do
       logic = Proc.new{ |msg|
         beg = /^[A-Z]?\d+/ 
         acct = msg[:PID].field(:account_number).first
-        visit = msg[:PV1].field(:visit_number).first 
-        visit.empty? ? acct =~ beg : acct =~ beg && acct == visit
+        visit = msg[:PV1].field(:visit_number) 
+        visit.nil? ? acct =~ beg : acct =~ beg && acct == visit.first
       }
       @failed = pass?( messages, logic )
       @failed.should be_empty

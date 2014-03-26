@@ -26,7 +26,6 @@ def organize_results( flagged, type )
   all_errs = flagged.values
   all_errs.flatten!
   all_errs.uniq!
-  type = flagged.keys.first.type
   
   err_headers = all_errs.map{ |e| e.upcase }
   ary = [ HL7CSV.get_header(type) + err_headers ]

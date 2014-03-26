@@ -5,7 +5,7 @@ require 'test_runner_helper'
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :lab
+TYPE = :enc
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input/" : "d:/FTP/"
 FPATT = ( TESTING ? /^#{TYPE}_post\./ : /^\w+_post_\d+\.dat$/ )
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs/" : "#{FTP}/logs/"
@@ -47,7 +47,7 @@ else
         ct += 1
       end   
     
-      save_flagged( new_file_pfx + "flagged_recs.csv", TYPE )
+      save_flagged( new_file_pfx + "flagged_recs.csv", TYPE ) unless $flagged.empty?
       remove_files( [file] ) unless TESTING
     end 
   }  

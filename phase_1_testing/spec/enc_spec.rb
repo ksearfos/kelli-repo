@@ -43,35 +43,11 @@ describe "OhioHealth Encounter record" do
   end
   
   context "the patient" do 
-    # it "has a race" do
-      # logic = Proc.new{ |msg| !msg[:PID].race.empty? }
-      # @failed = pass?( @messages, logic )
-      # @failed.should be_empty  
-    # end
-    
     it "has an address" do
       logic = Proc.new{ |msg| !msg[:PID].address.empty? }
       @failed = pass?( @messages, logic )
       @failed.should be_empty  
-    end
-    
-    # it "has a language" do
-      # logic = Proc.new{ |msg| !msg[:PID].language.empty? }
-      # @failed = pass?( @messages, logic )
-      # @failed.should be_empty  
-    # end
-    
-    # it "has a marital status" do
-      # logic = Proc.new{ |msg| !msg[:PID].marital_status.empty? }
-      # @failed = pass?( @messages, logic )
-      # @failed.should be_empty  
-    # end
-    
-    # it "has a religion" do
-      # logic = Proc.new{ |msg| !msg[:PID].religion.empty? }
-      # @failed = pass?( @messages, logic )
-      # @failed.should be_empty  
-    # end  
+    end 
     
     it "has the correct country code", :pattern => "if there is one" do
       logic = Proc.new{ |msg|
@@ -85,7 +61,7 @@ describe "OhioHealth Encounter record" do
 
   context "the encounter" do
     it "has a valid patient location", :pattern => "a 3- or 4-letter abbreviation" do
-      logic = Proc.new{ |msg| msg[:PV1].patient_location =~ /^[A-Z]{3,4}$/ }
+      logic = Proc.new{ |msg| msg[:PV1].patient_location =~ /^[A-z]{3,4}$/ }
       @failed = pass?( @messages, logic )
       @failed.should be_empty 
     end

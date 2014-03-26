@@ -9,7 +9,7 @@ def is_physician?( field )
  
   id = field.first
   name = field.components[1..6]
-  ok = ( id =~ /^\d+$/ && field.to_s =~ /\w+PROV$/ )
+  ok = ( id =~ /^\d+$/ && field.to_s =~ /\w+PROV/ )
   name.has_value? ? ok && HL7Test.is_name?( name ) : ok
 end
 

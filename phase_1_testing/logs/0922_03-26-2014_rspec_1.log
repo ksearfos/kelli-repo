@@ -1,0 +1,19 @@
+..................F.....
+
+Failures:
+
+  1) OhioHealth Encounter record the encounter has a valid patient location
+     Failure/Error: @failed.should be_empty
+       expected empty? to return true, got false
+     # ./spec/enc_spec.rb:66:in `block (3 levels) in <top (required)>'
+     # ./run_rspec.rb:10:in `run_rspec'
+     # ./rspec_run_tests.rb:45:in `block in <main>'
+     # ./rspec_run_tests.rb:30:in `each'
+     # ./rspec_run_tests.rb:30:in `<main>'
+
+Finished in 0.01563 seconds
+24 examples, 1 failure
+
+Failed examples:
+
+rspec ./spec/enc_spec.rb:63 # OhioHealth Encounter record the encounter has a valid patient location
