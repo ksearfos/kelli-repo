@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 require 'require_relative'
 require 'hl7_utils'
 require_relative './hl7_specs/support/hl7_shared_examples'

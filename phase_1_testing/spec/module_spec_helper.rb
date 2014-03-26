@@ -84,4 +84,3 @@ def capture_stdout(&blk)
 ensure
   $stdout = old
 end
->>>>>>> hl7

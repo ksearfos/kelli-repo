@@ -39,12 +39,10 @@ else
     if msg_hdlr.nil?   # will be nil if file was empty
       remove_files( [file] )   # remove even if we are testing! it's empty!!
     else    
-      $logger.info "Testing records..."
-      ct = 1      
+      $logger.info "Testing records..."    
       until msg_hdlr.records.empty?
-        run_rspec( new_file_pfx + "rspec_#{ct}.log", msg_hdlr.records, TYPE ) 
+        run_rspec( new_file_pfx + "rspec.log", msg_hdlr.records, TYPE ) 
         msg_hdlr.next     # get the next however-many records -- @records will be empty if we got them all
-        ct += 1
       end   
     
       save_flagged( new_file_pfx + "flagged_recs.csv", TYPE ) unless $flagged.empty?
