@@ -18,7 +18,7 @@ def save_flagged( csv_file, type )
 end
 
 def set_up_rspec( file, type )
-  $stdout.reopen(file, "w")   # send results of test to new file
+  $stdout.reopen(file, "a")   # send results of test to new file
   $logger.info "Beginning testing of #{type} messages\n"
 end
 
