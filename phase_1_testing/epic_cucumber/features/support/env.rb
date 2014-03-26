@@ -37,8 +37,8 @@ Before do
   window.move_mouse 400, 375
   window.click_mouse
   @password.scan(/./).each do |c|
-	c = :add if c == "+"
-	window.send_keys c
+    c = :add if c == "+"
+    window.send_keys c
   end
   window.move_mouse 400, 400
   window.click_mouse
