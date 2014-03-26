@@ -27,4 +27,7 @@ Then(/^I should be logged in$/) do
   window.send_keys @password
   window.send_keys :tab
   window.send_keys :return
+
+  edit_field = window.text_field :class => "Edit"
+  edit_field.exists?
 end
