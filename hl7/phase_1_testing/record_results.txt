@@ -1,0 +1,7 @@
+Patient ID: 00487630
+Patient Name: Richard L Thompson
+Visit Number: A2057219
+
+Patient ID: 00547448
+Patient Name: Michael Tanner
+Visit Number: 1134733972
