@@ -10,7 +10,7 @@ FTP = TESTING ? "C:/Users/Owner/Documents/script_input/" : "d:/FTP/"
 FPATT = ( TESTING ? /^#{TYPE}_post\./ : /^\w+_post_\d+\.dat$/ )
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs/" : "#{FTP}/logs/"
 PFX = "#{LOG_DIR}/#{dt}_"
-LOG_FILE = PFX + "comparer_parse_testrunner.log"
+LOG_FILE = PFX + "rspec_testrunner.log"
 MAX_RECS = 10000
 
 # create the directory, if needed
