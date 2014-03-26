@@ -1,4 +1,4 @@
-require 'highline/import'
+require 'io/console'
 require 'rautomation'
 
 Given(/^I am on the (.+)$/) do |page_name|
@@ -7,9 +7,14 @@ Given(/^I am on the (.+)$/) do |page_name|
 end
 
 When(/^I submit my credentials$/) do
-  @username = ask("OPID:   ") {|q| q.default = "none"}
-  @password = ask("Password:   ") {|q| q.echo = false}
-  @ccweb_landing_page = @ccweb_login_page.login_with @username.chomp!, @password.chomp!
+  print "OPID:   "
+  $stdout.flush
+  @username = gets.chomp
+  print "Password:   "
+  $stdout.flush
+  @password = STDIN.noecho(&:gets).chomp
+  print "\n" # Move console output off password line
+  @ccweb_landing_page = @ccweb_login_page.login_with @username, @password
 end
 
 Then(/^I should be logged in$/) do
@@ -19,15 +24,16 @@ Then(/^I should be logged in$/) do
   sleep 15
   window = RAutomation::Window.new(:title => /Hyperspace/i, :adapter => :ms_uia)
   window.exists?.should be_true
-  
   window.send_keys @username
-  window.send_keys :tab
-  window.send_keys :enter
-  window.send_keys :return
-  window.send_keys @password
-  window.send_keys :tab
-  window.send_keys :return
-
-  edit_field = window.text_field :class => "Edit"
-  edit_field.exists?
+  window.move_mouse 400, 375
+  window.click_mouse
+  @password.scan(/./).each do |c|
+	c = :add if c == "+"
+	window.send_keys c
+  end
+  window.move_mouse 400, 400
+  window.click_mouse
+  window.click_mouse
+  window.move_mouse 725, 525
+  window.click_mouse
 end
