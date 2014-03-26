@@ -5,13 +5,13 @@ require 'lib/extended_base_classes'
 require 'lib/HL7CSV'
 require 'logger'
 
-def run_record_comparer( file, messages, final )
+def run_record_comparer( file, messages, final, set_size = 1 )
   type = messages[0].type  
   
   add_dynamic_fields( messages, type ) 
   
   # make new record comparer
-  comparer = RecordComparer.new( messages, type )
+  comparer = RecordComparer.new( messages, type, set_size )
   comparer.analyze
   $logger.info "Finished running record comparer. #{comparer.recs_to_use.size} records required."   
   

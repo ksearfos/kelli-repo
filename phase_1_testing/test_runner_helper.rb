@@ -18,15 +18,17 @@ def set_up_logger( file )
   logger
 end
 
-def get_records( file ) 
-  $logger.info "Opening #{file}"
-  mh = HL7Test::MessageHandler.new( file )
-  $logger.info "File read. Parsing out records..."
-  
-  msg_list = mh.records  
-  msg_list.flatten!(1) unless msg_list.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.
-  $logger.info "Found #{msg_list.size} record(s)\n"
-  msg_list
+def get_records( file, max = false ) 
+  if File.zero?(file)   # empty
+    $logger.error "File is empty"
+    nil
+  else
+    $logger.info "Opening #{file}"
+    mh = HL7Test::MessageHandler.new( file, max )
+    $logger.info "File read. Parsing out records..."
+    $logger.info "Found #{mh.records.size} record(s)\n"
+    mh
+  end
 end
 
 def remove_files( files )

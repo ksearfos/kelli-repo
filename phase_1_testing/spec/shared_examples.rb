@@ -1,13 +1,5 @@
 # == shared among all record types
-shared_examples "every record" do
-  context "when converted to HL7" do   
-    it "has the correct event type", :pattern => HL7Test::ENCOUNTER_MESSAGE_TYPE do
-      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::ENCOUNTER_MESSAGE_TYPE }
-      @failed = pass?( @messages, logic )
-      @failed.should be_empty      
-    end
-  end
-  
+shared_examples "every record" do 
   context "the patient" do   # PID segment
     it "has a valid MRN", :pattern => "numbers, ending with (something)01" do
       logic = Proc.new{ |msg|
@@ -56,7 +48,7 @@ shared_examples "every record" do
       logic = Proc.new{ |msg|
         beg = /^[A-Z]?\d+/ 
         acct = msg[:PID].field(:account_number).first
-        visit = msg[:PV1].visit_number 
+        visit = msg[:PV1].field(:visit_number).first 
         visit.empty? ? acct =~ beg : acct =~ beg && acct == visit
       }
       @failed = pass?( messages, logic )
@@ -106,11 +98,19 @@ end
 
 # shared by lab and rad
 shared_examples "lab and rad records" do
+  context "when converted to HL7" do   
+    it "has the correct event type", :pattern => HL7Test::RESULT_MESSAGE_TYPE do
+      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::RESULT_MESSAGE_TYPE }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
+  end
+    
   context "the encounter" do
     it "has the same attending and referring physicians" do
       logic = Proc.new{ |msg|
         pv1 = msg[:PV1]
-        pv1.attending == pv1.referring
+        pv1.referring.empty? || pv1.attending == pv1.referring
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
@@ -125,7 +125,7 @@ shared_examples "lab and rad records" do
     end
 
     it "has a valid service ID", :pattern => "letters, numbers, and spaces" do
-      logic = Proc.new{ |msg| msg[:OBR][4] !~ /[^A-Z0-9 ]/ }
+      logic = Proc.new{ |msg| msg[:OBR][4] !~ /[^A-Z0-9 \^]/ }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    
     end 
@@ -145,8 +145,9 @@ shared_examples "lab and rad records" do
     it "has a result date/time", :pattern => "the same as the observation date/time" do
       logic = Proc.new{ |msg|
         obr = msg[:OBR]
-        dt = obr.result_date_time
-        HL7Test.is_datetime?(dt) && dt == obr.observation_date_time
+        res = obr.field(:result_date_time)
+        obs = obr.field(:observation_date_time)
+        HL7Test.is_datetime?(res) && res.as_date == obs.as_date
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    

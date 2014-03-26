@@ -4,14 +4,15 @@ require "spec/spec_helper"
 require 'logger'
 require 'lib/HL7CSV'
 
-def run_rspec( log_file, csv_file, messages )
-  type = messages[0].type
+def run_rspec( log_file, messages, type )
   set_up_rspec( log_file, type )
   $messages = messages
   $flagged = {}
   RSpec::Core::Runner.run [ "spec/#{type}_spec.rb" ]
-  
-  # now $flagged should be a list of messages and each example they failed
+end
+
+# $flagged should be a list of messages and each example they failed
+def save_flagged( csv_file, type )
   csv_ary = organize_results( $flagged, type )
   HL7CSV.make_spreadsheet_from_array( csv_file, csv_ary )
   $logger.info "Testing completed. See #{csv_file}\n"

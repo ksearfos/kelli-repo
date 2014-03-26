@@ -5,11 +5,11 @@ require 'rspec'
 require 'rspec/expectations'
 
 def is_physician?( field )
-  return true if field.nil?
+  return true if field.nil? || !field.components[0..6].has_value?
+ 
   id = field.first
   name = field.components[1..6]
-  prov = field[9]
-  ok = ( id =~ /^\d+$/ && prov =~ /\w+PROV$/ )
+  ok = ( id =~ /^\d+$/ && field.to_s =~ /\w+PROV$/ )
   name.has_value? ? ok && HL7Test.is_name?( name ) : ok
 end
 

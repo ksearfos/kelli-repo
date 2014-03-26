@@ -55,13 +55,17 @@ module HL7Test
     #  [HL7::MessageHandler] newly-created MessageHandler
     # EXAMPLE:
     #  HL7::MessageHandler.new( "C:\records.txt", 2 ) => new MessageHandler pointed to records.txt, with 2 records total  
-    def initialize( file )
+    def initialize( file, recs_num = false )
       @message = ""
       @records = []
-      
+      @number_of_records = recs_num
+ 
       read_message( file )    # updates @message
       get_separators          # updates HL7Test::@separators
-      break_into_records      # updates @records
+      
+      @headers = @message.scan( HDR )           # all headers
+      @bodies = @message.split( HDR )[1..-1]    # split across headers, yielding bodies of individual records
+      set_records
     end
 
     # NAME: to_s
@@ -129,7 +133,11 @@ module HL7Test
     def separators
       HL7Test.separators.values
     end
-    
+
+    def next
+      set_records  
+    end
+        
     private
 
     @@eol = "\n"             # the end of line character we are using
@@ -173,20 +181,23 @@ module HL7Test
     # sets @records to contain all HL7 messages contained within @message, as HL7::Message objects
     # can access segments as @records[index][segment_name]
     # e.g. hl7_messages_array[2][:PID] will return the PID segment of the 3rd record
-    def break_into_records
+    def set_records
       all_recs = records_by_text
       @records = all_recs.map{ |msg| Message.new( msg ) }
+      @records.flatten!(1) unless @records.first.is_a? HL7Test::Message  # only flatten Arrays, not Messages/Segments etc.      
     end
         
     # returns array of strings containing hl7 message of individual records, based on @message
     def records_by_text
-      hdrs = @message.scan( HDR )           # all headers (will be needed later)
-      recs = @message.split( HDR )[1..-1]   # split across headers, yielding individual records
-      
       all_recs = []
-      for i in 0...hdrs.size
-        all_recs << ( hdrs[i] + recs[i] )
-      end
+      iterations = ( @number_of_records ? @number_of_records : @headers.size )
+      iterations.times{
+        h = @headers.shift
+        b = @bodies.shift
+        break unless h && b      # ran out of records
+        
+        all_recs << ( h + b )    # h and b are Strings
+      }
       
       all_recs
     end

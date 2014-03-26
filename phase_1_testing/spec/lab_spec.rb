@@ -20,17 +20,17 @@ describe "OhioHealth Lab record" do
   end  
 
   context "when converted to HL7" do  
-    it "has the correct message processing ID", :pattern => "T for MGH, P otherwise" do
+    it "has the correct message processing ID", :pattern => "P for MGH, T otherwise" do
       logic = Proc.new{ |msg| 
         msh = msg.header
         prid = msh.processing_id
-        msh[3] == 'MGH' ? prid == 'T' : prid == 'P'
+        msh[3] == 'MGH' ? prid == 'P' : prid == 'T'
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty      
     end
          
-    it "has the correct HL7 version", :pattern => "2.4 for MGH, 2.3 otherwise" do
+    it "has the correct HL7 version", :pattern => "2.3 for MGH, 2.4 otherwise" do
       logic = Proc.new{ |msg| 
         msh = msg.header
         vsn = msh.version

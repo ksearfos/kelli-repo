@@ -19,7 +19,13 @@ describe "OhioHealth Encounter record" do
     let(:messages){ @messages }
   end
 
-  context "when converted to HL7" do   
+  context "when converted to HL7" do     
+    it "has the correct event type", :pattern => HL7Test::ENCOUNTER_MESSAGE_TYPE do
+      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::ENCOUNTER_MESSAGE_TYPE }
+      @failed = pass?( @messages, logic )
+      @failed.should be_empty      
+    end
+  
     list = [:MSH,:EVN,:PID,:PV1]
     it "has the correct segments", :pattern => "only #{list.join(', ')}" do
       logic = Proc.new{ |msg| 

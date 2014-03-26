@@ -19,8 +19,8 @@ module HL7Test
   ID_FORMAT = /^[A-Z]?d+$/    # regex defining a medical ID
   
   # a list of all possible message types can be found at http://www.interfaceware.com/hl7-standard/hl7-messages.html
-  ORDER_MESSAGE_TYPE = "ORD^O01"
-  RESULT_MESSAGE_TYPE = "ORD^R01"
+  ORDER_MESSAGE_TYPE = "ORU^O01"
+  RESULT_MESSAGE_TYPE = "ORU^R01"
   ENCOUNTER_MESSAGE_TYPE = "ADT^A08"
   
   UNITS = [ '#/mcL', '%', '% of total Hb', '%/L', '/hpf', '/lpf', '/mcL', 'AU/mL', 'IU/mL', 'K/mcL', 'L/min',

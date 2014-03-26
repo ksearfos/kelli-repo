@@ -18,7 +18,7 @@ class RecordComparer
     @total = @criteria.size
     
     @unmatched = @criteria.keys
-    @recs_to_search = {}             # will track which criteria each record meets
+    @recs_to_search = {}              # will track which criteria each record meets
     
     # items for keeping track of preferred records
     @high_recs = []                   # these get reset during find_best(), but I want the values accessible
