@@ -92,4 +92,8 @@ class Hash
     clean = self.invert.invert    # inverting keeps only the first key to have a given value
     self.replace( clean )         # then revert back to keys being keys
   end
+
+  def self.new_from_array( array, default_value=nil )
+    Hash[ array.collect{ |key| [key,default_value] } ]
+  end
 end
