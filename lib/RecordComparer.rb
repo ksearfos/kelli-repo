@@ -7,11 +7,13 @@ class RecordComparer
   include OHProcs
   
   attr_reader :records, :matches, :recs_to_use
+  attr_writer :weight_method
   
   def initialize( recs, type, min_results_size=1 )
     @records = recs                   # all records to be compared
     @min_size = min_results_size      # smallest number of records to return, 1 by default
     @type = type
+    @weight_method = Proc.new{ |records| records.shuffle.first }
     
     # items for tracking criteria
     @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
@@ -93,7 +95,8 @@ class RecordComparer
 
       # next, figure out which criteria those records meet, and record that we have matched them
       to_delete = []              # list of criteria we have found a record for, so we can stop searching for them
-      @high_recs.each{ |rec| 
+      use = pick_most_important
+      use.each{ |rec| 
         to_delete << @recs_to_search[rec] 
         note_matches( rec )       # also deletes rec from @recs_to_search, so we don't look again
       }
@@ -158,4 +161,8 @@ class RecordComparer
     r.take( amt )
   end  
 
+  def pick_most_important
+    @weight_method.call( @high_recs )
+  end
+  
 end #class  
