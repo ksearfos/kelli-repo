@@ -8,7 +8,7 @@ class RecordComparer
   
   def initialize( recs, type, min_results_size=1 )
     @records_and_criteria = Hash.new_from_array( recs, [] )
-    @unused_records = @records_and_criteria.keys
+    @unused_records = @records_and_criteria.keys.clone
     @min_size = min_results_size      # smallest number of records to return
     @weight_method = Proc.new{ |records| records.shuffle.first }
     
@@ -17,6 +17,7 @@ class RecordComparer
     @matched_criteria = []
 
     determine_record_criteria
+    @records_and_criteria.remove_duplicate_values!
   end
   
   def analyze
@@ -48,13 +49,19 @@ class RecordComparer
   
   def determine_record_criteria
     @records_and_criteria.each_key{ |record|
-      @records_and_criteria[record] = @criteria.select{ |name,proc| name if proc.call( record ) }
+      @records_and_criteria[record] = passing_criteria( record )
     }
   end  
   
+  def passing_criteria(record)
+    passed = []
+    @criteria.each{ |name,proc| passed << name if proc.call( record ) }
+    passed  
+  end
+  
   def find_me_some_records
     no_more_matches = false
-    until @unused_records.empty? || @unmatched_criteria.empty? || no_more_matches
+    until @unused_records.empty? || no_unmatched_criteria || no_more_matches
       score, matched_records = find_best 
       no_more_matches = ( score == 0 || matched_records.empty? )      
       choose = pick_most_important( matched_records )
@@ -108,4 +115,8 @@ class RecordComparer
     !@unused_records.include?( record )
   end     
 
+  def no_unmatched_criteria
+    @matched_criteria.size == @criteria.size
+  end
+  
 end  

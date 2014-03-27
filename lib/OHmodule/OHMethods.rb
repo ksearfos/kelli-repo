@@ -1,5 +1,5 @@
 require 'lib/extended_base_classes'
-require 'lib/hl7module/HL7'
+require 'lib/hl7/HL7'
 
 module OHProcs
   

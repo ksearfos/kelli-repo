@@ -1,4 +1,4 @@
-require 'lib/hl7module/HL7'
+require 'lib/hl7/HL7'
 require 'lib/OHmodule/OHProcs'
 require 'lib/extended_base_classes'
 require 'rspec'

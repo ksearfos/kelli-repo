@@ -3,14 +3,13 @@ require "#{dir}/OHMethods.rb"
 
 module OHProcs
 
-  extend HL7Test
-  
-  private
+  extend HL7
     
   IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   OBS_TYPES = %w( TX NM SN TS )
   RAD_OBS_IDS = %w( &GDT &IMP &ADT )
+  SERIES_ENC = Proc.new{ |message| message[:PID].account_number[0] == 'A' }
   
   # -------------Define the Procs------------ #
   # MSH
@@ -20,7 +19,7 @@ module OHProcs
   MSH11_24 = Proc.new{ |rec| is_val?(rec,"msh11",'2.4') }
 
   # PID  
-  SEXES = define_group( "pid8", HL7Test::SEXES, :sex )
+  SEXES = define_group( "pid8", HL7::SEXES, :sex )
   PID10 = Proc.new{ |rec| has_val?(rec,"pid10") }
   PID12_AND_11_7 = Proc.new{ |rec| comp_has_val?(rec,"pid11",7) && has_val?(rec,"pid12") }
   PID15 = Proc.new{ |rec| has_val?(rec,"pid15") } 
@@ -43,7 +42,7 @@ module OHProcs
   
   # OBR
   OBR7_AND_OBR22 = Proc.new{ |rec| both_have_vals?(rec,"obr7","obr22") }
-  OBR_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obr_result_status ) 
+  OBR_RES_STATS = define_group( "obr25", HL7::RESULT_STATUS, :obr_result_status ) 
   OBR27 = Proc.new{ |rec| has_val?(rec,"obr27") } 
   OBR31 = Proc.new{ |rec| has_val?(rec,"obr31") }
     
@@ -57,8 +56,8 @@ module OHProcs
   OBX5_NM = Proc.new{ |rec| is_type?( rec,"obx5",:NM ) }
   OBX5_TX = Proc.new{ |rec| is_type?( rec,"obx5",:TX ) }
   OBX5_TS = Proc.new{ |rec| is_type?( rec,"obx5",:TS ) }
-  ABN_FLAGS = define_group( "obx11", HL7Test::ABNORMAL_FLAGS, :abnormal_flag )
-  OBX_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obx_result_status ) 
+  ABN_FLAGS = define_group( "obx11", HL7::ABNORMAL_FLAGS, :abnormal_flag )
+  OBX_RES_STATS = define_group( "obr25", HL7::RESULT_STATUS, :obx_result_status ) 
 
   #-------------Group Procs for Quick Access-------------- #
 

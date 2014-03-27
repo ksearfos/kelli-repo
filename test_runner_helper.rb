@@ -24,10 +24,10 @@ def get_records( file, max = false )
     nil
   else
     $logger.info "Opening #{file}"
-    mh = HL7Test::MessageHandler.new( file, max )
+    handler = HL7::FileHandler.new( file, max )
     $logger.info "File read. Parsing out records..."
-    $logger.info "Found #{mh.records.size} record(s)\n"
-    mh
+    $logger.info "Found #{handler.records.size} record(s)\n"
+    handler
   end
 end
 
