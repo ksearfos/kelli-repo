@@ -1,0 +1,33 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+require 'rspec'
+
+file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in_shortened.txt" ) do |f|
+  file << f.gets.chomp    # blank lines cause a ParseError exception to be thrown
+end
+
+describe HL7::Message do
+  context "no input data" do
+    msg = HL7::Message.new()
+    
+    it "does not print out any messges" do
+      msg.to_s.should be_empty
+    end
+  end
+  
+  context "input data" do
+    msg = HL7::Message.new( file )
+  
+    it "prints a formatted version of the input" do
+      msg.to_s.should_not be_empty
+      puts msg
+    end
+  
+    it "finds sections by name" do
+      msg[:PID].to_s.should_not be_empty
+      puts msg[:PID]
+    end
+  end # context
+end

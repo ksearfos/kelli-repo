@@ -1,0 +1,14 @@
+#!/bin/env ruby
+
+require 'test.rb'
+
+describe "#empty_message" do
+  it "creats an empty HL7 message"
+    empty_message.should be_empty
+end 
+
+describe "#filled_message" do
+  it "creates a populated HL7 message"
+    filled_message.should_not be_empty
+end
+

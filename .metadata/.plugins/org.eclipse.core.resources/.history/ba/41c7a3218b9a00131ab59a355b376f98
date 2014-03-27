@@ -1,0 +1,18 @@
+# The following hash contains every field in a PID segment, with the index of the component it is in.
+# Some of these contain multiple sub-components delimited with ^.
+# I believe the abbreviations will be easier to use, which I why I went that way. Note that I devised the abbreviations;
+#    they do not come from an external source.
+# The full names of the fields are, in order:
+#    
+#    Patient ID (PID), External Patient ID (EXID), Internal Patient ID (INTID), Alternate Patient ID (ALTID),
+#    Patient Name (NAME), Mother's Maiden Name (MMN), Date/Time of Birth (DOB), Sex (SEX), Patient Alias (ALS),
+#    Race (RACE), Address (ADDR), Country Code (CCD), Home Phone Number (PHH), Business Phone Number (PHB),
+#    Native Language (LNG), Marital Status (MAR), Religion (REL), Patient Account Number (ACCT), Social Security
+#    Number (SSN), Driver's License Number (DLN), Mother's ID Number (MID), Ethnicity (ETH), Birthplace (POB),
+#    Multiple Birth Indicator (MBI), Birth Order (BORD), Citizenship (CTZ), Veteran Status (VET), Nationality (NTL),
+#    Date/Time of Death (DOD), Indication of Death (IOD)
+#    
+$pid_fields = { 1 => :PID, 2 => :EXID, 3 => :INTID, 4 => :ALTID, 5 => :NAME, 6 => :MMN, 7 => :DOB, 8 => :SEX,
+                9 => :ALS, 10 => :RACE, 11 => :ADDR, 12 => :CCD, 13 => :PHH, 14 => :PHB, 15 => :LNG, 16 => :MAR,
+                17 => :REL, 18 => :ACCT, 19 => :SSN, 20 => :DLN, 21 => :MID, 22 => :ETH, 23 => :POB, 24 => :MBI,
+                25 => :BORD, 26 => :CTZ, 27 => :VET, 28 => :NTL, 29 => :DOD, 30 => :IOD }

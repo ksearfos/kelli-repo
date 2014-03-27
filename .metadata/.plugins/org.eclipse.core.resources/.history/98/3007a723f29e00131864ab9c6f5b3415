@@ -1,0 +1,64 @@
+require "#{__FILE__}\\..\\hl7_utils.rb"
+
+# require all utility files, stored in [HEAD]/utilities
+DEL = "\\"       # windows-style file path delimiter
+pts = __FILE__.split( '/' )
+pts.pop(2)
+util_path = pts.join( DEL ) + DEL + 'utilities' 
+util = Dir.new( util_path )   # all helper functions
+util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+
+# FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
+FILE = "C:/Users/Owner/Documents/manifest_lab_short_unix.txt"
+HOW_MANY = 2
+IMPORTANT_FIELDS = [ "msh9", "pid3", "obx3" ]
+rec_by_field = {}
+field_by_rec = {}
+
+IMPORTANT_FIELDS.each{ |f| field_by_rec[f] = [] }
+
+msg = get_hl7( FILE )
+all_hl7 = hl7_by_record( msg )
+
+all_hl7.each{ |rec|
+  rec_by_field[rec] = []      # add for all recs, but some will hold empty array
+  
+  IMPORTANT_FIELDS.each{ |field|
+    res = rec.fetch_field( field )   # array of all matches
+    
+    if ( res.has_value? )            # this has one of the important fields, so link the field and the record
+      rec_by_field[rec] << field
+      field_by_rec[field] << rec
+    end
+  }
+}
+
+# find record with highest "score"
+high_score = 0
+high_rec = nil
+rec_by_field.each{ |r,f|
+  score = f.size
+  if score > high_score
+    high_score = score
+    high_rec = r
+  end
+}
+
+puts "rec #{high_rec[:MSH][0].e0} has the high score, matching #{high_score} of #{IMPORTANT_FIELDS.size} fields"
+puts "rec_by_field: "
+rec_by_field.each{ |r,f| puts r[:MSH][0].e0 + ": " + f.size.to_s }
+puts "field_by_rec: "
+field_by_rec.each{ |f,r| puts f + ": " + r.size.to_s }
+
+=begin
+highest scoring records
+take it
+cross off any other fields covered in those recs
+next highest scoring--higher priority given to any that contain the most unmatched fields
+pare down to remove duplicates/already checked
+repeat
+
+recs_by_field = { rec => [fields] }
+fields_by_rec = { field => [recs] }
+"ranking" = size of value
+=end

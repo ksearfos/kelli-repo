@@ -1,0 +1,17 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+
+file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in_shortened.txt" ) do |f|
+  line = f.gets
+  puts "found a blank one!" if line !~ /\S/
+  file << line unless line !~ /\S/    # blank lines cause a ParseError exception to be thrown
+end
+
+puts "The message has been read.\n\n"
+msg = HL7::Message.new( file )
+puts "new message completely created"
+#puts msg.to_s
+#puts "------"
+#puts msg['PID'].to_s

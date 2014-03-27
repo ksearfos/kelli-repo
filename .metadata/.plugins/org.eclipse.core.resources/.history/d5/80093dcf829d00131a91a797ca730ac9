@@ -1,0 +1,5 @@
+def get_hl7( file )
+  File.open( file ) { |f|
+    f.gets.chop     # blank lines cause ParsingErrors
+  }
+end

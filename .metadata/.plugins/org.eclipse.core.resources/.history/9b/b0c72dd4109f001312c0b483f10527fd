@@ -1,0 +1,186 @@
+require "#{__FILE__}\\..\\hl7_utils.rb"
+
+# require all utility files, stored in [HEAD]/utilities
+DEL = '\\'
+pts = __FILE__.split( '/' )
+pts.pop(2)
+util_path = pts.join( DEL ) + DEL + 'utilities' 
+util = Dir.new( util_path )   # all helper functions
+util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+
+class RecordComparer
+  @@IMPORTANT_FIELDS = [ "msh9", "pid3" ]
+  @@IMPT_NUM = @@IMPORTANT_FIELDS.size
+  @@HOW_MANY = 6
+  
+  attr_reader :recs, :high_recs, :high_score, :matches
+
+  def initialize( recs )
+    @rec_by_field = {}
+    @rec_field_2 = {}
+    @high_recs = []   # this gets reset during find_best(), but I want the values accessible
+    @high_score = 0   # in-between calls, so I made them instance methods
+    @matches = Array.new( @@IMPT_NUM, 0 )   # number of records containing the field we have found so far
+    @recs_to_use = []
+
+    # populate @recs, @rec_by_field
+    @recs = recs
+    @recs.each{ |rec|
+      @rec_by_field[rec] = []      # add for all recs, but some will hold empty array
+  
+      @@IMPORTANT_FIELDS.each{ |field|
+        res = rec.fetch_field( field )   # array of all matches
+    
+        if ( res.has_value? )            # this has one of the important fields, so link the field and the record
+          @rec_by_field[rec] << field
+        end
+      } #each field
+    } #each record
+
+    @rec_field_2 = @rec_by_field.clone   # don't want to point to the same object, since this one shouldn't change!
+    simplify                             # don't plan to search records that cover the same fields 
+  end
+
+
+  def analyze
+    puts "Searching records..."
+    until ( found_all? || !reset )  # either we're done, or we've run out of records
+      find_me_some_records
+    end
+    # the situationn will be one of three things:
+    # 1. we have completed our task and found all necessary records ( found_all? = true )
+    # 2. we have failed in our task, checking every single record ( reset = false )
+    # 3. we haven't finished yet, because we haven't checked every record yet ( reset = true -> find more! )
+  end
+  
+  def show_records
+    puts "We will use the following records:"
+    @recs_to_use.each{ |rec|
+      puts record_details( rec )
+    }
+  end
+  
+  def summarize
+    puts "We will require a total of #{@recs_to_use.size} records:"
+    @recs_to_use.each{ |r| puts "  #{record_id(r)}" }
+  end
+  
+  private
+  
+  # finds all records to be used in given "batch"
+  # a batch is a given set of @rec_by_field, before reset() is called
+  # since we remove duplicates for simplicity, we may have to find more records and go again
+  def find_me_some_records
+    until ( @rec_by_field.empty? || found_all? )    # either we're done, or we've run out of records in this batch
+      # find best of the current bunch
+      find_best      
+      exit 1 if ( @high_recs.empty? || @high_score == 0 )    # something went horribly wrong, or there is no data
+    
+      to_delete = []    # will store a list of fields that we have found enough records for
+      @high_recs.each{ |rec| 
+        # note that we found a match for each field that is in the best records
+        # and see if there are now any that can be "checked off"
+        to_delete << record_field_matches( rec )
+      
+        # note that we have already decided to use these "best" records 
+        record_rec_matches( rec )
+      }
+      
+      # now to_delete contains a list of fields that are covered in the chosen records
+      #+ aka "useless" records
+      to_delete.flatten!.uniq!     # might be duplicates
+      remove_useless_records( to_delete )
+    end
+  end
+  
+  # find records with highest "score"
+  # which are the records with the greatest number of unmatched fields
+  # also sets @high_recs and @high_score
+  def find_best
+    # reset count!
+    @high_recs = []        # reset for new search
+    @high_score = 0        # reset for new search
+    
+    @rec_by_field.each{ |r,fields|
+      # fields.keep_if{ |f| 
+        # idx = index(f)                 # which field is this?
+        # @matches[idx] < @@HOW_MANY     # get rid of any fields that we've finished up
+      # }
+      score = fields.size
+  
+      if score == @high_score
+        @high_recs << r
+      elsif score > @high_score
+        @high_score = score
+        @high_recs = [r]
+      end
+    }
+  end
+  
+  # analyze/clean field results
+  # updates @matches to identify everything we have matches for in given record
+  # returns list of fields to delete because they are full
+  def record_field_matches( rec )
+    del = []
+    
+    @rec_by_field[rec].each{ |field|
+      i = index( field )
+      @matches[i] += 1       # found a new match! up the count!   
+      
+      del << field if @matches[i] >= @@HOW_MANY     # don't need to find any more for this field
+    }
+    
+    del
+  end
+  
+  # analyze/clean record results
+  # updates @recs_to_use to add any records we found in this iteration
+  # returns nothing
+  def record_rec_matches( rec )
+    @recs_to_use << rec      # this one's a keeper!
+    @rec_by_field.delete_if{ |r,f| r == rec }   # remove any records we have already recorded,
+  end                                           # or that have no future use (out of unmatched fields)
+  
+  # further clean up
+  # removes from @rec_by_field and entries whose fields have all been completed
+  # e.g. if fields 1 and 2 have been matched and record 16 => [1,2] then deleted records 16
+  #+  because there is nothing to gain by looking at it again
+  def remove_useless_records( del )
+    # delete fields from lists if they are already "checked off"
+    @rec_by_field.delete_if{ |rec,fields|
+      fields.delete_if{ |f| del.include?( f ) }   # future rankings shouldn't include completed fields
+      fields.empty?
+    }
+  end
+  
+  # returns "number" (ID) of given field in @@IMPORTANT_FIELDS
+  # this is conventiently also the index in @matches
+  def index( field )
+    @@IMPORTANT_FIELDS.index( field )
+  end
+  
+  # have we found all the records we need to yet?
+  # we have if each important field has the right number of records
+  def found_all?
+    done = true
+    @matches.each{ |field| done = false if field < @@HOW_MANY }    # havent found enough yet
+    done
+  end
+  
+  # "reset" @rec_by_field for continued searching
+  # returns false if there is no way to reset (we've looked at everything), and true otherwise
+  def reset
+    # remove records we've decided to use
+    @rec_field_2.delete_if{ |r,fs| @recs_to_use.include?( r ) }
+    return false if @rec_field_2.empty?     #that's it!  there are no other records to look at!
+    
+    @rec_by_field = @rec_field_2.clone      # reset!  go again!
+    simplify   # get rid of duplicates for new search
+    return true
+  end
+  
+  def simplify
+    @rec_by_field.remove_duplicate_values!   # only work with one record with a specific combination of fields
+  end
+  
+end #class  

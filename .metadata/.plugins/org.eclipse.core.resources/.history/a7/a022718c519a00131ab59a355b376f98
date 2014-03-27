@@ -1,0 +1,37 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+require 'rspec'
+
+$file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in_shortened.txt" ) do |f|
+  $file << f.gets.chomp    # blank lines cause a ParseError exception to be thrown
+end
+
+describe HL7::Message do
+  # it "creates a new HL7" do
+    # HL7::Message.new().should_not == nil
+  # end
+  
+  context "no input provided" do
+    it "creates a message with no value" do
+      HL7::Message.new().to_s.should be_empty
+    end
+  end
+  
+  # context "input provided" do
+    # before :each do
+      # @msg = HL7::Message.new($file)
+    # end
+#     
+    # it "creates a message" do
+      # @msg.to_s.should_not be_empty
+    # end
+#     
+    # it "has correctly-formatted segments that are accessible by name" do   # yeah, I know this should be 2 steps
+      # @msg[:PID].should_not be_empty                                       # but this is just a test so I don't care that much
+      # @msg.should =~ /\w\|\w/    # message should be pipe-delimited
+    # end
+  # end
+end
+
