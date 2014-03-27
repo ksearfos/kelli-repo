@@ -5,14 +5,14 @@ require 'lib/hl7module/HL7'
 # as excel-writable
 module HL7CSV
   
-  extend HL7Test
+  extend HL7
   
   ADT_DETAILS = [ :PT_ID, :PT_NAME, :DOB, :PT_ACCT, :VISIT_DATE ]
   LAB_RAD_DETAILS = [ :PT_ID, :PT_NAME, :DOB, :PT_ACCT, :PROC_NAME, :PROC_DATE ]
   ADT_HEADER = [ "MRN", "PATIENT NAME", "DOB", "VISIT #", "VISIT DATE/TIME" ]
   LAB_RAD_HEADER = [ "MRN", "PATIENT NAME", "DOB", "ACCOUNT #", "PROCEDURE NAME", "DATE/TIME" ] 
 
-  class HL7Test::Message    
+  class HL7::Message    
     def to_row  
       dets = HL7CSV.get_details( @type )
       d = details( *dets )

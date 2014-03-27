@@ -169,7 +169,7 @@ module HL7
     # EXAMPLE:
     #  field.as_datetime => 4/15/1983 7:23:56 AM
     def as_datetime
-      HL7Test.make_datetime( @original_text )
+      HL7.make_datetime( @original_text )
     end
 
     # NAME: as_name
