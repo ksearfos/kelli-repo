@@ -1,0 +1,63 @@
+require 'ruby-hl7'
+
+def get_hl7( file )
+  File.open( file ) { |f|
+    f.gets.chop     # blank lines cause ParsingErrors
+  }
+end
+
+class String
+  # removes given characters == avoids the need to add the second argument every time
+  def rem( chs )
+    tr( chs, "" )
+  end
+  
+  def rem!( chs )
+    tr!( chs, "" )
+  end
+end
+
+class HL7::Message::Segment
+  @children = {}
+  
+  def view_details
+    puts "segments: " + @segments_by_name.to_s
+    puts "elements: " + @elements.to_s
+    puts "number of fields: " + @field_total.to_s
+  end
+  
+  def name
+    to_s.match( /\[[A-Z]+\|/ )[0].rem( '|[' )
+  end
+  
+  def each( &action )
+    all_entries.each{ |e| yield(e) }
+  end
+
+  def [](i)
+    all_entries[i]
+  end
+end
+
+class HL7::Message
+  
+  def create_children
+    hash = {}
+    @segment_by_name.each{ |k,v|
+      ch_seg_cl = Object.const_get( "HL7::Message::Segment::#{k}" )
+      hash[k] = ch_seg_cl.new( v.to_s )
+      }
+    
+    @segments_by_name = hash
+    # each{ |seg|
+      # name = seg.to_s.match( /\[[A-Z]+\|/ )[0].rem( '|[' )
+      # ch_seg_cl = Object.const_get( "HL7::Message::Segment::#{name}" )
+      # @segments_by_name[name] = ch_seg_cl.new( seg.to_s )
+    # }
+  end
+  
+  def view_children
+    puts @segments_by_name.to_s
+  end
+  
+end

@@ -1,0 +1,25 @@
+require 'ruby-hl7'
+
+class PID < HL7::Segment
+  
+  @fields = {}
+  @fields_by_index = { 1 => :PID, 2 => :EXID, 3 => :INTID, 4 => :ALTID, 5 => :NAME, 6 => :MMN, 7 => :DOB, 8 => :SEX,
+                       9 => :ALS, 10 => :RACE, 11 => :ADDR, 12 => :CCD, 13 => :PHH, 14 => :PHB, 15 => :LNG, 16 => :MAR,
+                       17 => :REL, 18 => :ACCT, 19 => :SSN, 20 => :DLN, 21 => :MID, 22 => :ETH, 23 => :POB, 24 => :MBI,
+                       25 => :BORD, 26 => :CTZ, 27 => :VET, 28 => :NTL, 29 => :DOD, 30 => :IOD }
+                       
+  def initialize( contents )
+    @fields_by_index = fields_by_index
+    
+    # populate @fields
+    cnt_ary = contents.split( '|' )
+    for i in 0...cnt_ary.size()
+      field = @fields_by_index[i+1]    # name of field; HL7 indices start at 1 but array indices start at 0
+      @fields[field] = cnt_ary[i]      # { field => value }
+    end
+  end
+  
+  def [](fname)
+    @fields[fname]
+  end
+end

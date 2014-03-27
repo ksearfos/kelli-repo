@@ -1,0 +1,14 @@
+#!/bin/env ruby
+
+require 'ruby-hl7'
+
+file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in.txt" ) do |f|
+  file << f.gets
+end
+
+puts "The message has been read.\n\n"
+msg = HL7::Message.new( file )
+puts msg.to_s
+puts "------"
+puts msg['PID'].to_s

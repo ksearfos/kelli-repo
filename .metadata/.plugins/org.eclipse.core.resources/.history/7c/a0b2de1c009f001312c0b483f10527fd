@@ -1,0 +1,36 @@
+require "#{__FILE__}\\..\\hl7_utils.rb"
+require "#{__FILE__}\\..\\RecordComparer.rb"
+
+# require all utility files, stored in [HEAD]/utilities
+DEL = "\\"       # windows-style file path delimiter
+pts = __FILE__.split( '/' )
+pts.pop(2)
+util_path = pts.join( DEL ) + DEL + 'utilities' 
+util = Dir.new( util_path )   # all helper functions
+util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+
+# FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
+FILE = "C:/Users/Owner/Documents/manifest_lab_short_unix.txt"
+
+msg = get_hl7( FILE )
+all_hl7 = hl7_by_record( msg )
+comparer = RecordComparer.new( all_hl7 )
+# puts comparer.recs
+# puts "--------------"
+# comparer.find_best
+# puts comparer.high_recs
+# record_details( comparer.high_recs[0] )
+# comparer.summarize
+
+=begin
+highest scoring records
+take it
+cross off any other fields covered in those recs
+next highest scoring--higher priority given to any that contain the most unmatched fields
+pare down to remove duplicates/already checked
+repeat
+
+recs_by_field = { rec => [fields] }
+fields_by_rec = { field => [recs] }
+"ranking" = size of value
+=end

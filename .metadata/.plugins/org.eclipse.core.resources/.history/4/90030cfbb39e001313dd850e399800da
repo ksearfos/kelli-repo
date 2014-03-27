@@ -1,0 +1,27 @@
+require "#{__FILE__}\\..\\hl7_utils.rb"
+
+# require all utility files, stored in [HEAD]/utilities
+DEL = "\\"       # windows-style file path delimiter
+pts = __FILE__.split( '/' )
+pts.pop(2)
+util_path = pts.join( DEL ) + DEL + 'utilities' 
+util = Dir.new( util_path )   # all helper functions
+util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+
+FILE = "C:/Users/Owner/Documents/manifest_lab_out.txt"
+msg = get_hl7( FILE )
+all_hl7 = hl7_by_record( msg )
+
+puts "Looking for non-empty OBX..."
+all_hl7.each{ |rec|
+  next unless rec[:OBX] 
+  
+  if !rec[:OBX].is_a?(Array) then puts rec.to_s; exit; end
+  rec[:OBX].each{ |seg| 
+    obx8 = seg.abnormal_flags
+    puts "obx8 = #{obx8}" if ( !obx8.empty? )
+  }
+  
+}
+
+puts "Completed."

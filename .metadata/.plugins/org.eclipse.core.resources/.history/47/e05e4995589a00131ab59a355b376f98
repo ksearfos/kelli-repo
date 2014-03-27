@@ -1,0 +1,33 @@
+require 'ruby-hl7'
+
+class PID < HL7::Segment
+  
+  @fields = {}
+  @fields_by_index = { 1 => 'Patient ID', 2 => 'External ID', 3 => 'Internal ID', 4 => 'Alternate ID',
+                       5 => 'Name', 6 => 'Mother\'s Maiden Name', 7 => 'DOB', 8 => 'Sex', 9 => 'Alias',
+                       10 => 'Race', 11 => 'Address', 12 => 'Country Code', 13 => 'Home Phone',
+                       14 => 'Business Phone', 15 => 'Language', 16 => 'Marital Status', 17 => 'Religion',
+                       18 => 'Account Number', 19 => 'SSN', 20 => 'Driver\'s License Number', 21 => 'Mother\'s ID',
+                       22 => 'Ethnicity', 23 => 'Birthplace', 24 => 'Multiple Birth Indicator', 25 => 'Birth Order',
+                       26 => 'Citizenship', 27 => 'Veteran Status', 28 => 'Nationality', 29 => 'Death Date',
+                       30 => 'Death Indicator' }
+  @field_by_abbr = { 'Patient ID' => :PID, 'External ID' => :EXID, 'Internal ID' => :INTID, 'Alternate ID' => :ALTID,
+                     'Name' => :NAME, 'Mother\'s Maiden Name' => :MMN, 'Birth Date/Time' => :DOB, 'Sex' => :SEX,
+                     'Alias' => :ALS, 'Race' => :RACE, 'Address' => :ADDR, 'Country Code' => :CCD, 'Home Phone' => :PHH,
+                     'Business Phone' => :PHB, 'Language' => :LNG, 'Marital Status' => :MAR, 'Religion' => :REL,
+                     'Account Number' => :ACCT, 'SSN' => :SSN, 'Driver\'s License Number' => :DLN, 'Mother\'s ID' => :MID,
+                     'Ethnicity' => :ETH, 'Birthplace' => :POB, 'Multiple Birth Indicator' => :MBI, 'Birth Order' = :BORD,
+                     'Citizenship' => :CTZ, 'Veteran Status' => :VET, 'Nationality' => :NTL, 'Death Date/Time',
+                       30 => 'Death Indicator' }
+                       
+  def initialize( contents )
+    @fields_by_index = fields_by_index
+    
+    # populate @fields
+    cnt_ary = contents.split( '|' )
+    for i in 0...cnt_ary.size()
+      field = @fields_by_index[i+1]    # name of field; HL7 indices start at 1 but array indices start at 0
+      @fields[field] = cnt_ary[i]      # { field => value }
+    end
+  end
+end

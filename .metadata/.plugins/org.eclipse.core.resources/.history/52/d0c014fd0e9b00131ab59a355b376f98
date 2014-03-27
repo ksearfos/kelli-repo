@@ -1,0 +1,68 @@
+require 'ruby-hl7'
+
+def get_hl7( file )
+  File.open( file ) { |f|
+    f.gets.chop     # blank lines cause ParsingErrors
+  }
+end
+
+class String
+  # removes given characters == avoids the need to add the second argument every time
+  def rem( chs )
+    tr( chs, "" )
+  end
+  
+  def rem!( chs )
+    tr!( chs, "" )
+  end
+end
+
+class HL7::Message::Segment
+  def name
+    to_s.match( /\[[A-Z]+\|/ )[0].rem( '|[' )
+  end
+  
+  def text
+    str = to_s.chomp( ']' )
+    str.reverse.chomp( '[' ).reverse
+  end
+  
+  def fields
+    fieldize()
+  end
+  
+  def each( &action )
+    all_entries.each{ |e| yield(e) }
+  end
+    
+  # for each entry, outputs line looking roughly like
+  # [ stuff, stuff2, , , st1^2^^3, more stuff ]
+  def parse_all
+    str = ""
+    each{ |e| str << "[" + fieldize(e).join( ',' ) + "]" }
+    # all_entries.each{ |e|
+      # s = HL7::Message::Segment.new(e)
+      # print "["
+      # print s.fields.join( ', ' )
+      # puts "]"
+    # } 
+  end
+  
+  # output looks something like 'NAME|stuff||stuff2|st1^2^^3|more stuff'
+  def all_entries
+    # have to split across comma-name because there might be commas in field values too
+    # but then put the name back in for nice formatting
+    text.split( ", #{name}" ).map{ |txt| txt =~ /^\|/ ? ( name + txt ) : txt }
+  end
+  
+  private
+  
+  # breaks individual string into fields
+  # called on whole text of Segment by default
+  # but if used with each can instead access each field for each individual entry
+  # str is something looking roughly like NAME|stuff|stuff|st1^2^3||more stuff
+  # returns something looking like ["stuff","stuff","st1^2^3","","more stuff"]
+  def fieldize( str=text )
+    text.split( @element_delim )[1..-1]   # get rid of name, since that's not an important field   
+  end
+end

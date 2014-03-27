@@ -1,0 +1,30 @@
+DIR = "C:\\Users\\Owner\\Dropbox\\2013_OhioHealth\\HL7\\ExampleHL7"
+FILE1 = "manifest_lab_in"
+FILE2 = "manifest_lab_out"
+OUT1 = "file1.txt"
+OUT2 = "file2.txt"
+
+f1 = ""
+File.open( DIR + "\\" + FILE1 ) { |f|
+    f1 = f.gets.chop
+  }
+  
+# f2 = ""
+# File.open( DIR + "\\" + FILE2 ) { |f|
+    # f2 = f.gets.chop
+  # }
+
+f1_ary = f1.split( "\n" )     # only want to split across lines, and default splits across all whitespace
+puts f1_ary.size
+# f2_ary = f2.split( "\n" )
+
+f1_ary.sort!
+# f2_ary.sort!
+
+File.open( DIR + "\\" + OUT1, "w" ) { |f|
+  f.puts( f1_ary.join( "\n" ) )
+  }
+  
+# File.open( DIR + "\\" + OUT2, "w" ) { |f|
+  # f.puts( f2_ary.join( "\n" ) )
+  # }

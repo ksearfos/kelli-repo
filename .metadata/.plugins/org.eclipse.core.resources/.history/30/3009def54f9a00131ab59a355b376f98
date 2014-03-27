@@ -1,0 +1,24 @@
+#!/bin/env ruby
+
+require 'C:/Users/Owner/Documents/Ruby code/Test/Test/RSpec/spec/test/test.rb'
+require 'ruby-hl7'
+
+$file = ""
+File.open( "C:\\Users\\Owner\\Documents\\manifest_lab_in_shortened.txt" ) do |f|
+  $file << f.gets.chomp    # blank lines cause a ParseError exception to be thrown
+end
+
+describe HL7::Message do
+  it "creates a new HL7"
+    HL7::Message.new().should_not be_empty
+end
+# describe EmptyHL7 do
+  # it "creats an empty HL7 message"
+    # EmptyHL7.new.to_s.should be_empty
+# end 
+
+# describe TextHL7 do
+  # it "creates a populated HL7 message"
+    # TextHL7.new($file).to_s.should_not be_empty
+# end
+

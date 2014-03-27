@@ -1,0 +1,146 @@
+require "#{__FILE__}\\..\\hl7_utils.rb"
+
+# require all utility files, stored in [HEAD]/utilities
+DEL = '\\'
+pts = __FILE__.split( '/' )
+pts.pop(2)
+util_path = pts.join( DEL ) + DEL + 'utilities' 
+util = Dir.new( util_path )   # all helper functions
+util.entries.each{ |f| require util_path + DEL + f if f.include?( '.rb' ) }
+
+class RecordComparer
+  @@IMPORTANT_FIELDS = [ "msh9", "pid3", "obx3", "pid1" ]
+  @@IMPT_NUM = @@IMPORTANT_FIELDS.size
+  @@HOW_MANY = 2
+  
+  attr_reader :recs, :high_recs, :high_score, :rec_by_field
+
+  def initialize( recs )
+    @rec_by_field = {}
+    @field_by_rec = {}
+    @high_recs = []   # this gets reset during find_best(), but I want the values accessible
+    @high_score = 0   # in-between calls, so I made them instance methods
+    @matches = Array.new( @@IMPT_NUM, 0 )   # number of records containing the field we have found so far
+    @recs_to_use = []
+    
+    # populate @field_by_rec
+    @@IMPORTANT_FIELDS.each{ |f| @field_by_rec[f] = [] }
+
+    # populate @recs, @rec_by_field
+    @recs = recs
+    @recs.each{ |rec|
+      @rec_by_field[rec] = []      # add for all recs, but some will hold empty array
+  
+      @@IMPORTANT_FIELDS.each{ |field|
+        res = rec.fetch_field( field )   # array of all matches
+    
+        if ( res.has_value? )            # this has one of the important fields, so link the field and the record
+          @rec_by_field[rec] << field
+          @field_by_rec[field] << rec
+        end
+      } #each field
+    } #each record
+
+    @rec_by_field.remove_duplicate_values!   # only work with one record with a specific combination of fields
+  end
+
+  def find_me_some_records
+    until ( @rec_by_field.empty? || found_all? )
+      puts "iteration"
+    
+    # find best of the current bunch
+    find_best      # now @high_score and @high_recs are populated
+    exit 1 if ( @high_recs.empty? || @high_score == 0 )    # something went horribly wrong, or there is no data
+    
+    # note use of each field that is in the best records
+    to_delete = []
+    @high_recs.each{ |rec| 
+      
+      # analyze/clean field results
+      @rec_by_field[rec].each{ |field|
+        i = index( field )
+        @matches[i] += 1       # found a new match!  up the count!   
+        
+        to_delete << field if @matches[i] >= @@HOW_MANY     # don't need to find any more for this field
+      }
+      
+      # now @matches is update with the latest counts
+      # and to_delete contains a list of fields that are covered in the chosen records
+      to_delete.uniq!     # might be duplicates
+
+      #analyze/clean record results
+      @recs_to_use << rec      # this one's a keeper!
+      @rec_by_field.delete_if{ |r,f| r == rec || f.empty? }   # already checked rec and/or all fields
+      @rec_by_field.values{ |fields|
+        fields.delete_if{ |f| to_delete.include?( f ) }       # ranking shouldn't include completed fields
+      }
+    } # done with @high_recs.each
+
+    puts "removed " + to_delete.size.to_s + " records"
+    # next highest scoring--higher priority given to any that contain the most unmatched fields
+    # pare down to remove duplicates/already checked
+    # repeat
+# 
+    # recs_by_field = { rec => [fields] }
+    # fields_by_rec = { field => [recs] }
+    # "ranking" = size of value
+    # =end
+  end
+  end
+
+  # find record with highest "score"
+  # which is the record with the greatest number of unmatches fields
+  def find_best
+    # reset count!
+    @high_recs = []        # reset for new search
+    @high_score = 0        # reset for new search
+    
+    @rec_by_field.each{ |r,fields|
+      # fields.keep_if{ |f| 
+        # idx = index(f)                 # which field is this?
+        # @matches[idx] < @@HOW_MANY     # get rid of any fields that we've finished up
+      # }
+      score = fields.size
+  
+      if score == @high_score
+        @high_recs << r
+      elsif score > @high_score
+        @high_score = score
+        @high_recs = [r]
+      end
+    }
+  end
+  
+  def conclusion
+    puts "We will use the following records:"
+    @recs_to_use.each{ |rec| puts record_details( rec ) }
+  end
+
+  def summarize
+    print "Record(s) "
+    print @high_recs.map{ |r| record_id( r ) }.join( ", " )
+    puts " have the high score, matching #{@high_score} of #{@@IMPT_NUM} fields" 
+    puts ""
+    puts "rec_by_field: "
+    @rec_by_field.each{ |r,f| puts record_id(r) + ": " + f.size.to_s }
+    puts ""
+    puts "field_by_rec: "
+    @field_by_rec.each{ |f,r| puts f + ": " + r.size.to_s }
+  end
+  
+  private
+  
+  # returns "number" (ID) of given field in @@IMPORTANT_FIELDS
+  # this is conventiently also the index in @matches
+  def index( field )
+    @@IMPORTANT_FIELDS.index( field )
+  end
+  
+  # have we found all the records we need to yet?
+  # we have if each important field has the right number of records
+  def found_all?
+    done = true
+    @matches.each{ |field| done = false if field < @@HOW_MANY }    # havent found enough yet
+    done
+  end
+end #class  
