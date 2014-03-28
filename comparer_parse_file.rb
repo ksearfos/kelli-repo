@@ -4,8 +4,8 @@ $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'test_runner_helper'
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
-TESTING = true  # make some changes if this is being run for testing
-TYPE = :rad
+TESTING = false  # make some changes if this is being run for testing
+TYPE = :lab
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input/" : "d:/FTP/"
 FPATT = ( TESTING ? /^#{TYPE}_post\./ : /^\w+_pre_\d+\.dat$/ )
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs/" : "#{FTP}/logs/"
@@ -47,7 +47,7 @@ else
       file_handler = get_records( tmp )
       run_record_comparer( outfile, file_handler.records, false )
       remove_files( [tmp] )  
-      remove_files( [file] ) unless TESTING
+      # remove_files( [file] ) unless TESTING
     end
   }  
 end

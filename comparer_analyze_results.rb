@@ -4,8 +4,8 @@ $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'test_runner_helper'
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
-TESTING = true  # make some changes if this is being run for testing
-SET_SIZE = 384  # 1067 for labs and rad
+TESTING = false  # make some changes if this is being run for testing
+SET_SIZE = 1024
 FTP = "D:/FTP"
 LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs/" : "#{FTP}/logs/"
 PFX = "#{LOG_DIR}/#{dt}_"
