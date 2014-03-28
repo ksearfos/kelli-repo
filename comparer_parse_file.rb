@@ -44,8 +44,8 @@ else
         msg_hdlr.next     # get the next however-many records -- @records will be empty if we got them all
       end until msg_hdlr.records.empty?
   
-      msg_hdlr = get_records( tmp )
-      run_record_comparer( outfile, msg_hdlr.records, false )
+      file_handler = get_records( tmp )
+      run_record_comparer( outfile, file_handler.records, false )
       remove_files( [tmp] )  
       remove_files( [file] ) unless TESTING
     end

@@ -19,10 +19,11 @@ def run_record_comparer( file, messages, final, set_size = 1 )
   
   # make new record comparer
   comparer = RecordComparer.new( messages, type, set_size )
-  comparer.weight_method = LIMIT_SERIES_ENCOUNTERS
+  # comparer.weight_method = LIMIT_SERIES_ENCOUNTERS
   comparer.analyze
   $logger.info "Finished running record comparer. #{comparer.chosen.size} records required."   
-  
+  $logger.info comparer.summary ###DEBUG
+  $logger.info comparer.matched ###DEBUG
   if final  
     fluff = '=' * 10
     matched = comparer.matched.unshift( "#{fluff} MATCHED #{fluff}" )

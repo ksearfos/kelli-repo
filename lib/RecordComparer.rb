@@ -8,9 +8,9 @@ class RecordComparer
   
   def initialize( recs, type, min_results_size=1 )
     @records_and_criteria = Hash.new_from_array( recs, [] )
-    @unused_records = @records_and_criteria.keys.clone
+    @unused_records = recs
     @min_size = min_results_size      # smallest number of records to return
-    @weight_method = Proc.new{ |records| records.shuffle.first }
+    @weight_method = Proc.new{ |records| records.shuffle }
     
     # items for tracking criteria
     @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
@@ -30,7 +30,7 @@ class RecordComparer
   end
 
   def chosen
-    @records_and_criteria - @unused_records
+    @records_and_criteria.keys - @unused_records
   end  
   
   def summary
@@ -61,11 +61,12 @@ class RecordComparer
   
   def find_me_some_records
     no_more_matches = false
-    until @unused_records.empty? || no_unmatched_criteria || no_more_matches
+    
+    until using_all_records || no_unmatched_criteria || no_more_matches
       score, matched_records = find_best 
       no_more_matches = ( score == 0 || matched_records.empty? )      
       choose = pick_most_important( matched_records )
-      choose_records( choose )
+      choose_records( [choose.first] )   # removes records from @unused_records and adds criteria to @matched_criteria
     end
   end
   
@@ -73,7 +74,7 @@ class RecordComparer
     high_recs = []
     high_score = 0
     @records_and_criteria.each{ |rec,criteria|
-      score = (criteria - @matched_criteria).size
+      score = criteria.size
   
       if score == high_score
         high_recs << rec
@@ -89,11 +90,16 @@ class RecordComparer
   def choose_records( records )
     records.each{ |record|
       @unused_records.delete( record )
-      @matched_criteria << @records_and_criteria[record]
+      @matched_criteria += @records_and_criteria[record]
+      @records_and_criteria.delete( record )
     }
-    @matched_criteria.uniq!
+    remove_matched_criteria
   end
-  
+
+  def remove_matched_criteria
+    @records_and_criteria.each_key{ |record| @records_and_criteria[record] -= @matched_criteria }  
+  end
+    
   def pick_random( amt )
     @unused_records.shuffle.take( amt )
   end  
@@ -103,10 +109,10 @@ class RecordComparer
   end
   
   def supplement_chosen
-    num_found = chosen_size
-    needed = @min_size - num_found                   # number of records we still need
+    num_found = chosen.size
+    needed = @min_size - num_found                          # number of records we still need
     
-    if ( needed > 0 && num_found < @records.size )   # not enough records, and there are others
+    if ( needed > 0 && num_found < @unused_records.size )   # not enough records, and there are others
       @unused_records -= pick_random( needed )
     end 
   end 
@@ -118,5 +124,9 @@ class RecordComparer
   def no_unmatched_criteria
     @matched_criteria.size == @criteria.size
   end
+
+  def using_all_records
+    @unused_records.empty?
+  end  
   
 end  
