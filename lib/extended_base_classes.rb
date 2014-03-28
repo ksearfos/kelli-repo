@@ -88,9 +88,12 @@ class Hash
     keys.flatten.each{ |k| self[k] = val }
   end
   
+  def remove_duplicate_values
+    self.invert.invert    # inverting keeps only the first key to have a given value
+  end                     # then revert back to keys being keys
+  
   def remove_duplicate_values!
-    clean = self.invert.invert    # inverting keeps only the first key to have a given value
-    self.replace( clean )         # then revert back to keys being keys
+    self.replace( remove_duplicate_values )
   end
 
   def update_values!(&block)
@@ -99,5 +102,26 @@ class Hash
   
   def self.new_from_array( array, default_value=nil )
     Hash[ array.collect{ |key| [key,default_value] } ]
+  end
+
+  # inverts Self, but keeps all keys linked to the same value
+  # e.g { 1=>"a", 2=>"b", 3=>"a" } becomes { "a"=>[1,3], "b"=>2 }
+  def flip
+    new_hash = {}
+    me_as_array = self.to_a
+    me_as_array.map!{ |pair| pair.reverse }
+    me_as_array.each{ |key,value|
+      new_hash[key] ||= []
+      new_hash[key] << value
+    }
+    new_hash  
+  end
+  
+  def flip!
+    self.replace( flip )
+  end
+
+  def delete_all( *keys )
+    self.delete_if{ |key,_| keys.include?( key ) }
   end
 end

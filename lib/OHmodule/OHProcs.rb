@@ -1,5 +1,6 @@
 dir = File.dirname( __FILE__ )
 require "#{dir}/OHMethods.rb"
+require "#{dir}/OrgProportions.rb"
 
 module OHProcs
 
@@ -9,8 +10,7 @@ module OHProcs
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   OBS_TYPES = %w( TX NM SN TS )
   RAD_OBS_IDS = %w( &GDT &IMP &ADT )
-  SERIES_ENC = Proc.new{ |message| message[:PID].account_number[0] == 'A' }
-  
+   
   # -------------Define the Procs------------ #
   # MSH
   MSH10_P = Proc.new{ |rec| is_val?(rec,"msh10",'P') }
