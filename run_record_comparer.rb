@@ -14,13 +14,12 @@ def run_record_comparer( output_file, messages, final, set_size = 1 )
   comparer = RecordComparer.new( messages, type, set_size )
   comparer.analyze
   $logger.info "Finished running record comparer. #{comparer.chosen.size} records required."   
-  # DEBUG(comparer)
 
   if final
     log_final_results( comparer, $logger )
     save_results( output_file, comparer.chosen )
   else
-    $logger.info "Writing to #{file}...\n"
+    $logger.info "Writing to #{output_file}...\n"
     write_temporary_results( comparer, output_file )
   end
 end

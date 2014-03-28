@@ -95,7 +95,7 @@ module OHProcs
       return false
     end 
     
-    fs.each{ |f| return true if HL7Test.send( method, f.to_s ) }
+    fs.each{ |f| return true if HL7.send( method, f.to_s ) }
     false   # if we get here, not a single value was of the correct type
   end
   

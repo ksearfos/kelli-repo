@@ -6,7 +6,7 @@ require 'test_runner_helper'
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TYPE = :rad
 DIR = "C:/Users/Owner/Documents/script_input/"
-FPATT = /^#{TYPE}_pre_testing/
+FPATT = /^#{TYPE}_post_\d/
 LOG_DIR = "#{DIR}/logs/"
 PFX = "#{LOG_DIR}/#{dt}_"
 LOG_FILE = PFX + "comparer_parse_testrunner.log"
@@ -30,10 +30,11 @@ if hl7_files.empty?
   $logger.info "No new files found.\n"
 else
   $logger.info "Found #{hl7_files.size} new file(s)\n"
+  tmp = PFX + "temp_results"
+  
   hl7_files.each{ |fname|
     file = DIR + fname
     outfile = LOG_DIR + "results_#{fname}"
-    tmp = PFX + "temp_results"
   
     $logger.info "Reading #{file}"
     msg_hdlr = get_records( file, MAX_RECS )
@@ -43,9 +44,13 @@ else
     else    
       $logger.info "Comparing records..."
       begin    
-        run_record_comparer( tmp, msg_hdlr.records, true )
+        run_record_comparer( tmp, msg_hdlr.records, false )
         msg_hdlr.next     # get the next however-many records -- @records will be empty if we got them all
       end until msg_hdlr.records.empty?
     end
   }
+  
+  msg_hdlr = get_records( tmp )
+  $logger.info "Comparing #{msg_hdlr.records.size} records"
+  run_record_comparer( PFX + "records.csv", msg_hdlr.records, true )
 end

@@ -62,8 +62,8 @@ class RecordComparer
   def remove_records_with_duplicate_criteria
     criteria_to_record = @records_and_criteria.flip  # => [ [procname, record(s)] ]
     criteria_to_record.each_value{ |records|
-      next unless records.is_a? Array   # don't do anything with unique sets of criteria
-
+      next unless records.size > 1   # don't do anything with unique sets of criteria
+      
       type_to_keep = OHProcs.series_or_nonseries( @used_records )
       record_to_keep = OHProcs.pick_one_of_type( records, type_to_keep )
       records.delete( record_to_keep )
@@ -97,20 +97,20 @@ class RecordComparer
   # called by remove_records_with_duplicate_criteria
   def unchoose( records )
     @unused_records += records
-    @used_records.delete( records )
-    @unused_records.uniq 
+    @used_records -= records
+    @unused_records.uniq
   end
 
   # called by fix_proportions
   def choose( records )
-    @unused_records.delete( records )
+    @unused_records -= records
     @used_records += records 
     @used_records.uniq
   end
     
   # called by remove_redundancies
   def is_redundant?( record )
-    criteria_matched_without_record( record ) == @matched_criteria.size
+    criteria_matched_without_record( record ).size == @matched_criteria.size
   end 
    
    # called by is_redundant?    
