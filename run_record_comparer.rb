@@ -27,7 +27,7 @@ end
 
 def add_dynamic_fields_for_type( messages, message_type )
   criteria_to_add = OHProcs.const_get( "#{message_type.upcase}_FIELDS_TO_ADD" )  
-  add_dynamic_fields( messages, criteria_to_add, message_type )
+  add_dynamic_fields( messages, message_type, criteria_to_add )
 end
 
 def add_dynamic_fields( messages, message_type, criteria_to_add )

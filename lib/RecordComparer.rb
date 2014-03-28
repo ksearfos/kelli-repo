@@ -7,6 +7,7 @@ class RecordComparer
   
   def initialize( recs, type, min_results_size=1 )
     @records_and_criteria = Hash.new_from_array( recs, [] )
+    # @series_records, @nonseries_records = OHProcs.sort_records( recs )
     @used_records = recs
     @unused_records = []
     @min_size = min_results_size      # smallest number of records to return
@@ -20,12 +21,14 @@ class RecordComparer
   end
   
   def analyze
-    return if @records_and_criteria.size <= @min_size   # we are going to need all the records
+    return if @records_and_criteria.size <= @min_size   # we aren't going to need all the records
     
-    remove_duplicate_criteria
     remove_redundancies
-    fix_proportions
-    supplement_chosen if chosen.size < @min_size
+    
+    if @used_records.size < @records_and_criteria.size
+      fix_proportions
+      supplement_chosen
+    end
   end
 
   def chosen
@@ -37,11 +40,12 @@ class RecordComparer
   end
   
   def unmatched  
-    @criteria.keys - @matched_criteria
+    unmatched = @criteria.keys - @matched_criteria
+    unmatched.sort
   end
   
   def matched
-    @matched_criteria
+    @matched_criteria.sort
   end
   
   private
@@ -60,17 +64,20 @@ class RecordComparer
     criteria_to_record.each_value{ |records|
       next unless records.is_a? Array   # don't do anything with unique sets of criteria
 
-      type_to_keep = series_or_nonseries( @records_and_criteria.keys )
-      record_to_keep = OHProcs.pick_best( records, type_to_keep )
-      records_to_remove = records.delete( record_to_keep )
-      unchoose( records_to_remove )   
+      type_to_keep = OHProcs.series_or_nonseries( @used_records )
+      record_to_keep = OHProcs.pick_one_of_type( records, type_to_keep )
+      records.delete( record_to_keep )
+      unchoose( records )   
     }
   end
  
   # called by analyze
   def remove_redundancies
-    rec_crit_array = @records_and_criteria.sort_by{ |_,criteria| criteria.size }   # => [ [key1,val1], [key2,val2] ... ]
-    rec_crit_array.each_key{ |record| unchoose( record ) if is_redundant?(record) }
+    rec_crit_array = @records_and_criteria.sort_by{ |_,criteria| criteria.size }   # => [ [rec1,crit1], [rec2,crit2] ... ]
+    rec_crit_array.each{ |record,_| 
+      next unless @used_records.include?( record )
+      unchoose( [record] ) if is_redundant?( record )
+    }
   end
    
   # called by determine_record_criteria and criteria_matched_without_record
@@ -87,16 +94,23 @@ class RecordComparer
     passed  
   end
 
-  # called by remove_records_with_duplicate_criteri
-  def unchoose( *records )
-    # @records_and_criteria.delete_all( *records )
+  # called by remove_records_with_duplicate_criteria
+  def unchoose( records )
     @unused_records += records
-    @used_records -= records 
+    @used_records.delete( records )
+    @unused_records.uniq 
   end
-  
+
+  # called by fix_proportions
+  def choose( records )
+    @unused_records.delete( records )
+    @used_records += records 
+    @used_records.uniq
+  end
+    
   # called by remove_redundancies
   def is_redundant?( record )
-    criteria_matched_without_record(record).size == @matched.size
+    criteria_matched_without_record( record ) == @matched_criteria.size
   end 
    
    # called by is_redundant?    
@@ -106,19 +120,21 @@ class RecordComparer
     get_criteria( used_records )
   end 
 
+  # called by analyze
   def fix_proportions
-    series_needed, nonseries_needed = OHProcs.analyze_proportions( @used_records )
-    unused_series, unused_nonseries = OHProcs.sort_records( @unused_records )
-    
-    # chances are that either series_needed or nonseries_needed will be 0
-    @used_records += take_within_reason( series_records, series_needed )
-    @used_records += take_within_reason( nonseries_records, nonseries_needed )
-  end 
+    size_cap = @used_records.size * 1.10   # don't add too many records -- we still want a small set
+    choose_based_on_series( size_cap ) if OHProcs.analyze_proportions( @used_records ) != OHProcs::SERIES_PROPORTION
+  end  
   
-  def take_within_reason( records_to_take, proposed_amount )
-    cutoff = 0.1                # how many more records do we take?  10% more
-    cutoff_amount = ( @used_records.size * 0.1 ).round
-    amount_to_take = cutoff_amount < proposed_amount ? cutoff_amount : proposed_amount
-    records_to_take.shuffle.take( amount_to_take )
-  end    
+  # called by analyze
+  def supplement_chosen
+    choose_based_on_series( @min_size ) if chosen.size < @min_size
+  end
+
+  def choose_based_on_series( size )
+    series_amount, nonseries_amount = OHProcs.how_many_to_take?( @used_records, size )
+    series_available, nonseries_available = OHProcs.sort_records( @unused_records )
+    records_to_add = series_available.shuffle.take(series_amount) + nonseries_available.shuffle.take(nonseries_amount)
+    choose( records_to_add )
+  end
 end  

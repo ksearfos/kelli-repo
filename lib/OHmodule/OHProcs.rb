@@ -83,7 +83,7 @@ module OHProcs
   ADT_FIELDS_TO_ADD = { hospital_service:"pv110", admit_source:"pv114", patient_type:"pv118",
                         financial_class:"pv120", discharge_disposition:"pv136", patient_class:"pv12" }   
   LAB_FIELDS_TO_ADD = { analyte:"obx4", procedure_ID:"obr4" }
-  RAD_FIELDS_TO_ADD = { procedure_ID:"obr4" }
+  RAD_FIELDS_TO_ADD = {} #{ procedure_ID:"obr4" }
   
   public
   
