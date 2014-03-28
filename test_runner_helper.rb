@@ -26,7 +26,6 @@ def get_records( file, max = false )
     $logger.info "Opening #{file}"
     handler = HL7::FileHandler.new( file, max )
     $logger.info "File read. Parsing out records..."
-    $logger.info "Found #{handler.records.size} record(s)\n"
     handler
   end
 end
