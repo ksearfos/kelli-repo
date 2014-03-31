@@ -1,7 +1,7 @@
 require 'lib/extended_base_classes'
 require 'lib/hl7/HL7'
 
-module OHProcs
+module OhioHealthUtilities
   
   # does the given field of the record have a value?
   # returns true if at least one matching field has a value, false otherwise

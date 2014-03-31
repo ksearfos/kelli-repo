@@ -1,4 +1,4 @@
-module OHProcs
+module OhioHealthUtilities
   
   SERIES_PROPORTION = 0.02   # 2% of records should be SERIES records
   SERIES_ENC = Proc.new{ |message| message[:PID].account_number[0] == 'A' }
@@ -19,7 +19,7 @@ module OHProcs
   end
 
   def self.pick_one_of_type( options, series_or_non )    
-    series,nonseries = OHProcs.sort_records( options )
+    series,nonseries = sort_records( options )
       
     if series.empty? || series_or_non == :nonseries
       nonseries.first

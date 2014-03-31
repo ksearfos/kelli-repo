@@ -5,9 +5,8 @@ require 'run_record_comparer'
 
 # set up and prettify the $logger
 def set_up_logger( file )
-  $stdout.reopen(file, "w")
-  $stderr.reopen(file, "w")
-  logger = Logger.new file
+  # $stdout = File.new( file, "w" )
+  logger = Logger.new( file )
   
   logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
   logger.formatter = Proc.new{ |severity,datetime,prog,msg|

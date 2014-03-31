@@ -1,8 +1,8 @@
 dir = File.dirname( __FILE__ )
-require "#{dir}/OHMethods.rb"
-require "#{dir}/OrgProportions.rb"
+require "#{dir}/OHUMethods.rb"
+require "#{dir}/OHUOrgDistribution.rb"
 
-module OHProcs
+module OhioHealthUtilities
 
   extend HL7
     
@@ -94,4 +94,12 @@ module OHProcs
     attr_reader :lab, :rad, :adt
   end
   
+  def self.reset( variable_type )
+    case variable_type.to_sym
+      when :lab then @lab = CORE + ORDERS + LAB
+      when :rad then @rad = CORE + ORDERS + RAD
+      when :adt then @adt = CORE + ADT
+    end
+  end
+
 end

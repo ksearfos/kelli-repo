@@ -1,5 +1,5 @@
 require 'lib/hl7/HL7'
-require 'lib/OHmodule/OHProcs'
+require 'lib/OHmodule/OhioHealthUtilities'
 require 'lib/extended_base_classes'
 require 'rspec'
 require 'rspec/expectations'

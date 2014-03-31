@@ -1,0 +1,9 @@
+# Logfile created on 2014-03-31 10:48:11 -0400 by logger.rb/31641
+2014-03-31 10:48:11 -0400 INFO: Checking C:/Users/Owner/Documents/script_input for files...
+2014-03-31 10:48:11 -0400 INFO: Found 1 new file(s)
+
+2014-03-31 10:48:11 -0400 INFO: Opening C:/Users/Owner/Documents/script_input/lab_post.txt
+2014-03-31 10:48:31 -0400 INFO: File read. Parsing out records...
+2014-03-31 10:48:31 -0400 INFO: Found 10000 record(s)
+
+2014-03-31 10:48:31 -0400 INFO: Comparing records...
