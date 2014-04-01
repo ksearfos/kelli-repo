@@ -1,10 +1,9 @@
-$LOAD_PATH.unshift File.dirname __FILE__
-require 'Methods'
-require 'FileHandler'
-require 'Message'
-require 'Segment'
-require 'TypedSegment'
-require 'Field'
+require 'lib/hl7/Methods'
+require 'lib/hl7/FileHandler'
+require 'lib/hl7/Message'
+require 'lib/hl7/Segment'
+require 'lib/hl7/TypedSegment'
+require 'lib/hl7/Field'
 
 module HL7
  
@@ -17,7 +16,7 @@ module HL7
   SUB_DEF = "~"               # subcomponents of a field are separated by this by default
   SS_DEF = "\\"               # sub-subcomponents are separated by this by default (a single backslash)
   SSS_DEF = "&"               # sub-sub-subcomponents, if they are ever actually used, are separated by this by default
-  HDR = /\d+MSH|MSH/          # regex defining header row
+  HDR = /^\d*MSH\|/           # regex defining header row
   SSN = /^\d{9}$/             # regex defining social security number, which is just 9 digits, no dashes
   ID_FORMAT = /^[A-Z]?d+$/    # regex defining a medical ID
   

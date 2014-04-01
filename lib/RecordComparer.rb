@@ -1,35 +1,33 @@
-require 'lib/OHmodule/OHProcs'
+require 'lib/OHmodule/OhioHealthUtilities'
 
 class RecordComparer
-  include OHProcs
+  include OhioHealthUtilities
   
-  attr_reader :records, :matches, :recs_to_use
-  attr_writer :weight_method
+  attr_reader :records_and_criteria
   
   def initialize( recs, type, min_results_size=1 )
     @records_and_criteria = Hash.new_from_array( recs, [] )
-    @unused_records = @records_and_criteria.keys
+    @used_records = recs
+    @unused_records = []
     @min_size = min_results_size      # smallest number of records to return
-    @weight_method = Proc.new{ |records| records.shuffle.first }
     
     # items for tracking criteria
-    @criteria = OHProcs.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => {proc_to_call}
+    @criteria = OhioHealthUtilities.instance_variable_get( "@#{type}" )   # hash, :descriptive_symbol => proc_to_call
     @matched_criteria = []
 
     determine_record_criteria
+    remove_records_with_duplicate_criteria
   end
   
   def analyze
-    if @records_and_criteria.size <= @min_size
-      @unused_records = []       # chose them all
-    else 
-      find_me_some_records
-      supplement_chosen if chosen.size < @min_size
-    end 
+    return if @records_and_criteria.size <= @min_size   # if we need all the records, don't do anything
+    
+    remove_redundancies    
+    supplement_chosen if @used_records.size < @records_and_criteria.size
   end
 
   def chosen
-    @records_and_criteria - @unused_records
+    @used_records
   end  
   
   def summary
@@ -37,75 +35,92 @@ class RecordComparer
   end
   
   def unmatched  
-    @criteria.keys - @matched_criteria
+    unmatched = @criteria.keys - @matched_criteria
+    unmatched.sort
   end
   
   def matched
-    @matched_criteria
+    @matched_criteria.sort
   end
   
   private
-  
+
+  # called by initialize
   def determine_record_criteria
     @records_and_criteria.each_key{ |record|
-      @records_and_criteria[record] = @criteria.select{ |name,proc| name if proc.call( record ) }
+      @records_and_criteria[record] = passing_criteria( record )
     }
-  end  
-  
-  def find_me_some_records
-    no_more_matches = false
-    until @unused_records.empty? || @unmatched_criteria.empty? || no_more_matches
-      score, matched_records = find_best 
-      no_more_matches = ( score == 0 || matched_records.empty? )      
-      choose = pick_most_important( matched_records )
-      choose_records( choose )
-    end
-  end
-  
-  def find_best
-    high_recs = []
-    high_score = 0
-    @records_and_criteria.each{ |rec,criteria|
-      score = (criteria - @matched_criteria).size
-  
-      if score == high_score
-        high_recs << rec
-      elsif score > high_score
-        high_score = score
-        high_recs = [rec]
-      end
-    }
-    
-    [ high_score, high_recs ] 
-  end
-  
-  def choose_records( records )
-    records.each{ |record|
-      @unused_records.delete( record )
-      @matched_criteria << @records_and_criteria[record]
-    }
-    @matched_criteria.uniq!
-  end
-  
-  def pick_random( amt )
-    @unused_records.shuffle.take( amt )
-  end  
-
-  def pick_most_important( potentials )
-    @weight_method.call( potentials )
-  end
-  
-  def supplement_chosen
-    num_found = chosen_size
-    needed = @min_size - num_found                   # number of records we still need
-    
-    if ( needed > 0 && num_found < @records.size )   # not enough records, and there are others
-      @unused_records -= pick_random( needed )
-    end 
+    @matched_criteria = get_criteria
   end 
 
-  def is_chosen?( record )
-    !@unused_records.include?( record )
-  end     
+  # called by initialize
+  def remove_records_with_duplicate_criteria
+    criteria_to_record = @records_and_criteria.flip  # => [ [procname, record(s)] ]
+    criteria_to_record.each_value{ |records|
+      next unless records.size > 1   # don't do anything with unique sets of criteria
+      unchoose_all_but_one( records )
+    }
+  end
 
+  # called by remove_records_with_duplicate_criteria
+  def unchoose_all_but_one( records )
+    records.shuffle!
+    records.shift       # "choose" the first one by not un-choosing it
+    unchoose( records )   
+  end
+ 
+  # called by analyze
+  def remove_redundancies
+    rec_crit_array = @records_and_criteria.sort_by{ |_,criteria| criteria.size }   # => [ [rec1,crit1], [rec2,crit2] ... ]
+    rec_crit_array.each{ |record,_| 
+      next unless @used_records.include?( record )
+      unchoose( [record] ) if is_redundant?( record )
+    }
+  end
+   
+  # called by determine_record_criteria and criteria_matched_without_record
+  def get_criteria( records = @records_and_criteria.keys )
+    criteria = []
+    records.each{ |record| criteria << @records_and_criteria[record] }
+    criteria.flatten.uniq
+  end 
+
+  # called by determine_record_criteria  
+  def passing_criteria(record)
+    passed = []
+    @criteria.each{ |name,proc| passed << name if proc.call( record ) }
+    passed  
+  end
+
+  # called by remove_records_with_duplicate_criteria
+  def unchoose( records )
+    @unused_records += records
+    @used_records -= records
+    @unused_records.uniq
+  end
+
+  # called by fix_proportions
+  def choose( records )
+    @unused_records -= records
+    @used_records += records 
+    @used_records.uniq
+  end
+    
+  # called by remove_redundancies
+  def is_redundant?( record )
+    criteria_matched_without_record( record ).size == @matched_criteria.size
+  end 
+   
+   # called by is_redundant?    
+  def criteria_matched_without_record( record )
+    used_records = @used_records.clone  # don't want to actually alter instance variable
+    used_records.delete( record )
+    get_criteria( used_records )
+  end 
+  
+  # called by analyze
+  def supplement_chosen
+    chosen = @unused_records.shuffle.take( @min_size )
+    choose( chosen )
+  end
 end  

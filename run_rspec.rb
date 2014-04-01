@@ -1,6 +1,6 @@
 #!/bin/env ruby
 
-require "spec/spec_helper"
+require "spec/conversion/hl7_spec_helper"
 require 'logger'
 require 'lib/HL7CSV'
 

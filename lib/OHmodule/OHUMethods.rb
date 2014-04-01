@@ -1,7 +1,7 @@
 require 'lib/extended_base_classes'
-require 'lib/hl7module/HL7'
+require 'lib/hl7/HL7'
 
-module OHProcs
+module OhioHealthUtilities
   
   # does the given field of the record have a value?
   # returns true if at least one matching field has a value, false otherwise
@@ -95,22 +95,28 @@ module OHProcs
       return false
     end 
     
-    fs.each{ |f| return true if HL7Test.send( method, f.to_s ) }
+    fs.each{ |f| return true if HL7.send( method, f.to_s ) }
     false   # if we get here, not a single value was of the correct type
   end
   
   # creates group of procs all checking for a field to have one of the values in the given list (vals)
-  # stores the whole group of procs as an array called [FIELD]_VALS
-  # returns the new hash
-  def self.define_group( field, vals, name )   
-    all_procs = {}
-    vals.each{ |s| 
-      key = "#{name}_of_#{s}".to_sym    # :some_val_of_x
-      all_procs[key] = Proc.new{ |rec| is_val?(rec,field,s) }
+  # returns the new hash { :description_of_value => proc_that_checks_value }
+  def self.define_group( field, all_values, description )   
+    new_procs = {}
+    all_values.each{ |value| 
+      proc_name = "#{description}_of_#{value}".to_sym    # :some_val_of_x, e.g. :blood_type_of_AB
+      new_procs[proc_name] = Proc.new{ |record| is_val?( record, field, value ) }
     }
-    all_procs
-    #const_name = "#{field.upcase}_VALS"
-    #self.const_set( const_name, all_procs )
-    #return self.const_get( const_name )  # just so there's no ambiguity about why there's a const_get here    
+    new_procs    
+  end
+  
+  # tested 3/28
+  def self.add_criteria_to_list( messages, criteria_to_add, list_name )
+    list = self.instance_variable_get( "@#{list_name}" )   # check this syntax
+    criteria_to_add.each{ |criterion_name, field_of_reference| 
+      field_values = HL7.get_data( messages, field_of_reference )   # check this too
+      new_group = define_group( field_of_reference, field_values, criterion_name )
+      list.merge! new_group
+    }
   end
 end

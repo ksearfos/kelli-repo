@@ -1,17 +1,16 @@
 dir = File.dirname( __FILE__ )
-require "#{dir}/OHMethods.rb"
+require "#{dir}/OHUMethods.rb"
+require "#{dir}/OHUOrgDistribution.rb"
 
-module OHProcs
+module OhioHealthUtilities
 
-  extend HL7Test
-  
-  private
+  extend HL7
     
   IMP_PROC = Proc.new{ |val| val.include?( "IMPRESSION:" ) }
   ADT_PROC = Proc.new{ |val| val.include?( "ADDENDUM:" ) }
   OBS_TYPES = %w( TX NM SN TS )
   RAD_OBS_IDS = %w( &GDT &IMP &ADT )
-  
+   
   # -------------Define the Procs------------ #
   # MSH
   MSH10_P = Proc.new{ |rec| is_val?(rec,"msh10",'P') }
@@ -20,7 +19,7 @@ module OHProcs
   MSH11_24 = Proc.new{ |rec| is_val?(rec,"msh11",'2.4') }
 
   # PID  
-  SEXES = define_group( "pid8", HL7Test::SEXES, :sex )
+  SEXES = define_group( "pid8", HL7::SEXES, :sex )
   PID10 = Proc.new{ |rec| has_val?(rec,"pid10") }
   PID12_AND_11_7 = Proc.new{ |rec| comp_has_val?(rec,"pid11",7) && has_val?(rec,"pid12") }
   PID15 = Proc.new{ |rec| has_val?(rec,"pid15") } 
@@ -43,7 +42,7 @@ module OHProcs
   
   # OBR
   OBR7_AND_OBR22 = Proc.new{ |rec| both_have_vals?(rec,"obr7","obr22") }
-  OBR_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obr_result_status ) 
+  OBR_RES_STATS = define_group( "obr25", HL7::RESULT_STATUS, :obr_result_status ) 
   OBR27 = Proc.new{ |rec| has_val?(rec,"obr27") } 
   OBR31 = Proc.new{ |rec| has_val?(rec,"obr31") }
     
@@ -57,8 +56,8 @@ module OHProcs
   OBX5_NM = Proc.new{ |rec| is_type?( rec,"obx5",:NM ) }
   OBX5_TX = Proc.new{ |rec| is_type?( rec,"obx5",:TX ) }
   OBX5_TS = Proc.new{ |rec| is_type?( rec,"obx5",:TS ) }
-  ABN_FLAGS = define_group( "obx11", HL7Test::ABNORMAL_FLAGS, :abnormal_flag )
-  OBX_RES_STATS = define_group( "obr25", HL7Test::RESULT_STATUS, :obx_result_status ) 
+  ABN_FLAGS = define_group( "obx11", HL7::ABNORMAL_FLAGS, :abnormal_flag )
+  OBX_RES_STATS = define_group( "obr25", HL7::RESULT_STATUS, :obx_result_status ) 
 
   #-------------Group Procs for Quick Access-------------- #
 
@@ -95,4 +94,12 @@ module OHProcs
     attr_reader :lab, :rad, :adt
   end
   
+  def self.reset( variable_type )
+    case variable_type.to_sym
+      when :lab then @lab = CORE + ORDERS + LAB
+      when :rad then @rad = CORE + ORDERS + RAD
+      when :adt then @adt = CORE + ADT
+    end
+  end
+
 end

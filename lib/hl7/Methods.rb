@@ -74,10 +74,11 @@ module HL7
   #   HL7.get_values(msg_list,"pid3") => all patient IDs appearing in the messages of msg_list
   def self.get_data( messages, field )
     data = []
-    messages.each{ |msg| data << msg.fetch_field(field) }
-    data.flatten!(1)   # only flatten arrays; don't flatten Fields
+    messages.each{ |message| data << message.fetch_field( field ) }
+    data.flatten!(1)
+    data.map!{ |datum| datum.to_s }
     data.uniq!
-    data.keep_if{ |e| !e.to_s.empty? }
+    data.delete_if{ |datum| datum.empty? }
   end
 
 # ---------------------------- Methods to add formatting ---------------------------- #
@@ -116,6 +117,7 @@ module HL7
   #   HL7.make_date( "19031105", "-" ) => 11-05-1903
   # Used by HL7::Field
   def self.make_date( date, delim = "/" )
+    return "" unless date.to_s.size >= 8
     yr = date[0...4]
     mon = date[4...6]
     day = date[6...8]
@@ -135,7 +137,8 @@ module HL7
   #   HL7.make_time( "1924", true ) => 19:24
   # Used by HL7::Field
   def self.make_time( time, military = false )
-    str = ""
+    return "" unless time.to_s.size >= 4
+
     hr = time[0...2]
     min = time[2...4]
     sec = time[4...6]

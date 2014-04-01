@@ -5,9 +5,8 @@ require 'run_record_comparer'
 
 # set up and prettify the $logger
 def set_up_logger( file )
-  $stdout.reopen(file, "w")
-  $stderr.reopen(file, "w")
-  logger = Logger.new file
+  # $stdout = File.new( file, "w" )
+  logger = Logger.new( file )
   
   logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
   logger.formatter = Proc.new{ |severity,datetime,prog,msg|
@@ -24,10 +23,9 @@ def get_records( file, max = false )
     nil
   else
     $logger.info "Opening #{file}"
-    mh = HL7Test::MessageHandler.new( file, max )
+    handler = HL7::FileHandler.new( file, max )
     $logger.info "File read. Parsing out records..."
-    $logger.info "Found #{mh.records.size} record(s)\n"
-    mh
+    handler
   end
 end
 
