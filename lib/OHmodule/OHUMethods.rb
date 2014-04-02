@@ -98,25 +98,29 @@ module OhioHealthUtilities
     fs.each{ |f| return true if HL7.send( method, f.to_s ) }
     false   # if we get here, not a single value was of the correct type
   end
+
+  def self.get_field_values_at_runtime(messages, message_type, criteria_to_add)
+    criteria = self.const_get("#{message_type.upcase}_RUNTIME_FIELDS")
+    criteria_to_add.each_pair do |criterion_name, field_of_reference| 
+      criteria.merge! get_criteria_from_messages(messages, criterion_name, field_of_reference)
+    end
+    
+    criteria
+  end
   
   # creates group of procs all checking for a field to have one of the values in the given list (vals)
   # returns the new hash { :description_of_value => proc_that_checks_value }
-  def self.define_group( field, all_values, description )   
+  def self.define_group(field, all_values, description)   
     new_procs = {}
-    all_values.each{ |value| 
-      proc_name = "#{description}_of_#{value}".to_sym    # :some_val_of_x, e.g. :blood_type_of_AB
-      new_procs[proc_name] = Proc.new{ |record| is_val?( record, field, value ) }
-    }
+    all_values.each do |value| 
+      proc_name = "#{description}_of_#{value}".to_sym    # :some_val_of_x, e.g. :blood_type_of_AB, etc.
+      new_procs[proc_name] = Proc.new { |record| is_val?(record, field, value) }
+    end
     new_procs    
   end
   
-  # tested 3/28
-  def self.add_criteria_to_list( messages, criteria_to_add, list_name )
-    list = self.instance_variable_get( "@#{list_name}" )   # check this syntax
-    criteria_to_add.each{ |criterion_name, field_of_reference| 
-      field_values = HL7.get_data( messages, field_of_reference )   # check this too
-      new_group = define_group( field_of_reference, field_values, criterion_name )
-      list.merge! new_group
-    }
+  def self.get_criteria_from_messages(messages, description, field)
+    field_values = HL7.get_data(messages, field)
+    define_group(field_of_reference, field_values, name)
   end
 end

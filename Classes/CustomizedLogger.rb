@@ -2,12 +2,12 @@ require 'logger'
 
 class CustomizedLogger < Logger
     
-  def initialize( log_directory, log_file )
+  def initialize(log_directory, log_file)
     @logger_directory = log_directory
     @logger_file = log_file
          
     create_log_directory
-    super( @logger_file )
+    super(@logger_file)
     format_logger
   end
     
@@ -19,21 +19,21 @@ class CustomizedLogger < Logger
     @logger_file
   end
   
-  def error( message )
+  def error(message)
     super "!!! #{message.upcase} !!!"
   end
  
-  def warn( message )
-    info message.upcase + "!"
+  def warn(message)
+    info "#{message.upcase}!"
   end
     
-  def add( message )
-    info "== " + message.downcase
+  def add(message)
+    info "== #{message.downcase}"
   end
 
-  def section( message )
+  def section(message)
     modified_message = message[0].downcase + message [1..-1]
-    info "\n" + modified_message
+    info "\n#{modified_message}"
   end
     
   def close
@@ -45,16 +45,15 @@ class CustomizedLogger < Logger
     
   # called by initialize
   def create_log_directory
-    `mkdir "#{@logger_directory}"` unless File.exists?( @logger_directory )
+    `mkdir "#{@logger_directory}"` unless File.exists?(@logger_directory)
   end
 
   # called initialize
   def format_logger 
     datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-    formatter = Proc.new{ |severity,datetime,prog,msg|
-      str = "#{datetime} #{severity}: #{msg}\n"
-      str
-    }
+    formatter = Proc.new do |severity,datetime,prog,msg|
+      "#{datetime} #{severity}: #{msg}\n"
+    end
   end
    
 end
