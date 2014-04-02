@@ -130,7 +130,7 @@ module HL7
     def next
       get_records  
     end
-        
+         
     private
         
     # reads in a HL7 message as a text file from the given filepath and stores it in @file_text

@@ -1,21 +1,23 @@
 #!/bin/env ruby
 
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
-require 'lib/extended_base_classes'
-require 'run_record_comparer'
+# require 'lib/extended_base_classes'
+# require 'run_record_comparer'
 require 'lib/hl7/HL7'
-require 'lib/OHmodule/OHProcs'
+# require 'lib/OHmodule/OHProcs'
 
 INFILE = "C:/Users/Owner/Documents/script_input/rad_pre.txt"
 
-handler = HL7::FileHandler.new( INFILE )
-records = handler.records
-criteria = { organization:"msh3" }
-puts OHProcs.instance_variable_get( "@rad" )
-HL7.get_data( records, "msh3" ).each{ |d| puts "'#{d}'"}
-OHProcs.add_criteria_to_list( records, criteria, :rad )
-puts OHProcs.instance_variable_get( "@rad" ).collect{ |name,proc| name if name.to_s.include? "organization" }
+handler = HL7::FileHandler.new( INFILE, 2 )
 
+def do_in_increments( file_handler, &block )
+  begin
+    yield
+    file_handler.next
+  end until file_handler.empty?
+end 
+
+do_in_increments(handler){ puts "I have #{handler.size} records!" }
 =begin
 handler = HL7::FileHandler.new( INFILE, 15000 )
 records = handler.records
