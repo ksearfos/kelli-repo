@@ -1,5 +1,5 @@
 require 'shared_examples'
-require 'spec_helper'
+require 'hl7_spec_helper'
 
 describe "OhioHealth Lab record" do
   before(:all) do

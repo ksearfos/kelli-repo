@@ -1,3 +1,4 @@
+$LOAD_PATH.unshift File.dirname __FILE__    # spec/conversion directory
 require 'lib/hl7/HL7'
 require 'lib/OHmodule/OhioHealthUtilities'
 require 'lib/extended_base_classes'

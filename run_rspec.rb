@@ -7,7 +7,7 @@ require 'lib/HL7CSV'
 def run_rspec( log_file, messages, type )
   set_up_rspec( log_file, type )
   $messages = messages
-  RSpec::Core::Runner.run [ "spec/#{type}_spec.rb" ]
+  RSpec::Core::Runner.run [ "spec/conversion/#{type}_spec.rb" ]
 end
 
 # $flagged should be a list of messages and each example they failed
