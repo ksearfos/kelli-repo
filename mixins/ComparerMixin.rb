@@ -2,9 +2,7 @@ require 'classes/RecordComparer'
 require 'lib/OHmodule/OhioHealthUtilities'
 require 'lib/HL7CSV'
 
-module TestRunnerMixins
-  
-  module ComparerSetup
+module ComparerMixIn
 
     # ----- setup ----- #
     def set_up_comparer(messages, org_specific)
@@ -38,5 +36,3 @@ module TestRunnerMixins
     end  
   
   end
-  
-end

@@ -1,7 +1,8 @@
-require 'mixins/TestRunnerMixins'
+require 'mixins/TestRunnerMixin'
+require 'mixins/ComparerMixin'
 
 class RecordComparerRunner
-  include TestRunnerMixIn
+  include TestRunnerMixIn, ComparerMixIn
   
   @extra_criteria = { sending_facility:"msh3" }   # why, yes, I *do* want class-level variables!
   @results_file_prefix = "#{@logger.directory}/results"

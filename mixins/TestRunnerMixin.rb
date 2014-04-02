@@ -1,8 +1,7 @@
 require 'TestRunnerMixins_FileHandling'
-require 'TestRunnerMixins_ComparerSetup'
 require 'classes/CustomizedLogger'
 
-module TestRunnerMixIns
+module TestRunnerMixIn
   
   TIMESTAMP = Time.now.strftime("%H%M_%m-%d-%Y")     # HHMM_MM-DD-YYYY
   INFO_FILE_PREFIX = "#{@logger.directory}/#{TIMESTAMP}" 

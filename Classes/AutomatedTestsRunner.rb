@@ -1,9 +1,10 @@
-require 'mixins/TestRunnerMixins'
+require 'mixins/TestRunnerMixin'
+require 'mixins/RSpecMixin'
 
 class AutomatedTestsRunner
-  include TestRunnerMixIn
+  include TestRunnerMixIn, RSpecMixIn
   
-  def initialize(type, debugging, minimum_size)
+  def initialize(type, debugging)
     set_common_instance_variables(type, debugging) 
     @input_file_pattern = @debugging ? /\A#{@message_type}_post_\d/ : /\w+_post_\d+\.dat/   
     @csv_file_suffix = "flagged_#{@message_type}_records.csv"

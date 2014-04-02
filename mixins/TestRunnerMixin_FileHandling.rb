@@ -1,6 +1,6 @@
 require 'lib/hl7/HL7'
 
-module TestRunnerMixIns
+module TestRunnerMixIn
   
   module FileHandling
     

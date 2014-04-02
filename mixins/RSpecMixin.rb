@@ -1,9 +1,7 @@
 require 'rspec'
 require 'HL7CSV'
 
-module TestRunnerMixins
-  
-  module RSpecSetup
+module RSpecMixIn
 
     def set_up_rspec_for_file
       $flagged = {}     # start with a clean hash
@@ -51,5 +49,3 @@ module TestRunnerMixins
     end
   
   end
-  
-end
