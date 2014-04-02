@@ -51,7 +51,7 @@ module HL7
     field = ""
     key = value.to_sym
     
-    HL7Test::Segment.subclasses.each{ |cl|
+    HL7::Segment.subclasses.each{ |cl|
       fim = cl.field_index_maps
       if fim.has_key?(key)
         seg = cl.to_s
@@ -211,7 +211,7 @@ module HL7
 # ---------------------------- Methods to verify formatting ---------------------------- #
 
   def self.is_name?( val )
-    parts = val.is_a?(Array) ? val.flatten : val.split(HL7Test.separators[:comp]) 
+    parts = val.is_a?(Array) ? val.flatten : val.split(HL7.separators[:comp]) 
     return false if parts.empty?
 
     first_last = /^[A-Z][A-z \-]*/

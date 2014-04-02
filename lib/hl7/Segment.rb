@@ -101,8 +101,10 @@ module HL7
     #  1-line segment: segment.each{ |s| print s + ' & ' } => a & b & c
     #  2-line segment: segment.each{ |s| print s + ' & ' } => [a,b,c] & [a2,b2,c2] 
     def each(&block)
-      yield(self)
-      @children.each{ |ch| yield(ch) }
+      @lines.each{ |line|
+        seg_obj = self.class.new( @separators, line )
+        yield(seg_obj)
+      }
     end
     
     # NAME: each_line
@@ -155,22 +157,40 @@ module HL7
       i = field_index(which)
       i == @@no_index_val ? nil : @fields[i]
     end
-    
+
     # NAME: all_fields
-    # DESC: returns array of fields at given index (in this line and all children!)
+    # DESC: returns array of fields at given index (in all lines!)
     # ARGS: 1
     #  index [Integer/Symbol/String] - the index or name of the field we want -- count starts at 1
     # RETURNS:
     #  [Array] the value of the field for each line
     #      ==>  if there is only one line of this segment's type, returns field() IN AN ARRAY
     # EXAMPLE:
-    #  segment.all_fields(2) => [ "b", "b2", "b3" ]
-    #  segment.all_fields(:beta) => [ "b", "b2", "b3" ] 
-    def all_fields( which )
+    #  segment.all_fields(2) => [ field1-1, field2-1, field3-1 ]
+    #  segment.all_fields(:beta) => [ field1-1, field2-1, field3-1 ] 
+    def all_field_valuess( which )
       i = field_index(which)
 
       all = []
-      @fields_by_line.each{ |row| all << row[i] } if i != @@no_index_val
+      each_line{ |row| all << row[i] } if i != @@no_index_val
+      all
+    end
+        
+    # NAME: all_field_values
+    # DESC: returns array of field values at given index (in all lines!)
+    # ARGS: 1
+    #  index [Integer/Symbol/String] - the index or name of the field we want -- count starts at 1
+    # RETURNS:
+    #  [Array] the value of the field for each line
+    #      ==>  if there is only one line of this segment's type, returns field() IN AN ARRAY
+    # EXAMPLE:
+    #  segment.all_field_values(2) => [ "b", "b2", "b3" ]
+    #  segment.all_field_values(:beta) => [ "b", "b2", "b3" ] 
+    def all_field_valuess( which )
+      i = field_index(which)
+
+      all = []
+      each_line{ |row| all << row[i].to_s } if i != @@no_index_val
       all
     end
     

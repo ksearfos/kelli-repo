@@ -50,7 +50,7 @@ describe "OhioHealth Rad record" do
 
   context "the order" do   # ORC segment
     it "has a valid transaction date and time" do
-      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:ORC].transaction_date_time }
+      logic = Proc.new{ |msg| HL7.is_datetime? msg[:ORC].transaction_date_time }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
     end
@@ -84,7 +84,7 @@ describe "OhioHealth Rad record" do
     it "has an end exam date/time" do
       logic = Proc.new{ |msg|
         dt = msg[:OBR][27]
-        dt.empty? || HL7Test.is_datetime?(dt)
+        dt.empty? || HL7.is_datetime?(dt)
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty

@@ -49,7 +49,7 @@ describe "OhioHealth Lab record" do
     end
   end
    
-  context "the order request" do
+  context "order request" do
     it "has a valid specimen source",
     :pattern => 'all letters, but only required if there are results' do
       logic = Proc.new{ |msg|
@@ -62,21 +62,22 @@ describe "OhioHealth Lab record" do
     end
   end 
 
-  context "the observation/results" do
+  context "observation/results" do
     it "have a valid component ID", :pattern => "ends with LA01" do
-      logic = Proc.new{ |obx| obx.field(:component_id).last == 'LA01' }
+      logic = Proc.new{ |obx| obx.field(:component_id).last == 'LA01'
+      }
       @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end
 
     it "has an observation value of the correct type",
     :pattern => "either numeric, structured numeric, textual, or a timestamp" do
-      logic = Proc.new{ |obx| HL7Test.has_correct_format?(obx.value,obx.value_type) }
+      logic = Proc.new{ |obx| HL7.has_correct_format?(obx.value,obx.value_type) }
       @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end
     
-    list = HL7Test::RESULT_STATUS
+    list = HL7::RESULT_STATUS
     it "has a valid result status", :pattern => "one of #{list.join(', ')}" do
       logic = Proc.new{ |obx| list.include? obx.result_status }
       @failed = pass_for_each?( @messages, logic, :OBX )
@@ -88,7 +89,7 @@ describe "OhioHealth Lab record" do
       
       it "have valid Units" do
         logic = Proc.new{ |obx|
-          discrete.include?(obx.type) ? HL7Test::UNITS.include?(obx.units) : true
+          discrete.include?(obx.type) ? HL7::UNITS.include?(obx.units) : true
         }
         @failed = pass_for_each?( @messages, logic, :OBX )
         @failed.should be_empty
@@ -99,7 +100,7 @@ describe "OhioHealth Lab record" do
           if discrete.include?(obx.type)
             range = obx.reference_range
             nums = range.split('-')
-            nums.size == 2 && HL7Test.is_numeric?(nums.first) && HL7Test.is_numeric?(nums.last)
+            nums.size == 2 && HL7.is_numeric?(nums.first) && HL7.is_numeric?(nums.last)
           else
             true
           end
@@ -111,7 +112,7 @@ describe "OhioHealth Lab record" do
       it "have valid Abnormal Flags" do
         logic = Proc.new{ |obx|
           if discrete.include?(obx.type)
-            HL7Test::ABNORMAL_FLAGS.include? obx.abnormal_flag
+            HL7::ABNORMAL_FLAGS.include? obx.abnormal_flag
           else
             true
           end  

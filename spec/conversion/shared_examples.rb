@@ -14,7 +14,7 @@ shared_examples "every record" do
       logic = Proc.new{ |msg|
         name = msg[:PID].field(:patient_name)
         sfx = name[4]
-        ok = HL7Test.is_name? name.to_s
+        ok = HL7.is_name? name.to_s
         sfx =~ /[JjSs][Rr]/ ? ok && sfx[-1] == '.' : ok
       }
       @failed = pass?( messages, logic )
@@ -22,12 +22,12 @@ shared_examples "every record" do
     end
 
     it "has a birthdate" do
-      logic = Proc.new{ |msg| HL7Test.is_date? msg[:PID].dob }
+      logic = Proc.new{ |msg| HL7.is_date? msg[:PID].dob }
       @failed = pass?( messages, logic )
       @failed.should be_empty
     end
 
-    list = HL7Test::SEXES
+    list = HL7::SEXES
     it "has a sex", :pattern => "one of #{list.join(', ')}" do
       logic = Proc.new{ |msg| list.include? msg[:PID].sex }
       @failed = pass?( messages, logic )
@@ -99,8 +99,8 @@ end
 # shared by lab and rad
 shared_examples "lab and rad records" do
   context "when converted to HL7" do   
-    it "has the correct event type", :pattern => HL7Test::RESULT_MESSAGE_TYPE do
-      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::RESULT_MESSAGE_TYPE }
+    it "has the correct event type", :pattern => HL7::RESULT_MESSAGE_TYPE do
+      logic = Proc.new{ |msg| msg[:MSH].event == HL7::RESULT_MESSAGE_TYPE }
       @failed = pass?( @messages, logic )
       @failed.should be_empty      
     end
@@ -131,7 +131,7 @@ shared_examples "lab and rad records" do
     end 
   
     it "has a date/time" do
-      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:OBR].observation_date_time }
+      logic = Proc.new{ |msg| HL7.is_datetime? msg[:OBR].observation_date_time }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    
     end  
@@ -147,13 +147,13 @@ shared_examples "lab and rad records" do
         obr = msg[:OBR]
         res = obr.field(:result_date_time)
         obs = obr.field(:observation_date_time)
-        HL7Test.is_datetime?(res.to_s) && res.as_date == obs.as_date
+        HL7.is_datetime?(res.to_s) && res.as_date == obs.as_date
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    
     end 
 
-    list = HL7Test::RESULT_STATUS
+    list = HL7::RESULT_STATUS
     it "has a valid result status", :pattern => "one of #{list.join(', ')}" do
       logic = Proc.new{ |msg| list.include? msg[:OBR].result_status }
       @failed = pass?( messages, logic )

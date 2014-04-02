@@ -20,8 +20,8 @@ describe "OhioHealth Encounter record" do
   end
 
   context "when converted to HL7" do     
-    it "has the correct event type", :pattern => HL7Test::ENCOUNTER_MESSAGE_TYPE do
-      logic = Proc.new{ |msg| msg[:MSH].event == HL7Test::ENCOUNTER_MESSAGE_TYPE }
+    it "has the correct event type", :pattern => HL7::ENCOUNTER_MESSAGE_TYPE do
+      logic = Proc.new{ |msg| msg[:MSH].event == HL7::ENCOUNTER_MESSAGE_TYPE }
       @failed = pass?( @messages, logic )
       @failed.should be_empty      
     end
@@ -73,13 +73,13 @@ describe "OhioHealth Encounter record" do
     end
     
     it "has an admission date and time" do
-      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:PV1].admit_date_time }
+      logic = Proc.new{ |msg| HL7.is_datetime? msg[:PV1].admit_date_time }
       @failed = pass?( @messages, logic )
       @failed.should be_empty 
     end
 
     it "has a discharge date and time" do
-      logic = Proc.new{ |msg| HL7Test.is_datetime? msg[:PV1].discharge_date_time }
+      logic = Proc.new{ |msg| HL7.is_datetime? msg[:PV1].discharge_date_time }
       @failed = pass?( @messages, logic )
       @failed.should be_empty 
     end

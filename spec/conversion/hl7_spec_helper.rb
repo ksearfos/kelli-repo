@@ -11,7 +11,7 @@ def is_physician?( field )
   id = field.first
   name = field.components[1..6]
   ok = ( id =~ /^\d+$/ && field.to_s =~ /\w+PROV/ )
-  name.has_value? ? ok && HL7Test.is_name?( name ) : ok
+  name.has_value? ? ok && HL7.is_name?( name ) : ok
 end
 
 def pass?( messages, logic )
@@ -20,13 +20,13 @@ def pass?( messages, logic )
   failed
 end
 
-def pass_for_each?( messages, logic, segment )
+def pass_for_each?( messages, logic, segment, *fields )
   p = Proc.new{ |msg|
     seg_obj = msg[segment]
     return true if seg_obj.nil?
-    
+
     ok = true
-    seg_obj.each{ |seg| ok &&= logic.call(seg) }        
+    seg_obj.each{ |child| ok &&= logic.call( child ) }        
     ok
   }
   
