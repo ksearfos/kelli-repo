@@ -1,9 +1,10 @@
 require 'classes/RecordComparer'
 require 'lib/OHmodule/OhioHealthUtilities'
+require 'lib/HL7CSV'
 
 module TestRunnerMixins
   
-  module ComparerUtilities
+  module ComparerSetup
 
     # ----- setup ----- #
     def set_up_comparer(messages, org_specific)
@@ -30,6 +31,11 @@ module TestRunnerMixins
       @logger.section "Criteria checked:\n#{@comparer.show_criteria}"
       save_results_to_csv(@csv_file, @comparer.chosen) 
     end
+
+    def save_results_to_csv(recs)
+      HL7CSV.records_to_spreadsheet(@csv_file, recs)
+      @logger.info "See #{@csv_file}"
+    end  
   
   end
   

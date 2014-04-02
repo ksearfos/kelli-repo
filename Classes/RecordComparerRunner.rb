@@ -3,11 +3,13 @@ require 'mixins/TestRunnerMixins'
 class RecordComparerRunner
   include TestRunnerMixIn
   
-  @extra_criteria = { sending_facility:"msh3" }   # why, yes, I *do* want a class-level variable!
+  @extra_criteria = { sending_facility:"msh3" }   # why, yes, I *do* want class-level variables!
+  @results_file_prefix = "#{@logger.directory}/results"
   
   def initialize(type, debugging, minimum_size)
     set_common_instance_variables(type, debugging)    
     @minimum_size = minimum_size
+    @input_file_pattern = @debugging ? /\A#{@message_type}_pre_\d/ : /\w+_pre_\d+\.dat/
     @csv_file = "#{INFO_FILE_PREFIX}_selected_#{@message_type}_records.csv"
     @comparer = nil
   end
@@ -19,7 +21,7 @@ class RecordComparerRunner
   end
 
   def supplement_existing
-    hl7_files = get_files(@input_directory, INPUT_FILE_PATTERN).shuffle
+    hl7_files = get_files(@input_directory, @input_file_pattern).shuffle
     @csv_file = "#{INFO_FILE_PREFIX}_supplemental_#{@message_type}_records.csv"
     @logger.info "Grabbing #{@minimum_size} records at random"
     file_handler = create_file_handler(hl7_files.first, @minimum_size)
@@ -31,11 +33,11 @@ class RecordComparerRunner
   
   # ----- top-level delegation: looping through file trees ----- #    
   def compare_original_files
-    hl7_files = get_files(@input_directory, INPUT_FILE_PATTERN)    
+    hl7_files = get_files(@input_directory, @input_file_pattern)    
     hl7_files.each do |file| 
       file_handler = create_file_handler(file)
       do_in_increments(file_handler) { gather_temp_results(file_handler.records) }   # repeat for sets of 10,000 records
-      gather_final_results("#{RESULTS_FILE_PREFIX}_#{File.basename(file)}")   
+      gather_final_results("#{@results_file_prefix}_#{File.basename(file)}")   
     end 
   end
   
@@ -81,5 +83,8 @@ class RecordComparerRunner
     @comparer.analyze 
     @logger.add @comparer.summary      
   end
+  
+  # ----- string formation ----- #
+  
   
 end
