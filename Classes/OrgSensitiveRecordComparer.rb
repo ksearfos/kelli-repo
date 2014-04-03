@@ -1,5 +1,5 @@
 require 'lib/OHmodule/OhioHealthUtilities'
-require 'lib/RecordComparer'
+require 'classes/RecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
 # of the SERIES encounters versus non-SERIES among the organiation and tries to give results that also fit
@@ -7,7 +7,7 @@ require 'lib/RecordComparer'
 class OrgSensitiveRecordComparer < RecordComparer
   include OhioHealthUtilities
   
-  def initialize( recs, type, min_results_size=1 )
+  def initialize(recs, type)
     super
   end
   

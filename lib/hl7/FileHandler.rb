@@ -32,10 +32,11 @@
 #                    then tries to call method on @file_text (String)
 #                    then gives up and throws exception
 #    next: gets the next @max_records records and stores them in @records - @records will be empty if there were no more
+#    do_in_increments: performs code block for @records, iterating with next() through all records
 #
 # CREATED BY: Kelli Searfos
 #
-# LAST UPDATED: 3/27/14 11:41
+# LAST UPDATED: 4/3/14 09:03
 #
 #------------------------------------------
 
@@ -125,6 +126,15 @@ module HL7
       else
         super
       end
+    end
+
+    # runs the code block for all records in the file read by the file handler, in increments of @max_records
+    # e.g. by default runs the code block for 10,000 records at a time
+    def do_in_increments(&block)
+      begin
+        yield(@records)
+        self.next
+      end until @records.empty?
     end
 
     def next

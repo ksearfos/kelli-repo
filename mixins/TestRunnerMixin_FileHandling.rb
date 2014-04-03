@@ -1,4 +1,5 @@
 require 'lib/hl7/HL7'
+require 'lib/utility_methods'
 
 module TestRunnerMixIn
   
@@ -6,44 +7,38 @@ module TestRunnerMixIn
     
     MAX_RECORDS = 10000
 
-    # ----- file input ----- #            
-    def get_files(input_directory, input_file_pattern)
-      @logger.section "Checking #{@input_directory} for files..."
-      file_list = get_list_of_files(input_directory, input_file_pattern)
-      file_list.empty? ? @logger.warn("No files found") : @logger.add("#{file_list.size} file(s) found") 
+    # ----- file input ----- #   
+    # returns a list of the full filepaths of files in the given directory and with names matching input_file_pattern
+    # takes a String and an optional regex 
+    # calls lib/utility_methods.rb#get_paths_of_files_in_directory, and merely adds logging around it         
+    def get_files(input_directory, input_file_pattern = /.*/)
+      @logger.section "Checking #{input_directory} for files..."
+      file_list = get_paths_of_files_in_directory(input_directory, input_file_pattern)
+      file_list.empty? ? @logger.warn("No files found") : @logger.child("#{file_list.size} file(s) found") 
       file_list
     end
 
-    # called by get_files
-    def get_list_of_files(directory, filename_pattern)
-      file_list = [] 
-      Dir.entries(directory).each do |filename|
-        full_filepath = "#{directory}/#{filename}"
-        file_list << full_filepath if File.file?(full_filepath) && filename.match(filename_pattern)
-      end
-    end
-
     # ----- file removal ----- #
-    def remove_file( file )
-      directory = File.expand_path("..", file)
+    # deletes the given file and logs its deletion
+    # takes a String, the full path of the file
+    # calls File.delete, and merely adds logging around it  
+    def remove_file(file)
       @logger.section "Deleting file: #{file}"
       File.delete(file)
-      verify_remove(file) 
-    end
-
-    # called by remove_file
-    def verify_remove(file)    
-      gone = !File.exists?(file)
-      gone ? @logger.add("File successfully deleted") : @logger.warn("Failed to delete file")
+      File.exists?(file) ? @logger.warn("Failed to delete file") : @logger.child("File successfully deleted") 
     end
     
     # ----- FileHandler initialization ----- #
+    # makes a new HL7::FileHandler object linked to the given file
+    # takes a String, the full path of the file, and returns either nil or a FileHandler object
     def create_file_handler(file)
-      @logger.section "Extracting records from #{input_file}..."
+      @logger.section "Extracting records from #{file}..."
       File.zero?(file) ? make_nil_file_handler(file) : make_valid_file_handler(file)
     end
   
     # called by create_file_handler
+    # returns nil
+    # calles lib/utility_methods.rb#remove_file, and merely adds logging around it
     def make_nil_file_handler(file)
       @logger.warn "File is empty"
       remove_file(file)
@@ -51,9 +46,11 @@ module TestRunnerMixIn
     end
 
     # called by create_file_handler
+    # returns new FileHandler object
+    # calls HL7::FileHandler.new, and merely adds logging around it
     def make_valid_file_handler(file)
       handler = HL7::FileHandler.new(file, MAX_RECORDS)
-      @logger.add "#{handler.records.size} records found"
+      @logger.child "#{handler.records.size} records found"
       handler
     end
     

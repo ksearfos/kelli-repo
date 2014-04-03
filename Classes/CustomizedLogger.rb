@@ -1,22 +1,15 @@
 require 'logger'
 
 class CustomizedLogger < Logger
+  attr_reader :directory, :file  
     
   def initialize(log_directory, log_file)
-    @logger_directory = log_directory
-    @logger_file = log_file
+    @directory = log_directory
+    @file = "#{@directory}/#{log_file}"
          
     create_log_directory
-    super(@logger_file)
+    super(@file)
     format_logger
-  end
-    
-  def directory
-    @logger_directory
-  end
-  
-  def file
-    @logger_file
   end
   
   def error(message)
@@ -27,12 +20,12 @@ class CustomizedLogger < Logger
     info "#{message.upcase}!"
   end
     
-  def add(message)
+  def child(message)
     info "== #{message.downcase}"
   end
 
   def section(message)
-    modified_message = message[0].downcase + message [1..-1]
+    modified_message = "#{message[0].downcase}#{message [1..-1]}"
     info "\n#{modified_message}"
   end
     
@@ -45,7 +38,7 @@ class CustomizedLogger < Logger
     
   # called by initialize
   def create_log_directory
-    `mkdir "#{@logger_directory}"` unless File.exists?(@logger_directory)
+    `mkdir "#{@directory}"` unless File.exists?(@directory)
   end
 
   # called initialize

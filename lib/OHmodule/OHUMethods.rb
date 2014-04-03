@@ -99,13 +99,21 @@ module OhioHealthUtilities
     false   # if we get here, not a single value was of the correct type
   end
 
-  def self.get_field_values_at_runtime(messages, message_type, criteria_to_add)
-    criteria = self.const_get("#{message_type.upcase}_RUNTIME_FIELDS")
-    criteria_to_add.each_pair do |criterion_name, field_of_reference| 
-      criteria.merge! get_criteria_from_messages(messages, criterion_name, field_of_reference)
-    end
+  def self.get_all_criteria_for_type(messages, type, additional_runtime_criteria = {})
+    type_var = "@#{type}"
+    raise "#{type} is not a valid message type" unless instance_variable_defined?(type_var) 
     
-    criteria
+    criteria = self.instance_variable_get(type_var).clone
+    criteria.merge get_field_values_at_runtime(messages, type, additional_runtime_criteria)  
+  end
+  
+  def self.get_field_values_at_runtime(messages, type, criteria_to_add)
+    criteria = self.const_get("#{type.upcase}_RUNTIME_FIELDS").merge!(criteria_to_add)
+    criteria_with_procs = {}
+    criteria.each_pair do |criterion_name, field_of_reference| 
+      criteria_with_procs.merge! get_criteria_from_messages(messages, criterion_name, field_of_reference)
+    end    
+    criteria_with_procs
   end
   
   # creates group of procs all checking for a field to have one of the values in the given list (vals)
@@ -121,6 +129,6 @@ module OhioHealthUtilities
   
   def self.get_criteria_from_messages(messages, description, field)
     field_values = HL7.get_data(messages, field)
-    define_group(field_of_reference, field_values, name)
+    define_group(field, field_values, name)
   end
 end

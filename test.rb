@@ -8,16 +8,22 @@ require 'lib/hl7/HL7'
 
 INFILE = "C:/Users/Owner/Documents/script_input/rad_pre.txt"
 
-handler = HL7::FileHandler.new( INFILE, 2 )
-
-def do_in_increments( file_handler, &block )
+class HL7::FileHandler
+def do_in_increments(&block)
   begin
-    yield
-    file_handler.next
-  end until file_handler.empty?
+    yield(@records)
+    self.next
+  end until @records.empty?
 end 
+end
 
-do_in_increments(handler){ puts "I have #{handler.size} records!" }
+handler = HL7::FileHandler.new( INFILE, 2 )
+str = "peas and carrots"
+handler.do_in_increments do |records|
+  puts "I have #{records.size} records!"
+  puts "I like to eat #{str}"
+end
+
 =begin
 handler = HL7::FileHandler.new( INFILE, 15000 )
 records = handler.records
