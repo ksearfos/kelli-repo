@@ -7,25 +7,21 @@ class RecordComparer
   
   def initialize( records, criteria )
     @records_and_criteria = Hash.new_from_array( records, [] )
-    @used_records = records
-    @unused_records = []
-    @minimum_size = 1      # smallest number of records to return
-    
-    # items for tracking criteria
     @criteria = criteria
-    @matched_criteria = []
-
-    determine_record_criteria
-    remove_records_with_duplicate_criteria
+    determine_record_criteria   # populates @records_and_criteria.values
+    set_starting_values  # sets @used_records, @unused_records, @matched_criteria
   end
   
   def analyze
-    return if @records_and_criteria.size <= @minimum_size   # if we need all the records, don't do anything
-    
-    remove_redundancies    
-    supplement_chosen if @used_records.size < @records_and_criteria.size
+    choose_smallest_number    
+    supplement_chosen
   end
 
+  # allow reset to re-analyze
+  def reset
+    set_starting_values
+  end
+  
   def chosen
     @used_records
   end  
@@ -48,7 +44,6 @@ class RecordComparer
   # called by initialize
   def determine_record_criteria
     @records_and_criteria.each_key { |record| @records_and_criteria[record] = passing_criteria(record) }
-    @matched_criteria = get_criteria
   end 
 
   # called by initialize
@@ -122,7 +117,36 @@ class RecordComparer
   
   # called by analyze
   def supplement_chosen
-    chosen = @unused_records.shuffle.take(@minimum_size)
+    return if chose_enough? || !records_left_to_take?
+    needed = @minimum_size - @used_records.size
+    chose_random_records(needed)
+  end
+  
+  def chose_random_records(amount)  
+    chosen = @unused_records.shuffle.take(amount)
     choose(chosen)
   end
+  
+  def set_starting_values
+    @used_records = @records_and_criteria.keys
+    @unused_records = []
+    @minimum_size = 1      # smallest number of records to return
+    @matched_criteria = get_criteria
+  end
+  
+  def chose_enough?
+    @used_records.size >= @minimum_size
+  end
+  
+  def records_left_to_take?
+    @used_records.size < @records_and_criteria.size
+  end
+
+  def choose_smallest_number
+    if @records_and_criteria.size > @minimum_size   # if we need all the records, we already have the "smallest number"
+      remove_records_with_duplicate_criteria
+      remove_redundancies
+    end
+  end
+
 end  

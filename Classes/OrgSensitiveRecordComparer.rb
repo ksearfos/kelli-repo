@@ -12,13 +12,9 @@ class OrgSensitiveRecordComparer < RecordComparer
   end
   
   def analyze
-    return if @records_and_criteria.size <= @min_size   # we aren't going to need all the records
-    
-    remove_redundancies    
-    if @used_records.size < @records_and_criteria.size
-      fix_proportions
-      supplement_chosen
-    end
+    choose_smallest_number
+    fix_proportions
+    supplement_chosen
   end
   
   private
@@ -33,17 +29,18 @@ class OrgSensitiveRecordComparer < RecordComparer
 
   # called by analyze
   def fix_proportions
+    return unless records_left_to_take?
     size_cap = @used_records.size * 1.10   # don't add too many records -- we still want a small set
     choose_based_on_series( size_cap ) if OhioHealthUtilities.analyze_proportions( @used_records ) != OhioHealthUtilities::SERIES_PROPORTION
   end  
   
   # called by analyze
-  def supplement_chosen
-    choose_based_on_series( @min_size )
+  def chose_random_records(amount)
+    choose_based_on_series(amount)
   end
 
   # called by supplement_chosen
-  def choose_based_on_series( size )
+  def choose_based_on_series(size)
     series_amount, nonseries_amount = OhioHealthUtilities.how_many_to_take?( @used_records, size )
     series_available, nonseries_available = OhioHealthUtilities.sort_records( @unused_records )
     series_amount = 0 if series_amount < 0

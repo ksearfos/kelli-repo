@@ -101,7 +101,7 @@ class Hash
   end
   
   def self.new_from_array( array, default_value=nil )
-    Hash[ array.collect{ |key| [key,default_value] } ]
+    Hash[array.collect { |key| [key,default_value] }]
   end
 
   # inverts Self, but keeps all keys linked to the same value

@@ -1,6 +1,4 @@
-require 'mixins/TestRunnerMixin'
-require 'mixins/ComparerMixin'
-require 'mixins/RSpecMixin'
+require 'classes/AutomatedTestsRunner'
 require 'rspec'
 require 'rspec/expectations'
 

@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../..", __FILE__)   # project directory
-require 'spec/test_runner_mixin/spec_helper'
+$LOAD_PATH.unshift File.dirname(__FILE__)
+require 'spec_helper'
 
 describe "ComparerMixin" do
   
