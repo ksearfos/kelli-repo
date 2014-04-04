@@ -56,7 +56,7 @@ class RecordComparer
   end
 
   # called by remove_records_with_duplicate_criteria
-  def unchoose_all_but_one( records )
+  def unchoose_all_but_one(records)
     records.shuffle!
     records.shift       # "choose" the first one by not un-choosing it
     unchoose(records)   
@@ -117,16 +117,16 @@ class RecordComparer
   
   # called by analyze
   def supplement_chosen
-    return if chose_enough? || !records_left_to_take?
-    needed = @minimum_size - @used_records.size
-    chose_random_records(needed)
+    choose_random_records(how_many_to_take?)
   end
   
-  def chose_random_records(amount)  
-    chosen = @unused_records.shuffle.take(amount)
+  # called by supplement_chosen
+  def choose_random_records(amount, pool_of_records = @unused_records)  
+    chosen = pool_of_records.shuffle.take(amount)
     choose(chosen)
   end
   
+  # called by initialize, reset
   def set_starting_values
     @used_records = @records_and_criteria.keys
     @unused_records = []
@@ -142,6 +142,7 @@ class RecordComparer
     @used_records.size < @records_and_criteria.size
   end
 
+  # called by analyze
   def choose_smallest_number
     if @records_and_criteria.size > @minimum_size   # if we need all the records, we already have the "smallest number"
       remove_records_with_duplicate_criteria
@@ -149,4 +150,9 @@ class RecordComparer
     end
   end
 
+  def how_many_to_take?
+    if chose_enough? || !records_left_to_take? then 0
+    else @minimum_size - @used_records.size
+    end
+  end
 end  
