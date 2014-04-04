@@ -1,6 +1,5 @@
 dir = File.dirname( __FILE__ )
 require "#{dir}/OHUMethods.rb"
-require "#{dir}/OHUOrgDistribution.rb"
 
 module OhioHealthUtilities
 

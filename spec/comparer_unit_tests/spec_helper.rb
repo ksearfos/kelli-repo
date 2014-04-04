@@ -1,15 +1,9 @@
-require 'classes/RecordComparerRunner'
+require 'classes/RecordComparer'
+require 'classes/OrgSensitiveRecordComparer'
 require 'lib/OHmodule/OhioHealthUtilities'
 require 'rspec'
 require 'rspec/expectations'
 
-# testing with lab messages here
-# Palmer^Lois^G should match obx_sodium, obx_chloride, female
-# Palmer^Lois^DUPLICATE should match obx_sodium, obx_chloride, female
-# Smith^John^W should match obx_potassium, obx_chloride, male
-# Palmer^Lois^SHOULD_NOT_BE_USED should match obx_potassium, female
-# the records returned should be Smith^John^W and either Palmer^Lois^G or Palmer^Lois^DUPLICATE
-# all criteria should be met except obx_fake
 file = HL7::FileHandler.new("#{File.dirname(__FILE__)}/test_data.txt")
 $messages = {}
 file.records.map do |record|
@@ -27,15 +21,6 @@ RSpec.configure do |c|
   c.fail_fast = true
 end
 
-def removal_is_random
-  remaining = @comparer.chosen
-  if remaining.include?($messages["Palmer^Lois^G"])
-    remaining.should_not include $messages["Palmer^Lois^DUPLICATE"]
-  else
-    remaining.should include $messages["Palmer^Lois^DUPLICATE"]
-  end    
-end
-
 class RecordComparer
   attr_reader :used_records, :unused_records, :matched_criteria, :minimum_size
 
@@ -50,5 +35,9 @@ class RecordComparer
   
   def call_supplement_chosen
     supplement_chosen
+  end
+  
+  def call_unchoose(*records)
+    unchoose(*records)
   end
 end

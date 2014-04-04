@@ -1,4 +1,4 @@
-require 'lib/SeriesNonseriesSuport'
+require 'lib/SeriesNonseriesSupport'
 require 'classes/RecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
@@ -11,9 +11,14 @@ class OrgSensitiveRecordComparer < RecordComparer
     super
   end
   
-  def analyze
-    choose_smallest_number
-    chose_enough? ? fix_proportions : supplement_chosen
+  def fix_proportions
+    return if !records_left_to_take? || current_series_proportion(@used_records) == SERIES_PROPORTION   # perfect as-is  
+ 
+    type = needed_type(@used_records)
+    ideal_amount = amount_that_fixes_proportion(@used_records, type)
+    size_cap = (@used_records.size * 0.10).ceil   # don't add too many records - 10% is arbitrary
+    realistic_amount = [ideal_amount, size_cap].min
+    choose_random_records_of_type(realistic_amount, type)
   end
   
   private
@@ -23,18 +28,7 @@ class OrgSensitiveRecordComparer < RecordComparer
     subset_of_records = records_of_needed_type(records)
     one_to_keep = subset_of_records.shuffle.shift
     records.delete(one_to_keep)
-    unchoose(records)   
-  end
-
-  # called by analyze
-  def fix_proportions
-    return unless records_left_to_take?  
-      
-    type = needed_type(@used_records)
-    ideal_amount = amount_that_fixes_proportions(@used_records, type)
-    size_cap = @used_records.size * 0.10   # don't add too many records, we still want a small set; 10% is arbitrary
-    realistic_amount = [ideal_amount, size_cap].min
-    choose_random_records_of_type(realistic_amount, type)
+    unchoose(*records)   
   end  
 
   # called by analyze
@@ -44,14 +38,15 @@ class OrgSensitiveRecordComparer < RecordComparer
   end
  
   def supplement_chosen_with_type(type)
-    desired_number_of_type = @minimum_size * SeriesNonseriesSupport.const_get("#{type.upcase}_PROPORTION")
+    desired_number_of_type = (@minimum_size * SeriesNonseriesSupport.const_get("#{type.upcase}_PROPORTION")).ceil
     amount_to_reach_desired = desired_number_of_type - number_of_records_of_type(@used_records, type)
+    amount_to_reach_desired = 0 if amount_to_reach_desired < 0
     realistic_amount = [amount_to_reach_desired, amount_to_reach_minimum_size].min
     choose_random_records_of_type(realistic_amount, type)
   end
   
   def choose_random_records_of_type(amount, type)
     pool = get_records_of_type(@unused_records, type)
-    choose_random(amount, pool)
+    choose_random_records(amount, pool)
   end
 end  

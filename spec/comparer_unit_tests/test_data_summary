@@ -1,0 +1,53 @@
+The sample data set used for testing was strategically designed to cover the widest variety of test cases, while
+still being small enough that the "correct answer" can be easily determined.
+
+The following is meant to indicate what can be found in the set of test data provided (test_data.txt):
+
+1. The records used are lab records
+
+2. There are a total of 4 patients:
+	Palmer^Lois^G
+	Palmer^Lois^DUPLICATE
+	Smith^John^W
+	Palmer^Lois^REDUNDANT
+	
+3. There are a total of 6 criteria (defined in spec_helper.rb):
+	:obx_potassium
+    :obx_sodium
+    :obx_chloride
+    :obx_fake
+    :male
+    :female
+    
+4. If the 6 criteria, 5 are matched by the records
+	:obx_fake is not matched
+
+5. Of the 4 records, 2 should be chosen by the (generic) RecordComparer:
+	Smith^John^W
+	either Palmer^Lois^G or Palmer^Lois^DUPLICATE
+
+6. Palmer^Lois^G and Palmer^Lois^DUPLICATE are identical except for two things:
+	the patient name (obviously)
+	the patient MRN (see 9)
+	
+7. The records each match these criteria:
+	Palmer^Lois^G                   =>  :obx_sodium, :obx_chloride, :female
+	Palmer^Lois^DUPLICATE           =>  :obx_sodium, :obx_chloride, :female
+	Smith^John^W                    =>  :obx_potassium, :obx_chloride, :male
+	Palmer^Lois^REDUNDANT  =>  :obx_potassium, :female
+
+From this it can be determined that Palmer^Lois^DUPLICATE and Palmer^Lois^G have dupliate criteria and
+that Palmer^Lois^REDUNDANT is redundant (does not match any criteria that are not matched by other records)
+
+8. There are two series records:
+	Palmer^Lois^DUPLICATE
+	Palmer^Lois^REDUNDANT
+	
+9. Of the 4 records, 3 should be chosen by the OrgSensitiveRecordComparer:
+	Smith^John^W
+	Palmer^Lois^G
+	Palmer^Lois^REDUNDANT
+
+Of the duplicate records, the SERIES one should be removed - this is Palmer^Lois^DUPLICATE (0% series)
+The redundant record Palmer^Lois^REDUNDANT will then be removed (0% series)
+Of the unused records, the SERIES one will be chosen - this is Palmer^Lois^DUPLICATE (33% series, but at least there's 1!)

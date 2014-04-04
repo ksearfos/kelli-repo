@@ -5,15 +5,21 @@ class RecordComparer
   attr_reader :records_and_criteria
   attr_writer :minimum_size
   
-  def initialize( records, criteria )
-    @records_and_criteria = Hash.new_from_array( records, [] )
+  def initialize(records, criteria)
+    @records_and_criteria = Hash.new_from_array(records, [])
     @criteria = criteria
-    determine_record_criteria   # populates @records_and_criteria.values
-    set_starting_values  # sets @used_records, @unused_records, @matched_criteria
+    
+    determine_record_criteria      # populates @records_and_criteria.values
+    @records_and_criteria.freeze   # once set, this should never be changed!
+    
+    set_starting_values            # sets @used_records, @unused_records, @minimum_value
+    @matched_criteria = get_criteria
   end
   
   def analyze
-    choose_smallest_number    
+    return unless @records_and_criteria.size > @minimum_size   # if we need all the records, we already have the "smallest number"
+    remove_records_with_duplicate_criteria
+    remove_redundancies  
     supplement_chosen
   end
 
@@ -59,7 +65,7 @@ class RecordComparer
   def unchoose_all_but_one(records)
     records.shuffle!
     records.shift       # "choose" the first one by not un-choosing it
-    unchoose(records)   
+    unchoose(*records)   
   end
  
   # called by analyze
@@ -67,7 +73,7 @@ class RecordComparer
     rec_crit_array = @records_and_criteria.sort_by { |_,criteria| criteria.size }   # => [[rec1,crit1],[rec2,crit2]...]
     rec_crit_array.each do |record,_| 
       next unless @used_records.include?(record)
-      unchoose([record]) if is_redundant?(record)
+      unchoose(record) if is_redundant?(record)
     end
   end
    
@@ -86,7 +92,7 @@ class RecordComparer
   end
 
   # called by remove_records_with_duplicate_criteria
-  def unchoose(records)
+  def unchoose(*records)
     records.each do |record|
       @unused_records << record
       @used_records.delete(record)
@@ -94,8 +100,8 @@ class RecordComparer
     @unused_records.uniq!
   end
 
-  # called by fix_proportions
-  def choose(records)
+  # called by supplement_chosen
+  def choose(*records)
     records.each do |record|
       @unused_records.delete(record)
       @used_records << record
@@ -117,13 +123,13 @@ class RecordComparer
   
   # called by analyze
   def supplement_chosen
-    choose_random_records(how_many_to_take?)
+    choose_random_records(amount_to_reach_minimum_size)
   end
   
   # called by supplement_chosen
-  def choose_random_records(amount, pool_of_records = @unused_records)  
+  def choose_random_records(amount, pool_of_records = @unused_records.clone)  
     chosen = pool_of_records.shuffle.take(amount)
-    choose(chosen)
+    choose(*chosen)
   end
   
   # called by initialize, reset
@@ -131,7 +137,6 @@ class RecordComparer
     @used_records = @records_and_criteria.keys
     @unused_records = []
     @minimum_size = 1      # smallest number of records to return
-    @matched_criteria = get_criteria
   end
   
   def chose_enough?
@@ -142,15 +147,7 @@ class RecordComparer
     @used_records.size < @records_and_criteria.size
   end
 
-  # called by analyze
-  def choose_smallest_number
-    if @records_and_criteria.size > @minimum_size   # if we need all the records, we already have the "smallest number"
-      remove_records_with_duplicate_criteria
-      remove_redundancies
-    end
-  end
-
-  def how_many_to_take?
+  def amount_to_reach_minimum_size
     if chose_enough? || !records_left_to_take? then 0
     else @minimum_size - @used_records.size
     end
