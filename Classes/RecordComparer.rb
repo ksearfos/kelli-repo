@@ -1,3 +1,4 @@
+# last tested 4/7
 require 'lib/extended_base_classes'
 
 class RecordComparer
