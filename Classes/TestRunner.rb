@@ -1,15 +1,18 @@
-require 'mixins/TestRunnerMixin_FileHandling'
+# last tested 4/7
+require 'mixins/FileHandlingMixin'
 require 'classes/CustomizedLogger'
 require 'lib/utility_methods'
 
 class TestRunner
   include TestRunnerFileHandling
 
+  class << self; attr_reader :timestamp; end
+  @timestamp = Time.now.strftime("%H%M_%m-%d-%Y")     # HHMM_MM-DD-YYYY
+  
   def initialize(type, debugging)
     @debugging = debugging   # just a flag -- affects whether files are deleted and level of detail of output
     @message_type = type   
     @input_directory = @debugging ? TESTING_INPUT_DIRECTORY : INPUT_DIRECTORY    
-    @timestamp = Time.now.strftime("%H%M_%m-%d-%Y")     # HHMM_MM-DD-YYYY
     @logger = CustomizedLogger.new("#{@input_directory}/logs", self.class.log_file_name) 
     redirect_stdout(@logger.file) unless @debugging
   end

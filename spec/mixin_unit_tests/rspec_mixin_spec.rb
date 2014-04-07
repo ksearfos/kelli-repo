@@ -1,3 +1,4 @@
+# passed testing 4/7
 $LOAD_PATH.unshift File.expand_path("../../..", __FILE__)   # project directory
 $LOAD_PATH.unshift File.dirname(__FILE__)
 require 'spec_helper'
@@ -5,10 +6,10 @@ require 'spec_helper'
 describe "RSpecMixin" do
   
   before(:all) do
-  	@test_runner_object = SpecHelperRspecClass.new
+  	@test_runner = SpecHelperRspecClass.new
   	errors = %w(error1 error2)
   	$flagged = { $lab_message => errors }
-  	@records_array = @test_runner_object.compile_flagged_records_into_array
+  	@records_array = @test_runner.compile_flagged_records_into_array
   end
   
   describe "#compile_flagged_records_into_array" do
@@ -30,10 +31,9 @@ describe "RSpecMixin" do
     
     context "a message row" do
       it "contains message information and exception information", :detail => "PASSED/FAILED" do
-        @records_array.last.each { |element| element.should be_a String }
-        @records_array.last[6..-1].each do |element|
-          (element == "PASSED" || element == "FAILED").should be_true
-        end
+        row = @records_array.last
+        row.each { |element| element.should be_a String }
+        row[6..-1].each { |element| (element == "PASSED" || element == "FAILED").should be_true }
       end
       
       it "has 6 columns of record information and 2 columns of error information", :detail => "8 columns" do

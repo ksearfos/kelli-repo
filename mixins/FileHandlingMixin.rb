@@ -1,3 +1,4 @@
+# last tested 4/7
 require 'lib/hl7/HL7'
 require 'lib/utility_methods'
 
@@ -24,7 +25,9 @@ module TestRunnerFileHandling
 
     # special case of get_files because we call this a lot
     def get_hl7_files
-      get_files(@input_dirname, @input_file_pattern)
+      raise "Please specify default input directory" if @input_directory.nil?
+      raise "Please specify hl7 file pattern" if @input_file_pattern.nil?
+      get_files(@input_directory, @input_file_pattern)
     end
     
     # ----- file removal ----- #
@@ -64,8 +67,8 @@ module TestRunnerFileHandling
     end
 
   def file_date_string(filename)
-    file_date = filename.match(/_(\d+)\./)[1]    # date/time from the file
-    file_date ||= @timestamp
+    file_date = filename.match(/_(\d+)\./)    # date/time from the file
+    file_date ? file_date[1] : @timestamp
   end    
 end
 

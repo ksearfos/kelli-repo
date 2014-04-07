@@ -1,6 +1,7 @@
-require 'mixins/TestRunnerMixin'
+require 'mixins/FileHandlingMixin'
 require 'mixins/ComparerMixin'
 require 'mixins/RSpecMixin'
+require 'classes/TestRunner'
 require 'rspec'
 require 'rspec/expectations'
 
@@ -22,12 +23,12 @@ RSpec.configure do |c|
   c.fail_fast = true
 end
 
-class SpecHelperClass
-  include TestRunnerMixIn
-  attr_reader :logger
+class SpecHelperClass < TestRunner
+  attr_reader :logger, :input_directory, :input_file_pattern, :timestamp
   
   def initialize
-    set_common_instance_variables(:rad, true)
+    super(:lab, true)
+    @input_file_pattern = /.*/
   end
 end
 

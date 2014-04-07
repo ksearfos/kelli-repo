@@ -70,7 +70,7 @@ shared_examples "RecordComparer" do
     end
     
     context "a small number of diverse results is desired", :detail => "@minimum_size is small" do 
-      before(:each) do
+      before(:all) do
         @comparer.reset
         @comparer.analyze
       end
@@ -106,8 +106,8 @@ shared_examples "RecordComparer" do
       end   
 
       it "supplements chosen records until the minimum size is met" do
-        @comparer.minimum_size = 3
         deselect(@comparer, :DUPLICATE, :REDUNDANT)
+        @comparer.minimum_size = 3
         @comparer.call_supplement_chosen
         @comparer.chosen.size.should == 3 
       end   

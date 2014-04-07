@@ -1,6 +1,7 @@
 require 'classes/RecordComparer'
 require 'classes/OrgSensitiveRecordComparer'
 require 'lib/OHmodule/OhioHealthUtilities'
+require 'lib/SeriesNonseriesSupport.rb'
 require 'rspec'
 require 'rspec/expectations'
 
