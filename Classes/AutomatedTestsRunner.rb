@@ -1,4 +1,4 @@
-require 'mixins/TestRunnerMixin_FileHandling'
+require 'mixins/FileHandlingMixin'
 require 'mixins/RSpecMixin'
 require 'classes/TestRunner'
 

@@ -26,7 +26,8 @@ class RecordComparerRunner < TestRunner
   def supplement_existing
     @csv_file = construct_csv_filename("supplemental")
     @logger.info "Selecting #{@minimum_size} records at random"
-    get_random_records
+    records = get_random_records.take(@minimum_size)
+    save_results_to_csv(records)
   end
   
   private
@@ -87,10 +88,10 @@ class RecordComparerRunner < TestRunner
     files = get_hl7_files
     records = []
     until records.size >= @minimum_size   # looping, just in case we need more records than 1 file has
-      file_handler = create_file_handler(files.shift, @minimum_size)
+      file_handler = create_file_handler(files.shift)
       records += file_handler.records
     end
-    save_results_to_csv(records)
+    records
   end
   
   # ----- string formation ----- #
