@@ -41,3 +41,19 @@ class RecordComparer
     unchoose(*records)
   end
 end
+
+# pass in names as either Last^First^MI or, in the case of the 3 Lois Palmers, as just :DUPLICATE or :REDUNDANT
+def deselect(comparer,*names)
+  names.each do |name| 
+    name !~ /\w+^\w+/ ? key = "Palmer^Lois^#{name}" : key = name
+    comparer.call_unchoose($messages[key]) 
+  end
+end
+
+def should_only_use_one_of_the_duplicates(results)
+  if results.include?($messages["Palmer^Lois^G"])
+    results.should_not include $messages["Palmer^Lois^DUPLICATE"]
+  else  # results include Lois G Palmer
+    results.should_not include $messages["Palmer^Lois^G"]
+  end
+end

@@ -24,7 +24,7 @@ class CustomizedLogger < Logger
     info "== #{message.downcase}"
   end
 
-  def section(message)
+  def parent(message)
     modified_message = "#{message[0].downcase}#{message [1..-1]}"
     info "\n#{modified_message}"
   end

@@ -9,7 +9,7 @@ describe "RecordComparer" do
     @comparer = RecordComparer.new($messages.values, $criteria)
   end
   
-  it_behaves_like "a generic RecordComparer" do
+  it_behaves_like "RecordComparer" do
     let(:comparer){ @comparer }
   end
  

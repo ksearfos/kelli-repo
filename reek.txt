@@ -1,0 +1,22 @@
+./Classes/AutomatedTestsRunner.rb -- 4 warnings:
+  [4]:AutomatedTestsRunner has no descriptive comment (IrresponsibleModule)
+  [40]:AutomatedTestsRunner#file_date_string doesn't depend on instance state (UtilityFunction)
+  [40]:AutomatedTestsRunner#file_date_string refers to filename more than self (FeatureEnvy)
+  [13]:AutomatedTestsRunner#run has approx 6 statements (TooManyStatements)
+./Classes/CustomizedLogger.rb -- 3 warnings:
+  [3]:CustomizedLogger has no descriptive comment (IrresponsibleModule)
+  [15]:CustomizedLogger#error refers to message more than self (FeatureEnvy)
+  [27]:CustomizedLogger#parent refers to message more than self (FeatureEnvy)
+./Classes/OrgSensitiveRecordComparer.rb -- 1 warning:
+  [14]:OrgSensitiveRecordComparer#fix_proportions has approx 6 statements (TooManyStatements)
+./Classes/RecordComparer.rb -- 4 warnings:
+  [3]:RecordComparer has no descriptive comment (IrresponsibleModule)
+  [81]:RecordComparer#get_criteria refers to criteria more than self (FeatureEnvy)
+  [90]:RecordComparer#passing_criteria is controlled by argument record (ControlParameter)
+  [65]:RecordComparer#unchoose_all_but_one refers to records more than self (FeatureEnvy)
+./Classes/RecordComparerRunner.rb -- 2 warnings:
+  [4]:RecordComparerRunner has no descriptive comment (IrresponsibleModule)
+  [14, 15]:RecordComparerRunner#initialize calls @logger.directory twice (DuplicateMethodCall)
+./Classes/TestRunner.rb -- 1 warning:
+  [5]:TestRunner has no descriptive comment (IrresponsibleModule)
+15 total warnings

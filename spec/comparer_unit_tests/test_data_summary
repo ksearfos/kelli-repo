@@ -19,7 +19,7 @@ The following is meant to indicate what can be found in the set of test data pro
     :male
     :female
     
-4. If the 6 criteria, 5 are matched by the records
+4. Of the 6 criteria, 5 are matched by the records
 	:obx_fake is not matched
 
 5. Of the 4 records, 2 should be chosen by the (generic) RecordComparer:
@@ -34,7 +34,7 @@ The following is meant to indicate what can be found in the set of test data pro
 	Palmer^Lois^G                   =>  :obx_sodium, :obx_chloride, :female
 	Palmer^Lois^DUPLICATE           =>  :obx_sodium, :obx_chloride, :female
 	Smith^John^W                    =>  :obx_potassium, :obx_chloride, :male
-	Palmer^Lois^REDUNDANT  =>  :obx_potassium, :female
+	Palmer^Lois^REDUNDANT           =>  :obx_potassium, :female
 
 From this it can be determined that Palmer^Lois^DUPLICATE and Palmer^Lois^G have dupliate criteria and
 that Palmer^Lois^REDUNDANT is redundant (does not match any criteria that are not matched by other records)
@@ -46,7 +46,7 @@ that Palmer^Lois^REDUNDANT is redundant (does not match any criteria that are no
 9. Of the 4 records, 3 should be chosen by the OrgSensitiveRecordComparer:
 	Smith^John^W
 	Palmer^Lois^G
-	Palmer^Lois^REDUNDANT
+	Palmer^Lois^DUPLICATE
 
 Of the duplicate records, the SERIES one should be removed - this is Palmer^Lois^DUPLICATE (0% series)
 The redundant record Palmer^Lois^REDUNDANT will then be removed (0% series)

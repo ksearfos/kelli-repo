@@ -5,3 +5,4 @@ raise ArgumentError, "Specify number of messages with --size=" if size_string.ni
 
 record_comparer_runner = RecordComparerRunner.new(:enc, false, size_string[1])
 record_comparer_runner.supplement_existing
+record_comparer_runner.shutdown

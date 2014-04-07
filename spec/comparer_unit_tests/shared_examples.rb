@@ -1,4 +1,4 @@
-shared_examples "a generic RecordComparer" do
+shared_examples "RecordComparer" do
   
   describe "a new object" do
     it "connects a list of records to a list of criteria" do
@@ -81,11 +81,12 @@ shared_examples "a generic RecordComparer" do
     
       it "does not choose records that duplicate data" do
         @comparer.chosen.should_not include $messages["Palmer^Lois^REDUNDANT"]
+        should_only_use_one_of_the_duplicates(@comparer.chosen)
       end
     end
 
     context "redundant records exist" do
-      before(:all) do
+      before(:each) do
         @comparer.reset
       end
       
@@ -93,9 +94,11 @@ shared_examples "a generic RecordComparer" do
         @comparer.call_remove_records_with_duplicate_criteria
         remaining = @comparer.chosen
         remaining.size.should eq 3
+        should_only_use_one_of_the_duplicates(remaining)
       end            
 
       it "removes records that aren't needed to match all criteria" do
+        deselect(@comparer, :DUPLICATE)
         @comparer.call_remove_redundancies
         remaining = @comparer.chosen
         remaining.size.should eq 2
@@ -104,7 +107,7 @@ shared_examples "a generic RecordComparer" do
 
       it "supplements chosen records until the minimum size is met" do
         @comparer.minimum_size = 3
-        @comparer.call_unchoose($messages["Palmer^Lois^REDUNDANT"],$messages["Palmer^Lois^DUPLICATE"])
+        deselect(@comparer, :DUPLICATE, :REDUNDANT)
         @comparer.call_supplement_chosen
         @comparer.chosen.size.should == 3 
       end   
