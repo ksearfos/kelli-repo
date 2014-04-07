@@ -1,23 +1,22 @@
-require 'mixins/TestRunnerMixin'
+require 'mixins/TestRunnerMixin_FileHandling'
 require 'mixins/RSpecMixin'
+require 'classes/TestRunner'
 
-class AutomatedTestsRunner
-  include TestRunnerMixIn, RSpecMixIn
+class AutomatedTestsRunner < TestRunner
+  include RSpecMixIn
   
   def initialize(type, debugging)
-    set_common_instance_variables(type, debugging) 
-    @input_file_pattern = @debugging ? /\A#{@message_type}_post_\d/ : /\w+_post_\d+\.dat/   
+    super(type, debugging) 
+    @input_file_pattern = /#{@message_type}_#{PRE_FILE_REGEX}/  
     @csv_file_suffix = "flagged_#{@message_type}_records.csv"
   end
 
   def run
     $logger = @logger    # rspec needs to be able to access the same logger
-    hl7_files = get_files(@input_directory, @input_file_pattern)  
-    hl7_files.each do |filename|   
+    get_hl7_files.each do |filename|   
       set_up_rspec
       test_messages_in_file(filename)
     end 
-    @logger.close 
   end
 
   private
@@ -35,11 +34,6 @@ class AutomatedTestsRunner
   # ----- string formation ----- #
   def result_file_prefix(file)
     "#{@logger.directory}/#{file_date_string(file)}"
-  end
-    
-  def file_date_string(filename)
-    file_date = filename.match(/_(\d+)\./)[1]    # date/time from the file
-    file_date ||= TIMESTAMP
   end
   
 end

@@ -62,6 +62,10 @@ module TestRunnerFileHandling
       @logger.child "#{handler.records.size} records found"
       handler
     end
-    
-  end
+
+  def file_date_string(filename)
+    file_date = filename.match(/_(\d+)\./)[1]    # date/time from the file
+    file_date ||= @timestamp
+  end    
+end
 

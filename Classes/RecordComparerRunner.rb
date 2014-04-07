@@ -52,14 +52,14 @@ class RecordComparerRunner < TestRunner
   def gather_temp_results(infile)
     file_handler = create_file_handler(infile)
     file_handler.do_in_increments do |set_of_records| 
-      set_up_comparer(set_of_records, false)   # sets @comparer
+      set_up_comparer(set_of_records)   # sets @comparer
       do_intermediate_comparison(@temp_file)
     end
   end
   
   def gather_final_results(outfile = "")
     file_handler = create_file_handler(@temp_file)
-    set_up_comparer(file_handler.records, true)   # sets @comparer     
+    set_up_org_sensitive_comparer(file_handler.records)   # sets @comparer     
     outfile.empty? ? do_final_comparison : do_intermediate_comparison(outfile)
     remove_file(@temp_file)
   end

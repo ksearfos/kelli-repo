@@ -9,12 +9,21 @@ module ComparerMixIn
     # creates RecordComparer or OrgSensitiveRecordComparer object
     # takes an array of strings, and a boolean
     # returns nothing, but sets @comparer
-    def set_up_comparer(messages, org_specific)
+    def get_criteria(messages)
+      clazz = self.class
       criteria_args = [messages, @message_type]
-      criteria_args << self.class.extra_criteria if self.class.instance_variable_defined?(:@extra_criteria)
-      criteria = OhioHealthUtilities.get_all_criteria_for_type(*criteria_args)
-      comparer_class = org_specific ? OrgSensitiveRecordComparer : RecordComparer
-      @comparer = comparer_class.new(messages, criteria)  
+      criteria_args << clazz.extra_criteria if clazz.instance_variable_defined?(:@extra_criteria)
+      OhioHealthUtilities.get_all_criteria_for_type(*criteria_args)
+    end
+    
+    def set_up_comparer(messages)
+      criteria = get_criteria(messages)
+      @comparer = RecordComparer.new(messages, criteria)  
+    end
+    
+    def set_up_org_sensitive_comparer(messages)
+      criteria = get_criteria(messages)
+      @comparer = OrgSensitiveRecordComparer.new(messages, criteria)  
     end
     
     # ----- output ----- # 

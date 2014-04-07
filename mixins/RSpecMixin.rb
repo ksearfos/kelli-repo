@@ -3,15 +3,15 @@ require 'HL7CSV'
 
 module RSpecMixIn
 
-    # creates the global variable @flagged, for use in rspec, and redirects stdout to point to the new rspec.log file
-    def set_up_rspec_for_file
+    # creates the global variable $flagged, for use in rspec, and redirects stdout to point to the new rspec.log file
+    def set_up_rspec
       $flagged = {}     # start with a clean hash
-      redirect_stdout("#{@result_file_prefix}_rspec.log") 
+      redirect_stdout("#{result_file_prefix}_rspec.log") 
     end
     
     # launches an instance of the RSpec::Core::Runner, and adds logging
     def run_rspec
-      @logger.section "Testing records..."
+      @logger.parent "Testing records..."
       RSpec::Core::Runner.run ["spec/conversion/#{@message_type}_spec.rb"]
     end
 
@@ -20,7 +20,7 @@ module RSpecMixIn
     # uses the subroutine compile_flagged_records_into_array and HL7CSV.make_spreadsheet_from_array  
     def save_flagged_records(csv_file)
       csv_array = compile_flagged_records_into_array
-      HL7CSV.make_spreadsheet_from_array(csv_file,csv_array)
+      HL7CSV.make_spreadsheet_from_array(csv_file, csv_array)
       @logger.info "See #{csv_file}"
     end
 
@@ -47,7 +47,7 @@ module RSpecMixIn
     end
 
     # I call this code in a few different places so I shoved it into a method
-  	def extract_errors
+  	def self.extract_errors
       $flagged.values.flatten.uniq
     end
   
@@ -57,11 +57,7 @@ module RSpecMixIn
     # returns an array of PASSED and FAILED
   	def errors_in_row(errors_for_message)
       values = []
-      extract_errors.each do |error|    # I chose not to use the ternary operator purely for readability
-        if errors_for_message.include?(error) then values << "FAILED"
-        else values << "PASSED"
-        end
-      end    
+      extract_errors.each { |error| values << errors_for_message.include?(error) ? "FAILED" : "PASSED" }  
       values
     end
   

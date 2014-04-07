@@ -79,16 +79,13 @@ class RecordComparer
    
   # called by determine_record_criteria and criteria_matched_without_record
   def get_criteria(records = @records_and_criteria.keys)
-    criteria = []
-    records.each { |record| criteria << @records_and_criteria[record] }
+    criteria = records.map { |record| @records_and_criteria[record] }
     criteria.flatten.uniq
   end 
 
   # called by determine_record_criteria  
   def passing_criteria(record)
-    passed = []
-    @criteria.each { |name,proc| passed << name if proc.call(record) }
-    passed  
+    @criteria.select { |_,proc| proc.call(record) }.keys
   end
 
   # called by remove_records_with_duplicate_criteria
