@@ -1,0 +1,19 @@
+# Logfile created on 2014-04-07 14:53:49 -0400 by logger.rb/31641
+I, [2014-04-07T14:53:49.061770 #14572]  INFO -- : 
+checking C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data for files...
+I, [2014-04-07T14:53:49.061770 #14572]  INFO -- : == 7 file(s) found
+I, [2014-04-07T14:54:53.227438 #6816]  INFO -- : 
+checking C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data for files...
+I, [2014-04-07T14:54:53.227438 #6816]  INFO -- : == 7 file(s) found
+I, [2014-04-07T14:55:19.045945 #5880]  INFO -- : 
+checking C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data for files...
+I, [2014-04-07T14:55:19.061571 #5880]  INFO -- : == 7 file(s) found
+I, [2014-04-07T14:55:49.267651 #10892]  INFO -- : 
+checking C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data for files...
+I, [2014-04-07T14:55:49.283277 #10892]  INFO -- : == 7 file(s) found
+I, [2014-04-07T14:57:45.659787 #12000]  INFO -- : 
+checking C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data for files...
+I, [2014-04-07T14:57:45.659787 #12000]  INFO -- : == 7 file(s) found
+I, [2014-04-07T14:57:45.659787 #12000]  INFO -- : 
+extracting records from C:/Users/Owner/Documents/Code/git/ohioHealth-phase1/spec/runner_unit_tests/test_data/lab_pre_1.txt...
+I, [2014-04-07T14:57:49.699303 #12000]  INFO -- : == 2190 records found

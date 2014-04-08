@@ -8,7 +8,9 @@ describe "TestRunner class" do
   describe "#log_file_name" do
     it "returns a file name based on the class name" do
       TestRunner.log_file_name.should include "test_runner"
-      SpecHelperClass.log_file_name.should include "spec_helper_class"
+      
+      class NewTestClass < TestRunner; end
+      NewTestClass.log_file_name.should include "new_test_class"
     end
     
     it "includes a unique timestamp" do
