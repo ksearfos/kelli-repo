@@ -15,6 +15,7 @@ class RecordComparerRunner < TestRunner
     @temp_file = "#{@logger.directory}/#{TEMP_FILENAME}"
     @csv_file = ""
     @comparer = nil
+    @excluded = []
   end
 
   def run
@@ -30,7 +31,9 @@ class RecordComparerRunner < TestRunner
     save_results_to_csv(records)
   end
   
-  private
+  def exclude_records_in_file(csv_file)
+    @excluded = HL7CSV.csv_to_record_rows(csv_file)
+  end
   
   # ----- top-level delegation: looping through file trees ----- #    
   def compare_original_files    
@@ -48,7 +51,9 @@ class RecordComparerRunner < TestRunner
     end
     gather_final_results
   end  
-  
+
+  private
+    
   # ----- mid-level delegation: comparing groups of records ----- #
   def gather_temp_results(infile)
     file_handler = create_file_handler(infile)
@@ -67,6 +72,7 @@ class RecordComparerRunner < TestRunner
 
   # ----- bottom-level delegation: sectionalizing for second pass ----- #
   def do_intermediate_comparison(outfile)
+    @comparer.records_to_avoid = @excluded
     compare
     write_intermediate_results(outfile)
   end

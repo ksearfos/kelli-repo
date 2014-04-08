@@ -1,5 +1,5 @@
 require 'CSV'
-require 'lib/hl7/HL7'
+require 'lib/HL7CSV_Classes'
 
 # really just exists to add methodology to treat HL7 objects
 # as excel-writable
@@ -14,17 +14,17 @@ module HL7CSV
 
   class HL7::Message    
     def to_row  
-      dets = HL7CSV.get_details( @type )
-      d = details( *dets )
+      columns = HL7CSV.get_details(@type)
+      message_row_info = details(*columns)
       
-      # theoretically, the next part is unnecessary, since dets.values should be in the desired order
+      # theoretically, the next part is unnecessary, since message_row_info should be in the desired order
       # but in case it isn't, since the return order matters....
       row = []
-      dets.each{ |key| row << d[key] }
+      columns.each { |key| row << message_row_info[key] }
       row
     end
   end
-
+  
   # requires array_of_rows that looks like [ [hdr1], [rec1], [rec2] ... ]     
   def self.make_spreadsheet_from_array( file, array_of_rows )
     sorted = HL7CSV.csv_sort( array_of_rows )
@@ -93,4 +93,10 @@ module HL7CSV
     
     sized_ary.each{ |row| puts row.join(sep) }
   end
+  
+  def self.csv_to_record_rows(csv_file)
+    all_rows = CSV.read(csv_file)
+    all_rows.shift   # first row is headers, and we can figure those out based on type
+  end
+
 end

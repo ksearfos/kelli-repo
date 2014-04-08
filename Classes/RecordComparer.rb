@@ -1,10 +1,11 @@
 # last tested 4/7
 require 'lib/extended_base_classes'
+require 'lib/HL7CSV'    # where row is defined
 
 class RecordComparer
   
   attr_reader :records_and_criteria
-  attr_writer :minimum_size
+  attr_writer :minimum_size, :records_to_avoid
   
   def initialize(records, criteria)
     @records_and_criteria = Hash.new_from_array(records, [])
@@ -19,6 +20,7 @@ class RecordComparer
   
   def analyze
     return unless @records_and_criteria.size > @minimum_size   # if we need all the records, we already have the "smallest number"
+    remove_unwanted_records
     remove_records_with_duplicate_criteria
     remove_redundancies  
     supplement_chosen
@@ -77,6 +79,12 @@ class RecordComparer
       unchoose(record) if is_redundant?(record)
     end
   end
+  
+  # called by analyze
+  def remove_unwanted_records
+    unwanted = @used_records.select { |record| exclude?(record) }
+    unchoose(unwanted)
+  end
    
   # called by determine_record_criteria and criteria_matched_without_record
   def get_criteria(records = @records_and_criteria.keys)
@@ -134,7 +142,8 @@ class RecordComparer
   def set_starting_values
     @used_records = @records_and_criteria.keys
     @unused_records = []
-    @minimum_size = 1      # smallest number of records to return
+    @minimum_size = 1        # smallest number of records to return
+    @records_to_avoid = []   # records to exclude from search results
   end
   
   def chose_enough?
@@ -149,5 +158,9 @@ class RecordComparer
     if chose_enough? || !records_left_to_take? then 0
     else @minimum_size - @used_records.size
     end
+  end
+  
+  def exclude?(record)
+    @records_to_avoid.include?(record.to_row)
   end
 end  
