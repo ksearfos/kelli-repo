@@ -14,7 +14,7 @@ class RecordComparer
     determine_record_criteria      # populates @records_and_criteria.values
     @records_and_criteria.freeze   # once set, this should never be changed!
     
-    set_starting_values            # sets @used_records, @unused_records, @minimum_value
+    set_starting_values            # sets @used_records, @unused_records, @minimum_size, @records_to_avoid
     @matched_criteria = get_criteria
   end
   
@@ -83,7 +83,7 @@ class RecordComparer
   # called by analyze
   def remove_unwanted_records
     unwanted = @used_records.select { |record| exclude?(record) }
-    unchoose(unwanted)
+    unchoose(*unwanted)
   end
    
   # called by determine_record_criteria and criteria_matched_without_record
@@ -100,6 +100,7 @@ class RecordComparer
   # called by remove_records_with_duplicate_criteria
   def unchoose(*records)
     records.each do |record|
+      raise "Cannot unchoose a #{record.class}!" if !record.is_a? HL7::Message
       @unused_records << record
       @used_records.delete(record)
     end

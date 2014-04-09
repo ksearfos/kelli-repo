@@ -35,6 +35,8 @@ class RecordComparerRunner < TestRunner
     @excluded = HL7CSV.csv_to_record_rows(csv_file)
   end
   
+  private
+  
   # ----- top-level delegation: looping through file trees ----- #    
   def compare_original_files    
     get_hl7_files.each do |file| 
@@ -51,8 +53,6 @@ class RecordComparerRunner < TestRunner
     end
     gather_final_results
   end  
-
-  private
     
   # ----- mid-level delegation: comparing groups of records ----- #
   def gather_temp_results(infile)
