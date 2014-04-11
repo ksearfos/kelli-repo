@@ -10,7 +10,7 @@ shared_examples "RecordComparer" do
   
   it "connects a record to all criteria matched" do
     record = $messages["Palmer^Lois^G"]
-    expect(comparer.records_and_criteria[record]).to eq([:obx_sodium, :obx_chloride, :female])
+    expect(comparer.records_and_criteria[record]).to eq([:obx_sodium, :obx_chloride, :female].to_set)
   end
   
   describe "#reset" do

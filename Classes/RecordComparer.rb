@@ -1,18 +1,22 @@
 # last tested 4/7
-require 'lib/extended_base_classes'
-require 'lib/HL7CSV'    # where row is defined
+require_relative '../lib/extended_base_classes'
+require_relative '../lib/HL7CSV'    # where row is defined
 
 class RecordComparer
   
   attr_reader :records_and_criteria
   attr_writer :minimum_size, :records_to_avoid
   
-  def initialize(records, criteria)
-    @records_and_criteria = Hash.new_from_array(records, [])
+  def initialize(criteria,*record_criteria_maps)
+    @records_and_criteria = {}
+    record_criteria_maps.each { |map| @records_and_criteria[map.record] = map.matched_criteria }
+    # @records_and_criteria = Hash.new_from_array(records, [])
     @criteria = criteria
+    # @criteria = @records_and_criteria.clone.values.uniq!
+    # @records_and_criteria.values.each(&:choose)
     
-    determine_record_criteria      # populates @records_and_criteria.values
-    @records_and_criteria.freeze   # once set, this should never be changed!
+    #determine_record_criteria      # populates @records_and_criteria.values
+    # @records_and_criteria.freeze   # once set, this should never be changed!
     
     set_starting_values            # sets @used_records, @unused_records, @minimum_size, @records_to_avoid
     @matched_criteria = get_criteria
@@ -45,7 +49,7 @@ class RecordComparer
   end
   
   def matched
-    @matched_criteria.sort
+    @matched_criteria
   end
   
   private

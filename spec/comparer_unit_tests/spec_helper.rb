@@ -1,9 +1,16 @@
-require 'classes/RecordComparer'
-require 'classes/OrgSensitiveRecordComparer'
+require 'test_classes'
+# require_relative '../../classes/RecordCriteriaMap'
+# require 'classes/RecordComparer'
+# require 'classes/OrgSensitiveRecordComparer'
 require 'lib/OHmodule/OhioHealthUtilities'
-require 'lib/SeriesNonseriesSupport.rb'
+# require 'lib/SeriesNonseriesSupport.rb'
 require 'rspec'
 require 'rspec/expectations'
+
+RSpec.configure do |c|
+  c.fail_fast = true
+  c.formatter = :documentation
+end
 
 file = HL7::FileHandler.new("#{File.dirname(__FILE__)}/test_data.txt")
 $messages = {}
@@ -17,11 +24,11 @@ $criteria = { obx_potassium:Proc.new { |rec| OhioHealthUtilities.is_val?(rec,"ob
               male:Proc.new { |rec| OhioHealthUtilities.is_val?(rec, "pid8", "M") },
               female:Proc.new { |rec| OhioHealthUtilities.is_val?(rec, "pid8", "F") }
             }
-
-RSpec.configure do |c|
-  c.fail_fast = true
-  c.formatter = :documentation
-end
+# $maps = [ RecordCriteriaMap.new($messages["Palmer^Lois^G"], $criteria.clone), 
+          # RecordCriteriaMap.new($messages["Palmer^Lois^DUPLICATE"], $criteria.clone),
+          # RecordCriteriaMap.new($messages["Smith^John^W"], $criteria.clone),
+          # RecordCriteriaMap.new($messages["Palmer^Lois^REDUNDANT"], $criteria.clone)
+        # ]
 
 class RecordComparer
   attr_reader :used_records, :unused_records, :matched_criteria, :minimum_size

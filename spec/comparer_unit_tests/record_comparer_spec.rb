@@ -7,7 +7,7 @@ require 'shared_examples'
 describe "RecordComparer" do
 
   before(:all) do
-    @comparer = RecordComparer.new($messages.values, $criteria)
+    @comparer = RecordComparer.new($criteria, *$maps)
   end
   
   it_behaves_like "RecordComparer" do
