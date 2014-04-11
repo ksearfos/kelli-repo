@@ -31,7 +31,7 @@ class CustomizedLogger < Logger
     
   def close
     info "Exiting..."
-    close
+    super
   end  
 
   private

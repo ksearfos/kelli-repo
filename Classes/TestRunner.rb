@@ -6,8 +6,7 @@ require 'lib/utility_methods'
 class TestRunner
   include TestRunnerFileHandling
 
-  class << self; attr_reader :timestamp; end
-  @timestamp = Time.now.strftime("%H%M_%m-%d-%Y")     # HHMM_MM-DD-YYYY
+  TIMESTAMP = Time.now.strftime("%H%M_%m-%d-%Y")     # HHMM_MM-DD-YYYY
   
   def initialize(type, debugging)
     @debugging = debugging   # just a flag -- affects whether files are deleted and level of detail of output
@@ -23,7 +22,7 @@ class TestRunner
     clazz = name
     clazz.gsub!(/([A-Z])/, '_\1' )    # you must use single quotes when using a back-reference to a regex match
     clazz.downcase!
-    "#{@timestamp}_#{clazz}.log"
+    "#{TIMESTAMP}_#{clazz}.log"
   end
 
   def shutdown

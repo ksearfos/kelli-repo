@@ -6,17 +6,10 @@ require 'lib/extended_base_classes'
 require 'lib/hl7/HL7'
 # require 'lib/OHmodule/OHProcs'
 
-INFILE = "C:/Users/Owner/Documents/script_input/rad_pre.txt"
+INFILE = "C:/Users/Owner/Documents/script_input/manifest_rad201404021205.txt"
 
-module Include; CONST = :stuff; end
-
-class Testing
-  include Include
-
-  def initialize; puts CONST.to_s; end
-end
-
-t = Testing.new
+file_handler = HL7::FileHandler.new(INFILE)
+file_handler.records.first.view_segments
 
 =begin
 handler = HL7::FileHandler.new( INFILE, 15000 )

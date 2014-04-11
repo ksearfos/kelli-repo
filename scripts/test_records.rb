@@ -1,5 +1,7 @@
 #!/bin/env ruby
 
+$LOAD_PATH.unshift(File.expand_path("../..", __FILE__))
+require 'Classes/AutomatedTestsRunner'
 require 'trollop'   # command-line argument parsing
 
 # set up the defaults
@@ -25,6 +27,6 @@ Trollop::die :record_type, "is required" unless opts[:record_type_given]
 Trollop::die :record_type, "unknown type '#{rec_type}'" unless RECORD_TYPES.has_key?(rec_type)
 
 # the actual "script" portion
-test_runner = AutomatedTestRunner.new(RECORD_TYPES[rec_type], opts[:test_mode])
+test_runner = AutomatedTestsRunner.new(RECORD_TYPES[rec_type], opts[:test_mode])
 test_runner.run
 test_runner.shutdown

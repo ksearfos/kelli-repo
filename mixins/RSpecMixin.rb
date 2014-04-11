@@ -1,6 +1,6 @@
 # last tested 4/7
 require 'rspec'
-require 'HL7CSV'
+require 'lib/HL7CSV'
 
 module RSpecMixIn
   
@@ -11,15 +11,15 @@ module RSpecMixIn
 
   # now, onto the instance methods
   # creates the global variable $flagged, for use in rspec, and redirects stdout to point to the new rspec.log file
-  def set_up_rspec
+  def set_up_rspec(file)
     $flagged = {}     # start with a clean hash
-    redirect_stdout("#{result_file_prefix}_rspec.log") 
+    redirect_stdout("#{result_file_prefix(file)}_rspec.log") 
   end
     
   # launches an instance of the RSpec::Core::Runner, and adds logging
   def run_rspec
     @logger.parent "Testing records..."
-    RSpec::Core::Runner.run ["spec/conversion/#{@message_type}_spec.rb"]
+    RSpec::Core::Runner.run ["#{File.dirname(__FILE__)}/../spec/conversion/#{@message_type}_spec.rb"]
   end
 
   # saves all records in $flagged to the specified file

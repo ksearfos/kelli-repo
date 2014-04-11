@@ -83,6 +83,13 @@ shared_examples "RecordComparer" do
         @comparer.chosen.should_not include $messages["Palmer^Lois^REDUNDANT"]
         should_only_use_one_of_the_duplicates(@comparer.chosen)
       end
+      
+      it "ignores records if told to" do
+        records_to_avoid = [%w(04089927 Palmer^Lois^DUPLICATE 19330102 A1134833697 46504 201112141232)]        
+        @comparer.records_to_avoid = records_to_avoid
+        @comparer.analyze
+        @comparer.chosen.should_not include $messages["Palmer^Lois^DUPLICATE"]
+      end
     end
 
     context "redundant records exist" do

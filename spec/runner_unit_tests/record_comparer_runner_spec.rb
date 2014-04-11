@@ -14,7 +14,7 @@ describe "RecordComparerRunner" do
       @runner.run
     end
     
-    it "runs comparisons of records in all input files and stores the results in logs/results" do
+    it "runs comparisons of records in all input files" do
       File.exists?(@runner.results_file).should be_true
       File.zero?(@runner.results_file).should_not be_true
       HL7::FileHandler.new(@results_file).size.should >= 5

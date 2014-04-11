@@ -46,6 +46,7 @@ module HL7
     
     @@eol = "\n"    # the end-of-line character we are using
     attr_reader :records, :file_text, :file
+    attr_writer :max_records
     
     # NAME: new
     # DESC: creates a new HL7::FileHandler object from a text file
