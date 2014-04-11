@@ -2,14 +2,16 @@
 
 $LOAD_PATH.unshift File.dirname __FILE__    # phase_1_testing directory
 require 'lib/extended_base_classes'
-# require 'run_record_comparer'
 require 'lib/hl7/HL7'
-# require 'lib/OHmodule/OHProcs'
-
+require 'classes/CustomizedLogger'
 INFILE = "C:/Users/Owner/Documents/script_input/manifest_rad201404021205.txt"
-
-file_handler = HL7::FileHandler.new(INFILE)
-file_handler.records.first.view_segments
+ 
+logger = CustomizedLogger.new("C:/Users/Owner/Documents", "log")
+logger.parent "Parent"
+logger.child "child"
+logger.warn "warning"
+logger.error "Problem"
+logger.info "other stuff"
 
 =begin
 handler = HL7::FileHandler.new( INFILE, 15000 )

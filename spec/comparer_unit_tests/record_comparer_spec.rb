@@ -13,18 +13,5 @@ describe "RecordComparer" do
   it_behaves_like "RecordComparer" do
     let(:comparer){ @comparer }
   end
- 
-  describe "#analyze" do
-    before(:all) do
-      @comparer.reset
-      @comparer.analyze
-    end
-    
-    it "returns the smallest statistically-significant subset of records" do
-      used = @comparer.chosen
-      used.should include $messages["Smith^John^W"]
-      used.should_not include $messages["Palmer^Lois^REDUNDANT"]
-      should_only_use_one_of_the_duplicates(used)
-    end
-  end
+
 end

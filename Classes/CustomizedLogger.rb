@@ -21,12 +21,13 @@ class CustomizedLogger < Logger
   end
     
   def child(message)
-    info "== #{message.downcase}"
+    info "-- #{message.downcase}"
   end
 
   def parent(message)
+    self << "\n"
     modified_message = "#{message[0].downcase}#{message [1..-1]}"
-    info "\n#{modified_message}"
+    info "#{modified_message}"
   end
     
   def close
@@ -43,8 +44,8 @@ class CustomizedLogger < Logger
 
   # called initialize
   def format_logger 
-    datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-    formatter = Proc.new do |severity,datetime,prog,msg|
+    self.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
+    self.formatter = Proc.new do |severity,datetime,prog,msg|
       "#{datetime} #{severity}: #{msg}\n"
     end
   end

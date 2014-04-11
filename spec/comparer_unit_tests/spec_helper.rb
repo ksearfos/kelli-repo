@@ -20,6 +20,7 @@ $criteria = { obx_potassium:Proc.new { |rec| OhioHealthUtilities.is_val?(rec,"ob
 
 RSpec.configure do |c|
   c.fail_fast = true
+  c.formatter = :documentation
 end
 
 class RecordComparer
