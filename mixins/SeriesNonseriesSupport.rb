@@ -13,6 +13,7 @@ module SeriesNonseriesSupport
   
   SERIES_RATIO = 2.0/100
   SERIES_IDENTIFIER = proc { |record| record.series? }
+  SERIES_PROPORTION = SeriesProportion.new(SERIES_RATIO, SERIES_IDENTIFIER)
   
   class SeriesProportion < Proportion
     def initialize(elements)
@@ -20,7 +21,7 @@ module SeriesNonseriesSupport
     end
   end
 
-  def self.new_proportion(records)
-    SeriesProportion.new(SERIES_RATIO, records, SERIES_IDENTIFIER)
+  def self.make_new_evaluator(records)
+    ProportionEvaluator.new(SERIES_PROPORTION, records)
   end
 end

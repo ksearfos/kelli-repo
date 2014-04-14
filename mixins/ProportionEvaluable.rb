@@ -11,43 +11,47 @@ module ProportionEvaluable
       @inverse_set = @all_elements - @proportion_set 
     end
       
-    def take_set_amount(amount)
+    def take_from_both_sets(amount)
       amount_of_proportion = amount_to_reach_ratio(amount)
       amount_of_inverse = amount - amount_of_a
       @proportion_set.take(amount_of_proportion) + @inverse_set.take(amount_of_inverse)
-    end   
+    end  
+    
+    # takes from @proportion_set if amount is positive, otherwise takes from @inverse_set
+    def take_from_correct_set(amount)
+      negative?(amount) ? @inverse_set.take(amount.abs) : @proportion_set.take(amount)
+    end 
 
-    # as takes_set_amount, except determines amount for you and allows for a size limit
-    def take_enough_to_fix_proportions(limit)
-      return [] if enough_elements?
-      amount = [ideal_amount_to_take, limit].min
-      take_set_amount(amount)
-    end   
+    # returning a negative number means to take that amount from the inverse set
+    def amount_that_fixes_proportions(limit)
+      return 0 if enough_elements?
+      amount = ideal_amount_to_take
+      smaller_amount(amount, limit)
+    end  
+    
+    def current_size
+      @proportion_set.size
+    end 
     
     private
     
     # called by take_enough_to_fix_proportions
     def enough_elements?
-      current_ratio >= @proportion.ratio  
+      current_ratio >= @proportion  
     end
    
     # called by enough_elements?
     def current_ratio
-      @proportion_set.size / @all_elements.size
+      current_size / @all_elements.size
     end 
     
-    # called by take_minimum
-    # def ideal_amount_to_take
-      # amount_of_a = amount_that_fixes_proportions(@proportion_a)
-      # amount_of_b = amount_that_fixes_proportions(@proportion_b)
-      # amount_of_a + amount_of_b
-    # end
-#     
-    # # called by ideal_amount_to_take
-    # def amount_that_fixes_proportions(proportion)
-      # tentative_amount = proportion.amount_to_add
-      # tentative_amount < 0 ? 0 : tentative_amount    # negatives don't really make sense here
-    # end  
+    # I determined the formula to use here algebraically:
+    #+ (records_of_type + x_more) / (total_records + x_more) = type_proportion
+    #+ x_more = (type_proportion * total_records - records_of_type) / (1 - type_proportion) 
+    def calculate_amount_to_add
+      amount_to_add = ideal_size - current_size
+      (amount_to_add / @proportion.inverse_ratio)   # yes, do keep negative numbers negative
+    end 
     
     # called by take_set_amount
     def amount_to_reach_ratio(amount_to_add)
@@ -56,16 +60,39 @@ module ProportionEvaluable
       make_into_realistic_number(desired_amount - current_amount)
     end
     
-    # called by amount_to_reach_ratio
+    # called by amount_to_reach_ratio, calculate_amount_to_add
     def make_into_realistic_number(amount)
-      amount < 0 ? 0 : amount.ceil
+      negative?(amount) ? 0 : amount.ceil
     end 
+    
+    # called by calculate_amount_to_add
+    def ideal_size
+      @proportion.apply(@all_elements)
+    end
+    
+    # compares absolute values, but returns actual value (positive or negative)
+    def smaller_amount(amount1, amount2)
+      amount1.abs > amount2.abs ? amount1 : amount2
+    end
+    
+    def negative?(amount)
+      amount < 0
+    end
   end
       
   class Proportion
+    include Comparable
+    
     def initialize(ratio, &identifier)
       @ratio = ratio
       @identifier = identifier
+    end
+    
+    def <=>(other_ratio)
+      if @ration > other_ratio then 1
+      elsif other_ratio > @ratio then -1
+      else 0
+      end  
     end
     
     def find_elements_in(set)
@@ -76,19 +103,9 @@ module ProportionEvaluable
       amount * @ratio
     end
     
-    # I determined the formula to use here algebraically
-    #+ (records_of_type + x_more) / (total_records + x_more) = type_proportion
-    #+ x_more = (type_proportion * total_records - records_of_type) / (1 - type_proportion)  
-    #+        = amount_we_need_to_fix_current_size / (inverse_proportion)
-    # def calculate_amount_to_add
-      # amount_to_add = ideal_size - my_size
-      # amount_to_add < 0 ? 0 : amount_to_add / (1 - @ratio)
-    # end
-    
-    # def amount_to_reach_ratio(amount_to_add)
-      # desired_amount = scale(amount_to_add + @all_elements.size)
-      # (desired_amount - my_size).ceil
-    # end
+    def inverse_ratio
+      1 - @ratio
+    end
     
     private
     
