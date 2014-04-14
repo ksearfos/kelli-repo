@@ -1,16 +1,17 @@
-# last tested 4/7
+require 'mixins/SizeRestrictable'
+require 'classes/ListOfMaps'
 
 class RecordComparer
+  include SizeRestrictable
   
   def initialize(list_of_maps)
-    @list_of_maps = list_of_maps
-    @starting_value_setters = [proc { choose(@list_of_maps) }]    # start with all maps "chosen" 
+    @list_of_maps = list_of_maps 
     set_starting_values   
   end
   
   def analyze    
-    redundancies = ListOfMaps.new(@list_of_maps.find_redundancies)
-    unchoose(redundancies) 
+    unchoose(@list_of_maps.find_redundancies) 
+    supplement
   end
   
   def chosen
@@ -44,6 +45,20 @@ class RecordComparer
   end
 
   def set_starting_values
-    @starting_value_setters.each { |setter| setter.call }
+    choose(@list_of_maps.maps)
+    set_size(1)
   end
+  
+  def size
+    chosen.size
+  end
+  
+  def add(amount) 
+    choose(take_random(amount))
+  end
+  
+  def take_random(amount)
+    unchosen.shuffle.take(amount)
+  end
+  
 end  

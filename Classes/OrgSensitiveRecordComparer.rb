@@ -1,5 +1,4 @@
-# last tested 4/7
-require 'lib/SeriesNonseriesSupport'
+require 'mixins/SeriesNonseriesSupport'
 require 'classes/RecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
@@ -8,62 +7,37 @@ require 'classes/RecordComparer'
 class OrgSensitiveRecordComparer < RecordComparer
   include SeriesNonseriesSupport
   
-  def initialize(recs, type)
+  def initialize(list_of_maps)
     super
   end
   
-  def fix_proportions
-    return if !records_left_to_take? || series_proportion_is_correct?  
-
-    type = needed_type
-    ideal_amount = SeriesNonseriesSupport.amount_that_fixes_proportion(@used_records, type)
-    size_cap = (@used_records.size * 0.10).ceil   # don't add too many records - 10% is arbitrary
-    realistic_amount = [ideal_amount, size_cap].min
-    choose_random_records_of_type(realistic_amount, type)
+  def analyze
+    super
+    fix_proportions
   end
   
   private
-
-  # called by remove_records_with_duplicate_criteria
-  def unchoose_all_but_one(records)
-    needed_type_records = records_of_needed_type(records)
-    records_to_remove = records    
-    kept_record = needed_type_records.empty? ? records.shuffle.shift : needed_type_records.shuffle.shift 
-    records_to_remove.delete(kept_record)
-    unchoose(*records_to_remove)
-  end  
-
-  # called by analyze
-  def supplement_chosen
-    supplement_chosen_with_type(:series)
-    supplement_chosen_with_type(:nonseries)
-  end
- 
-  def supplement_chosen_with_type(type)
-    desired_amount = @minimum_size * SeriesNonseriesSupport.const_get("#{type.upcase}_PROPORTION")
-    current_amount = SeriesNonseriesSupport.number_of_records_of_type(@used_records, type)
-    amount_to_reach_desired = (desired_amount - current_amount).ceil
-    realistic_amount = [amount_to_reach_desired, amount_to_reach_minimum_size].min
-    choose_random_records_of_type(realistic_amount, type)
+  
+  def fix_proportions
+    add(chosen_evaluator.take_minimum(size_cap))
   end
   
-  def choose_random_records_of_type(amount, type)
-    return if amount <= 0
-    pool = records_of_needed_type(@unused_records)
-    choose(*pool.shuffle.take(amount))
+  def size_cap
+    size_cap = (chosen.size * 0.10).ceil   # don't add too many records - 10% is arbitrary
   end
 
-  # aliasing for SeriesNonseriesSupport methods
-  def records_of_needed_type(records)
-    SeriesNonseriesSupport.get_records_of_type(records, needed_type)
+  # add method calles take_random
+  def take_random(amount)
+    unchosen_evaluator.take_proportionately(amount)
   end
-
-  def series_proportion_is_correct?
-    SeriesNonseriesSupport.series_proportion(@used_records) == SERIES_PROPORTION
-  end  
   
-  def needed_type
-    SeriesNonseriesSupport.needed_type(@used_records)
+  # can't really use instance variables, since these will keep changing as records are chosen/unchosen
+  def chosen_evaluator
+    SeriesNonseriesSupport.instantiate_proportion(chosen)
   end
-
+    
+  def unchosen_evaluator
+    SeriesNonseriesSupport.instantiate_proportion(unchosen)
+  end
+  
 end  

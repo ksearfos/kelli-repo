@@ -7,25 +7,22 @@ class RecordComparerRunner < TestRunner
   # this could very easily change for a subclass
   @extra_criteria = { sending_facility:"msh3" }
   
-  def initialize(type, debugging, minimum_size)
-    super(type, debugging)    
+  def initialize(type, minimum_size)
+    @input_directory = FileIO::INPUT_DIRECTORY
+    super(type)    
     @minimum_size = minimum_size
     @input_file_pattern = /#{@message_type}_#{PRE_FILE_REGEX}/
-    @results_file = "#{@logger.directory}/#{RESULTS_FILENAME}"
-    @temp_file = "#{@logger.directory}/#{TEMP_FILENAME}"
-    @csv_file = ""
     @comparer = nil
-    @excluded = []
   end
 
   def run
-    @csv_file = construct_csv_filename("selected")
+    @csv_file = csv_filename("selected")
     compare_original_files
     compare_results_files  
   end
 
   def supplement_existing
-    @csv_file = construct_csv_filename("supplemental")
+    @csv_file = csv_filename("supplemental")
     @logger.info "Selecting #{@minimum_size} records at random"
     records = get_random_records.take(@minimum_size)
     save_results_to_csv(records)
@@ -41,7 +38,7 @@ class RecordComparerRunner < TestRunner
   def compare_original_files    
     get_hl7_files.each do |file| 
       gather_temp_results(file)
-      gather_final_results("#{@results_file}_#{File.basename(file)}")   
+      gather_final_results(results_filename(File.basename(file)))   
     end 
   end
   
@@ -101,8 +98,16 @@ class RecordComparerRunner < TestRunner
   end
   
   # ----- string formation ----- #
-  def construct_csv_filename(detail)
-    "#{@logger.directory}/#{@timestamp}_#{detail}_#{@message_type}_records.csv"
+  def temp_filename
+    "#{@logger.directory}/#{FileIO.TEMP_FILENAME}"
+  end
+  
+  def results_filename(tag)
+    "#{@logger.directory}/#{tag}_results.txt"
+  end
+  
+  def csv_filename(detail)
+    "#{@logger.directory}/#{FileIO::TIMESTAMP}_#{detail}_#{@message_type}_records.csv"
   end  
   
 end

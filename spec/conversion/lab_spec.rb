@@ -55,7 +55,7 @@ describe "OhioHealth Lab record" do
       logic = Proc.new{ |msg|
         obx = msg[:OBX]
         return true if obx.nil?
-        msg[:OBR].specimen_source !~ /[^A-z]/
+        msg[:OBR].specimen_source !~ /[^A-z ]/
       }
       @failed = pass?( @messages, logic )
       @failed.should be_empty
@@ -64,7 +64,7 @@ describe "OhioHealth Lab record" do
 
   context "the observation/results" do
     it "have a valid component ID", :pattern => "ends with LA01" do
-      logic = Proc.new{ |obx| obx.field(:component_id).last == 'LA01' }
+      logic = Proc.new{ |obx| obx.component_id == '&GDT' || obx.field(:component_id).last == 'LA01' }
       @failed = pass_for_each?( @messages, logic, :OBX )
       @failed.should be_empty
     end

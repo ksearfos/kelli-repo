@@ -124,8 +124,8 @@ shared_examples "lab and rad records" do
       @failed.should be_empty    
     end
 
-    it "has a valid service ID", :pattern => "letters, numbers, and spaces" do
-      logic = Proc.new{ |msg| msg[:OBR][4] !~ /[^A-Z0-9 \^]/ }
+    it "has a valid service ID", :pattern => "letters, numbers, carets, underscores, and spaces" do
+      logic = Proc.new{ |msg| msg[:OBR][4] !~ /[^A-Z0-9_ \^]/ }
       @failed = pass?( @messages, logic )
       @failed.should be_empty    
     end 

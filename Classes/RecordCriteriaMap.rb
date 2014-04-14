@@ -18,7 +18,7 @@ class RecordCriteriaMap
     
     if other_criteria.superset?(@criteria) then -1
     elsif @criteria.supserset?(other_criteria) then 1
-    elsif 0    # @criteria == other_criteria
+    else 0    # @criteria == other_criteria
     end
   end
   
@@ -26,12 +26,12 @@ class RecordCriteriaMap
 
   # called by initialize
   def determine_record_criteria(criteria_list)
-    criteria_list.keep_if { |_,proc| matches(proc) }
+    criteria_list.keep_if { |_,proc| satisfies_criterion?(proc) }
     criteria_list.keys.to_set
   end 
 
   # called by determine_record_criteria  
-  def matches(proc)
+  def satisfies_criterion?(proc)
     proc.call(@record)
   end
 
