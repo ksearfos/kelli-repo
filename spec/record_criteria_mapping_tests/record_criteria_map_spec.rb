@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'spec_helper'
-require 'chooseable_spec'
+require 'spec/mixin_unit_tests/chooseable_spec'
 
 describe RecordCriteriaMap do
   before(:all) do
