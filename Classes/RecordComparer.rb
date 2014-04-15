@@ -2,7 +2,8 @@ require 'mixins/SizeRestrictable'
 require 'classes/ListOfMaps'
 
 class RecordComparer
-  include SizeRestrictable
+  include SizeRestrictable  
+  attr_reader :list_of_maps
   
   def initialize(list_of_maps)
     @list_of_maps = list_of_maps 

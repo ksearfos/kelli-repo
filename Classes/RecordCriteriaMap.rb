@@ -16,6 +16,7 @@ class RecordCriteriaMap
   # called by initialize
   def determine_record_criteria(criteria_list)
     criteria_list.keep_if { |_,proc| satisfies_criterion?(proc) }
+    criteria_list.keys
   end 
 
   # called by determine_record_criteria  

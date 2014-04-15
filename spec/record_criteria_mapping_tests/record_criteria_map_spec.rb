@@ -1,9 +1,10 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'spec_helper'
+require 'chooseable_spec'
 
 describe RecordCriteriaMap do
   before(:all) do
-	  @map = TestRecordCriteriaMap.new($criteria_with_procs)
+	  @map = RecordCriteriaMap.new(nil, $criteria_with_procs)
 	end
 	
   it "has a record" do
@@ -11,16 +12,10 @@ describe RecordCriteriaMap do
   end
   
   it "knows which criteria are matched" do
-    expect(@map.criteria).to eq($criteria.to_set)
+    expect(@map.criteria).to eq($criteria)
   end
   
-  it "can be selected" do
-    @map.choose
-    expect(@map).to be_chosen
-  end
-  
-  it "can be de-selected" do
-    @map.unchoose
-    expect(@map).not_to be_chosen
+  it_behaves_like Chooseable do
+    let(:object) { @map }
   end
 end

@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../../", __FILE__)
-require 'test_classes'
+require 'classes/RecordCriteriaMap'
+require 'classes/ListOfMaps'
 require 'rspec'
 require 'rspec/expectations'
 require 'rspec/mocks'
