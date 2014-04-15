@@ -1,4 +1,4 @@
-require_relative '../classes/RecordCriteriaMap'
+require 'classes/RecordCriteriaMap'
 
 class ListOfMaps
   attr_reader :matched_criteria
