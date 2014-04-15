@@ -60,6 +60,16 @@ class Array
     !new.empty?                        # is there anything left?
   end
 
+  def find_duplicates
+    full_list = select { |element| count(element) > 1 }
+    full_list.uniq
+  end
+  
+  # as delete, except not destructive
+  def remove(*elements)
+    self - elements
+  end
+  
   def make_table   # should be an array of arrays
     num_cols = self.size
     max_rows = 0

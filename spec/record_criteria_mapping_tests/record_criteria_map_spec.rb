@@ -14,18 +14,13 @@ describe RecordCriteriaMap do
     expect(@map.criteria).to eq($criteria.to_set)
   end
   
-  it "can be compared to other maps" do
-    duplicate_map = TestRecordCriteriaMap.new($criteria_with_procs)
-    expect(@map).to eq(duplicate_map)
-  end
-  
   it "can be selected" do
     @map.choose
-    expect(@map.chosen).to be_true
+    expect(@map).to be_chosen
   end
   
   it "can be de-selected" do
     @map.unchoose
-    expect(@map.chosen).to be_false
+    expect(@map).not_to be_chosen
   end
 end

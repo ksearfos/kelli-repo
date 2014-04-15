@@ -1,10 +1,8 @@
-# last tested 4/11
-project_directory = File.expand_path("../", File.dirname(__FILE__))
-$:.unshift(project_directory)
-require 'classes/Chooseable'
+# last tested 4/15
+require 'mixins/Chooseable'
 
 class RecordCriteriaMap
-  include Chooseable, Comparable
+  include Chooseable
   
   attr_reader :record, :criteria
   
@@ -13,21 +11,11 @@ class RecordCriteriaMap
     @criteria = determine_record_criteria(all_possible_criteria)   # will be a Set, not an Array
   end
   
-  def <=>(other_map)
-    other_criteria = other_map.criteria
-    
-    if other_criteria.superset?(@criteria) then -1
-    elsif @criteria.supserset?(other_criteria) then 1
-    else 0    # @criteria == other_criteria
-    end
-  end
-  
   private
 
   # called by initialize
   def determine_record_criteria(criteria_list)
     criteria_list.keep_if { |_,proc| satisfies_criterion?(proc) }
-    criteria_list.keys.to_set
   end 
 
   # called by determine_record_criteria  

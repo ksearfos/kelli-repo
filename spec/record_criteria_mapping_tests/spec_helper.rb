@@ -1,8 +1,8 @@
-$LOAD_PATH.unshift(File.dirname(__FILE__).join("../../"))
-puts $LOAD_PATH[0...2]
+$LOAD_PATH.unshift File.expand_path("../../../", __FILE__)
 require 'test_classes'
 require 'rspec'
 require 'rspec/expectations'
+require 'rspec/mocks'
 
 RSpec.configure do |c|
   c.fail_fast = true

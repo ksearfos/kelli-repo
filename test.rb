@@ -5,24 +5,7 @@ require 'lib/extended_base_classes'
 require 'lib/hl7/HL7'
 require 'classes/CustomizedLogger'
 INFILE = "C:/Users/Owner/Documents/script_input/manifest_rad201404021205.txt"
- 
-logger = CustomizedLogger.new("C:/Users/Owner/Documents", "log")
-logger.parent "Parent"
-logger.child "child"
-logger.warn "warning"
-logger.error "Problem"
-logger.info "other stuff"
 
-=begin
-handler = HL7::FileHandler.new( INFILE, 15000 )
-records = handler.records
-count_series = Proc.new{ |recs|
-  count = 0
-  recs.each{ |r| count += 1 if OHProcs::SERIES_ENC.call(r) }
-  count
-}
-
-puts "File contains #{count_series.call(records)} series encounters out of #{records.size} total encounters"
-after = LIMIT_SERIES_ENCOUNTERS.call(records)
-puts "After limiting, we have #{count_series.call(after)} series encounters out of #{after.size} total encounters"
-=end
+array = [1,2,3,4]
+puts array.remove(3) * ','
+puts array * ','
