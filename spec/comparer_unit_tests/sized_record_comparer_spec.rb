@@ -21,23 +21,20 @@ describe RecordComparer do
     let(:object) { @comparer }
   end
 
-  describe "#reset" do
-    it "sets the minimum size to 1" do   
-      @comparer.reset
-      expect(@comparer.minimum_size).to eq(1)
+  context "extends RecordComparer functionality" do
+    describe "#reset" do
+      it "also sets the minimum size to 1" do   
+        @comparer.reset
+        expect(@comparer.minimum_size).to eq(1)
+      end
+    end
+  
+    describe "#analyze" do
+      it "also chooses random records until minimum size is reached" do
+        expect(@comparer).to receive(:supplement)
+        @comparer.analyze
+      end
     end
   end
-  
-   describe "#analyze" do
-     it "chooses the smallest number of records that meet all criteria" do
-       @comparer.set_size(1)
-       @comparer.analyze
-       expect(@comparer.chosen).to eq([$needed_record, $extra_record])
-    end
-
-    it "chooses random records until minimum size is reached" do
-      expect(@comparer).to receive(:supplement)
-      @comparer.analyze
-    end
-  end 
+   
 end
