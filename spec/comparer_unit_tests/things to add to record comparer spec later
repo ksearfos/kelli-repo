@@ -1,0 +1,14 @@
+      
+      it "ignores specific records" do
+        records_to_avoid = [%w(04089927^^^STAR^^1 Palmer^Lois^DUPLICATE 19330102 A1134833697 46504 201112141232)]
+        comparer.reset        
+        comparer.records_to_avoid = records_to_avoid
+        comparer.analyze
+        expect(comparer.chosen).not_to include $messages["Palmer^Lois^DUPLICATE"]
+      end
+      
+      it "supplements chosen records until the minimum size is met" do
+        comparer.minimum_size = 3
+        comparer.analyze
+        expect(comparer.chosen.size).to eq(3) 
+      end 
