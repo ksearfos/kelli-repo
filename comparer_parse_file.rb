@@ -5,10 +5,10 @@ require 'test_runner_helper'
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-TYPE = :lab
+TYPE = :enc
 FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
-FPATT = ( TESTING ? /^#{TYPE}_post\./ : /^\w+_pre_\d+\.dat$/ )
-LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
+FPATT = ( TESTING ? /^#{TYPE}_pre\./ : /^\w+_pre_\d+\.dat$/ )
+LOG_DIR = "#{FTP}/logs"
 PFX = LOG_DIR + "/#{dt}_"
 LOG_FILE = PFX + "comparer_parse_testrunner.log"
 MAX_RECS = 10000

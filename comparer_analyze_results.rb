@@ -5,9 +5,9 @@ require 'test_runner_helper'
 
 dt = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 TESTING = true  # make some changes if this is being run for testing
-SET_SIZE = 1024
-FTP = "D:/FTP"
-LOG_DIR = TESTING ? "#{$LOAD_PATH[0]}/logs" : "#{FTP}/logs"
+SET_SIZE = TESTING ? 1 : 1024
+FTP = TESTING ? "C:/Users/Owner/Documents/script_input" : "d:/FTP"
+LOG_DIR = "#{FTP}/logs"
 PFX = "#{LOG_DIR}/#{dt}_"
 LOG_FILE = PFX + "comparer_analyze_testrunner.log"
 

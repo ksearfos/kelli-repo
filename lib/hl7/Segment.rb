@@ -168,7 +168,7 @@ module HL7
     # EXAMPLE:
     #  segment.all_fields(2) => [ field1-1, field2-1, field3-1 ]
     #  segment.all_fields(:beta) => [ field1-1, field2-1, field3-1 ] 
-    def all_field_valuess( which )
+    def all_fields( which )
       i = field_index(which)
 
       all = []
@@ -186,7 +186,7 @@ module HL7
     # EXAMPLE:
     #  segment.all_field_values(2) => [ "b", "b2", "b3" ]
     #  segment.all_field_values(:beta) => [ "b", "b2", "b3" ] 
-    def all_field_valuess( which )
+    def all_field_values( which )
       i = field_index(which)
 
       all = []
