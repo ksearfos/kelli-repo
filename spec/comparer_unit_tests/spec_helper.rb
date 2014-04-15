@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path("../../../", __FILE__)
 require 'classes/RecordComparer'
+require 'classes/SizedRecordComparer'
 require 'rspec'
 require 'rspec/expectations'
 require 'rspec/mocks'

@@ -4,8 +4,6 @@ require 'classes/RecordComparer'
 class SizedRecordComparer < RecordComparer
   include SizeRestrictable  
   
-  attr_reader :minimum_size
-  
   def initialize(list_of_maps)
     super  
   end
@@ -27,10 +25,10 @@ class SizedRecordComparer < RecordComparer
   end
   
   def add(amount) 
-    choose(take_random(amount))
+    choose(take(amount))
   end
   
-  def take_random(amount)
+  def take(amount)
     unchosen.shuffle.take(amount)
   end
   
