@@ -1,3 +1,4 @@
+# last tested 4/15
 module ProportionEvaluation
     
   class Evaluator
