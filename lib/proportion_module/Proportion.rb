@@ -1,4 +1,4 @@
-# last tested 4/7
+# last tested 4/15
 require 'lib/hl7/HL7'
 
 module ProportionEvaluation
