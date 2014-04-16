@@ -7,7 +7,7 @@ module ProportionEvaluable
     def initialize(proportion, set)
       @proportion = proportion
       @all_elements = set
-      @proportion_set = @proportion.find_elements_in(@all_elements)
+      @proportion_set = @proportion.elements_in_set(@all_elements)
       @inverse_set = @all_elements - @proportion_set 
     end
       
@@ -37,12 +37,7 @@ module ProportionEvaluable
     
     # called by take_enough_to_fix_proportions
     def enough_elements?
-      current_ratio >= @proportion  
-    end
-   
-    # called by enough_elements?
-    def current_ratio
-      current_size / @all_elements.size
+      @proportion.exemplified_by?(@all_elements)  
     end 
     
     # I determined the formula to use here algebraically:
@@ -55,7 +50,7 @@ module ProportionEvaluable
     
     # called by take_set_amount
     def amount_to_reach_ratio(amount_to_add)
-      desired_amount = @proportion.apply(amount_to_add + @all_elements.size)
+      desired_amount = ideal_size(amount_to_add + @all_elements.size)
       current_amount = @proportion_set.size
       make_into_realistic_number(desired_amount - current_amount)
     end
@@ -66,8 +61,8 @@ module ProportionEvaluable
     end 
     
     # called by calculate_amount_to_add
-    def ideal_size
-      @proportion.apply(@all_elements)
+    def ideal_size(set_size = @all_elements.size)
+      @proportion.apply(set_size)
     end
     
     # compares absolute values, but returns actual value (positive or negative)
@@ -80,27 +75,29 @@ module ProportionEvaluable
     end
   end
       
-  class Proportion
-    include Comparable
+  class Proportion    
+    attr_reader :ratio
     
-    def initialize(ratio, &identifier)
+    def initialize(ratio, identifier)
       @ratio = ratio
       @identifier = identifier
     end
     
-    def <=>(other_ratio)
-      if @ration > other_ratio then 1
-      elsif other_ratio > @ratio then -1
-      else 0
-      end  
+    def exemplified_by?(set)
+      target_number = apply(set.size).round    # likely to be a decimal
+      number_of_elements_in_set(set) == target_number
     end
     
-    def find_elements_in(set)
+    def number_of_elements_in_set(set)
+      elements_in_set(set).size
+    end
+    
+    def elements_in_set(set)
       my_elements(set)
     end
     
-    def apply(amount)
-      amount * @ratio
+    def apply(number)
+      number * @ratio
     end
     
     def inverse_ratio
@@ -110,8 +107,8 @@ module ProportionEvaluable
     private
     
     # called by initialize
-    def my_elements
-      @elements.select { |element| @identifier.call(element) }
+    def my_elements(all_elements)
+      all_elements.select { |element| @identifier.call(element) }
     end
   end
   

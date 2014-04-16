@@ -1,10 +1,10 @@
 require 'mixins/SeriesNonseriesSupport'
-require 'classes/RecordComparer'
+require 'classes/SizedRecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
 # of the SERIES encounters versus non-SERIES among the organiation and tries to give results that also fit
 # these proportions
-class OrgSensitiveRecordComparer < RecordComparer
+class OrgSensitiveRecordComparer < SizedRecordComparer
   
   def initialize(list_of_maps)
     super
@@ -26,8 +26,8 @@ class OrgSensitiveRecordComparer < RecordComparer
     size_cap = (chosen.size * 0.10).ceil   # don't add too many records - 10% is arbitrary
   end
 
-  # add() method calls take_random, supplement() calls add(), and analyze() calls supplement()
-  def take_random(amount)
+  # add() method calls take, supplement() calls add(), and analyze() calls supplement()
+  def take(amount)
     unchosen_evaluator.take_from_both_sets(amount)
   end
   

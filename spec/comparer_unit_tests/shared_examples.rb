@@ -1,5 +1,4 @@
-shared_examples RecordComparer do
-    
+shared_examples RecordComparer do    
   it "has a list of record-criteria maps" do
     expect(comparer).to respond_to :list_of_maps
   end
@@ -40,6 +39,23 @@ shared_examples RecordComparer do
       @comparer.analyze
       expect(@comparer.chosen).to eq([$needed_record, $extra_record])
     end
-  end
+  end  
+end
+
+shared_examples SizedRecordComparer do
+  context "extends RecordComparer functionality" do
+    describe "#reset" do
+      it "also sets the minimum size to 1" do   
+        comparer.reset
+        expect(comparer.minimum_size).to eq(1)
+      end
+    end
   
+    describe "#analyze" do
+      it "also chooses random records until minimum size is reached" do
+        expect(comparer).to receive(:supplement)
+        comparer.analyze
+      end
+    end
+  end
 end
