@@ -18,8 +18,8 @@ class OrgSensitiveRecordComparer < SizedRecordComparer
   private
   
   def fix_proportions
-    amount = chosen_evaluator.amount_that_fixes_proportions(size_cap)
-    unchosen_evaluator.take_from_correct_set(amount)
+    amount = chosen_evaluator.evaluate(size_cap)
+    unchosen_evaluator.take_from_single_set(amount)
   end
   
   def size_cap
@@ -28,7 +28,7 @@ class OrgSensitiveRecordComparer < SizedRecordComparer
 
   # add() method calls take, supplement() calls add(), and analyze() calls supplement()
   def take(amount)
-    unchosen_evaluator.take_from_both_sets(amount)
+    unchosen_evaluator.take_proportionately(amount)
   end
   
   # can't really use instance variables, since these will keep changing as records are chosen/unchosen

@@ -7,72 +7,91 @@ module ProportionEvaluable
     def initialize(proportion, set)
       @proportion = proportion
       @all_elements = set
-      @proportion_set = @proportion.elements_in_set(@all_elements)
-      @inverse_set = @all_elements - @proportion_set 
+      @qualifying_elements = @proportion.elements_in_set(@all_elements)
+      @nonqualifying_elements = @all_elements - @qualifying_elements 
     end
       
-    def take_from_both_sets(amount)
-      amount_of_proportion = amount_to_reach_ratio(amount)
-      amount_of_inverse = amount - amount_of_a
-      @proportion_set.take(amount_of_proportion) + @inverse_set.take(amount_of_inverse)
+    def take_proportionately(amount)
+      qualifying_amount = how_many_qualifying_elements?(amount)
+      nonqualifying_amount = amount - qualifying_amount
+      take(qualifying_amount, nonqualifying_amount)
     end  
     
-    # takes from @proportion_set if amount is positive, otherwise takes from @inverse_set
-    def take_from_correct_set(amount)
-      negative?(amount) ? @inverse_set.take(amount.abs) : @proportion_set.take(amount)
+    # takes from @qualifying_elements if amount is positive, otherwise takes from @nonqualifying_elements
+    def take_from_single_set(amount)
+      subset(which_set?(amount), amount)
     end 
 
-    # returning a negative number means to take that amount from the inverse set
-    def amount_that_fixes_proportions(limit)
+    # returning a negative number means to take that amount from the nonqualifying set
+    def evaluate(limit = 0)
       return 0 if enough_elements?
-      amount = ideal_amount_to_take
-      smaller_amount(amount, limit)
+      recommended = how_many_will_fix_proportion?
+      limit = 0 ? recommended : smaller_magnitude(recommended, limit)
     end  
-    
-    def current_size
-      @proportion_set.size
-    end 
     
     private
     
-    # called by take_enough_to_fix_proportions
+    # ----- size-related methods ----- #
+    
+    # called by how_many_will_fix_proportion?, number_of_qualifying_to_add
+    def current_size
+      @qualifying_elements.size
+    end 
+    
+    # called by evaluate
     def enough_elements?
       @proportion.exemplified_by?(@all_elements)  
     end 
     
-    # I determined the formula to use here algebraically:
-    #+ (records_of_type + x_more) / (total_records + x_more) = type_proportion
-    #+ x_more = (type_proportion * total_records - records_of_type) / (1 - type_proportion) 
-    def calculate_amount_to_add
-      amount_to_add = ideal_size - current_size
-      (amount_to_add / @proportion.inverse_ratio)   # yes, do keep negative numbers negative
+    # ----- calculation methods ----- #
+    
+    # called by evaluate
+    # (records_of_type + x_more) / (total_records + x_more) = type_proportion
+    #+  ==>  x_more = (type_proportion * total_records - records_of_type) / (1 - type_proportion) 
+    #+  result may be positive or negative
+    def how_many_will_fix_proportion?
+      (@proportion.apply(@all_elements.size) - current_size) / @proportion.inverse_ratio
     end 
     
-    # called by take_set_amount
-    def amount_to_reach_ratio(amount_to_add)
-      desired_amount = ideal_size(amount_to_add + @all_elements.size)
-      current_amount = @proportion_set.size
-      make_into_realistic_number(desired_amount - current_amount)
+    # called by take_proportionately
+    def how_many_qualifying_elements?(amount_to_add)
+      larger_set_size = @all_elements.size + amount_to_add
+      return_as_a_usable_number(number_of_qualifying_to_add(larger_set_size))
+    end
+
+    # called by how_many_qualifying_elements?
+    def number_of_qualifying_to_add(set_size)
+      desired_amount = @proportion.apply(set_size)
+      desired_amount - current_size
     end
     
-    # called by amount_to_reach_ratio, calculate_amount_to_add
-    def make_into_realistic_number(amount)
-      negative?(amount) ? 0 : amount.ceil
-    end 
-    
-    # called by calculate_amount_to_add
-    def ideal_size(set_size = @all_elements.size)
-      @proportion.apply(set_size)
+    # ----- methods that manipulate @qualified_elements/@nonqualified_elements
+    # called by take_from_single_set
+    def which_set?(number)
+      number.negative? ? @nonqualifying_elements : @qualifying_elements
     end
     
+    # called by take_proportonately
+    def take(qualifying_amount, nonqualifying_amount)
+      subset(@qualifying_elements, qualifying_amount) + subset(@nonqualifying_elements, nonqualifying_amount)
+    end
+    
+    # called by take, take_from_single_set
+    def subset(set, amount)
+      set.shuffle.take(amount)
+    end
+
+    # ----- numeric result manipulation ----- #
+    # called by how_many_qualifying_elements?
+    def return_as_a_usable_number(amount)
+      amount.negative? ? 0 : amount.ceil
+    end
+    
+    # called by evaluate
     # compares absolute values, but returns actual value (positive or negative)
-    def smaller_amount(amount1, amount2)
+    def smaller_magnitude(amount1, amount2)
       amount1.abs > amount2.abs ? amount1 : amount2
-    end
-    
-    def negative?(amount)
-      amount < 0
-    end
+    end   
   end
       
   class Proportion    
@@ -111,5 +130,15 @@ module ProportionEvaluable
       all_elements.select { |element| @identifier.call(element) }
     end
   end
-  
+
+  class TypedSet
+    attr_reader :size, ratio
+    
+    def initialize(elements, ratio)
+      @elements = elements
+      @size = @elements.size
+      @ratio = ratio
+    end
+  end
+ 
 end

@@ -135,3 +135,13 @@ class Hash
     self.delete_if{ |key,_| keys.include?( key ) }
   end
 end
+
+class Numeric
+  def positive?
+    self > 0
+  end
+  
+  def negative?
+    self < 0
+  end
+end

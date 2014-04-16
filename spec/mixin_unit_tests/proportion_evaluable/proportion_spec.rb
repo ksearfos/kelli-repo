@@ -1,4 +1,4 @@
-# passed testing 4/
+# passed testing 4/15
 $LOAD_PATH.unshift File.expand_path('../..',__FILE__)   # mixins directory
 require 'spec_helper'
 
