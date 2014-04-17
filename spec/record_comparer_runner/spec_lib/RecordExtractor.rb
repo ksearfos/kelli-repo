@@ -4,20 +4,29 @@ require 'ListOfRecordMaps'
 class RecordExtractor
   include HL7  
   
-  attr_reader :files
+  attr_reader :files, :records
   MAX_RECORDS = 10000
   
   def initialize(files)
     @files = files
     read_in_next_file
+    @records = get_current_set
   end
   
-  def get_records
-    return_current_set
+  def do_for_all_records(&block)
+    until @records.empty?
+      yield(@records)
+      get_records
+    end
   end
   
   private
   
+  def get_records
+    prepare_next_set
+    @records = get_current_set 
+  end
+
   # ----- File iteration ----- #
   def read_in_next_file
     @file_handler = nil   # reset
@@ -31,12 +40,6 @@ class RecordExtractor
   # ----- Record iteration ----- #
   def get_current_set
     @file_handler ? @file_handler.records : []
-  end
-  
-  def return_current_set
-    @records = get_current_set
-    prepare_next_set    
-    @records
   end
   
   def prepare_next_set
