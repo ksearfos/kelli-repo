@@ -15,12 +15,11 @@ class RecordComparerRunner < TestRunner
   end
   
   def run
-    begin
-      records = @extractor.records
-      @record_list = ListOfRecordMaps.new(records)
+    @extractor.do_for_all_records do |records|
+      @record_list = new_list(records)
       @results = compare_records
       save_results
-    end until @extractor.get_records.empty?
+    end
   end
   
   def save_results
@@ -32,5 +31,10 @@ class RecordComparerRunner < TestRunner
   def compare_records
     comparer = Comparer.new(@record_list)
     comparer.analyze
+  end
+  
+  def new_list(records)
+    record_maps = [] #records.map { |record| RecordCriteriaMap.new(record) }
+    ListOfRecordMaps.new(record_maps)
   end
 end
