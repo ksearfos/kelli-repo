@@ -27,11 +27,13 @@ if hl7_files.empty?
   $logger.info "No new files found.\n"
 else
   $logger.info "Found #{hl7_files.size} new file(s)\n"
-  hl7_files.each{ |fname|
+  until hl7_files.empty?   # I am hoping that doing it this way will clear up memory as we go along
+    fname = hl7_files.shift
     file = "#{FTP}/#{fname}"
     outfile = LOG_DIR + "/results_#{fname}"
     tmp = PFX + "temp_results"
-
+    file_handler = nil    # reset
+    
     file_handler = get_records( file, MAX_RECS )    
     if file_handler.nil?   # will be nil if file was empty
       remove_files( [file] )   # remove even if we are testing! it's empty!!
@@ -50,7 +52,7 @@ else
       remove_files( [tmp] )  
       # remove_files( [file] ) unless TESTING
     end
-  }  
+  end  
 end
 
 $logger.info "Exiting..."
