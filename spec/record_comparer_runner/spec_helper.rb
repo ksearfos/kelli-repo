@@ -8,3 +8,10 @@ RSpec.configure do |c|
   c.fail_fast = true
   c.formatter = :documentation
 end
+
+class TestComparer < Comparer
+  def analyze
+    get_records
+    super
+  end
+end

@@ -4,12 +4,17 @@ class Comparer
   attr_reader :records
   
   def initialize(files)
-    extractor = RecordExtractor.new(@files)
-    @records = extractor.records
+    @extractor = RecordExtractor.new(files)
+    @records = get_records
   end
   
   def analyze
-    search_records
+    until @records.empty?
+      search_records
+      @records = get_records
+    end
+    
+    []   #return chosen or some such
   end
   
   private
@@ -17,4 +22,9 @@ class Comparer
   def search_records
     @records.identify_best_subset
   end
+  
+  def get_records
+    @extractor.get_records
+  end
+
 end
