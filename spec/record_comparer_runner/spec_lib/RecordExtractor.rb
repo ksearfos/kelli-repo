@@ -30,24 +30,25 @@ class RecordExtractor
   
   # ----- Record iteration ----- #
   def get_current_set
-    @records = @file_handler ? @file_handler.records : []
+    @file_handler ? @file_handler.records : []
   end
   
   def return_current_set
-    get_current_set
+    @records = get_current_set
     prepare_next_set    
     @records
   end
   
   def prepare_next_set
-    return if @file_handler.nil?
-    
     queue_next
-    read_in_next_file if @file_handler.records.empty?
+    read_in_next_file if no_more_records_in_file
   end
   
   def queue_next
     @file_handler.next      # get new records
   end
 
+  def no_more_records_in_file
+    @file_handler.records.empty?
+  end
 end

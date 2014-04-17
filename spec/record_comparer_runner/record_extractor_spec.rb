@@ -3,9 +3,14 @@ require 'spec_helper'
 
 describe RecordExtractor do
   before(:each) do
-    files = %w(file1 file2 file3)
-    RecordExtractor.any_instance.stub(:get_current_set).and_return([1, 2, 3], [4, 5, 6]) 
-    @extractor = RecordExtractor.new(files)   
+    @files = %w(file1 file2 file3)
+    @set1 = [1]
+    @set2 = [2]
+    RecordExtractor.any_instance.stub(:get_current_set).and_return(@set1, @set2, []) 
+    RecordExtractor.any_instance.stub(:set_up_new_file_handler)
+    RecordExtractor.any_instance.stub(:no_more_records_in_file) { true }
+    RecordExtractor.any_instance.stub(:queue_next)
+    @extractor = RecordExtractor.new(@files)   
   end
   
   it "exists" do
@@ -29,7 +34,7 @@ describe RecordExtractor do
   end
   
   context "when there are too many records to use at once" do
-    before(:all) do
+    before(:each) do
       @first_set = @extractor.get_records
       @second_set = @extractor.get_records
     end
@@ -46,4 +51,31 @@ describe RecordExtractor do
       expect(@first_set).not_to eq(@second_set)
     end
   end
+  
+  describe "#get_records" do
+    it "returns the next group of records" do
+      expect(@extractor.get_records).to eq(@set1)  
+    end
+    
+    context "when all records in the file have been returned" do
+      it "reads records from the next file" do
+        files = @files.clone
+
+        until files.empty?
+          expect(@extractor.files.first).to eq(files.shift)
+          @extractor.get_records
+        end  
+      end
+    
+      context "when all the files have been read" do
+        it "returns an empty record list" do
+          until @extractor.files.empty?
+            @extractor.get_records
+          end
+          
+          expect(@extractor.get_records).to eq([])
+        end
+      end # context: all files read
+    end # context: all records returned
+  end # describe: #get_records
 end
