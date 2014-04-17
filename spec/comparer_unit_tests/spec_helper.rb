@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift File.expand_path("../../../", __FILE__)
 require 'classes/RecordComparer'
 require 'classes/SizedRecordComparer'
+require 'classes/ProportionateRecordComparer'
 require 'rspec'
 require 'rspec/expectations'
 require 'rspec/mocks'
@@ -13,6 +14,10 @@ end
 class TestRecord
   def initialize
     @chosen = false
+  end
+  
+  def series?
+    true
   end
   
   def choose
@@ -32,5 +37,6 @@ $redundant_record = TestRecord.new
 $duplicate_record = TestRecord.new
 $needed_record = TestRecord.new
 $extra_record = TestRecord.new
-$all_records = [$needed_record, $redundant_record, $duplicate_record, $extra_record]
+$series_record = TestRecord.new
+$all_records = [$needed_record, $redundant_record, $duplicate_record, $extra_record, $series_record]
 $criteria = [:criterion1, :criterion2]

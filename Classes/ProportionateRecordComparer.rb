@@ -1,10 +1,10 @@
-require 'mixins/SeriesNonseriesSupport'
+require 'lib/proportion_module/SeriesNonseriesEvaluation'
 require 'classes/SizedRecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
 # of the SERIES encounters versus non-SERIES among the organiation and tries to give results that also fit
 # these proportions
-class OrgSensitiveRecordComparer < SizedRecordComparer
+class ProportionateRecordComparer < SizedRecordComparer
   
   def initialize(list_of_maps)
     super
@@ -18,8 +18,8 @@ class OrgSensitiveRecordComparer < SizedRecordComparer
   private
   
   def fix_proportions
-    amount = chosen_evaluator.evaluate(size_cap)
-    unchosen_evaluator.take_from_single_set(amount)
+    amount = chosen_evaluator.evaluate_up_to_limit(size_cap)
+    unchosen_evaluator.take(amount)
   end
   
   def size_cap
@@ -28,16 +28,16 @@ class OrgSensitiveRecordComparer < SizedRecordComparer
 
   # add() method calls take, supplement() calls add(), and analyze() calls supplement()
   def take(amount)
-    unchosen_evaluator.take_proportionately(amount)
+    unchosen_evaluator.take(amount)
   end
   
   # can't really use instance variables, since these will keep changing as records are chosen/unchosen
   def chosen_evaluator
-    SeriesNonseriesSupport.make_new_evaluator(chosen)
+    SeriesNonseriesEvaluation.make_new_evaluator(chosen)
   end
     
   def unchosen_evaluator
-    SeriesNonseriesSupport.make_new_evaluator(unchosen)
+    SeriesNonseriesEvaluation.make_new_evaluator(unchosen)
   end
   
 end  
