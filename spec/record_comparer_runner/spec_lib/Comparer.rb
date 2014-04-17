@@ -1,10 +1,20 @@
+require 'RecordExtractor'
+
 class Comparer
+  attr_reader :records
   
   def initialize(files)
-    @files = files
+    extractor = RecordExtractor.new(@files)
+    @records = extractor.records
   end
   
   def analyze
-    # return something
+    search_records
+  end
+  
+  private
+  
+  def search_records
+    @records.identify_best_subset
   end
 end
