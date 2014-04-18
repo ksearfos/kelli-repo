@@ -23,7 +23,7 @@ Dir.glob("./CSV/*.csv") do |csv_file|
   results.each do |result|
     result_columns = (result.size - DATA_COLUMNS)
     failures = 0.0
-	result[DATA_COLUMNS..-1].each do |col|
+    result[DATA_COLUMNS..-1].each do |col|
       failures += 1 if col.upcase == "FAILED"
     end
     output_data << result if (failures / result_columns) >= 0.5
