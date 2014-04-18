@@ -16,9 +16,9 @@ first_time = true
 Dir.glob("./CSV/*.csv") do |csv_file|
   results = CSV.read(csv_file)
   if first_time
-	  output_data << results[HEADER_ROW]
-	  DATA_COLUMNS = countDataColumns(results[HEADER_ROW])
-	  first_time = false
+    output_data << results[HEADER_ROW]
+    DATA_COLUMNS = countDataColumns(results[HEADER_ROW])
+    first_time = false
   end
   results.each do |result|
     result_columns = (result.size - DATA_COLUMNS)
