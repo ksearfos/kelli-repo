@@ -3,7 +3,15 @@ require 'spec_helper'
 require 'shared_examples'
 
 describe RecordComparerRunner do
-  before(:all) do
+  before(:each) do
+    RecordExtractor.any_instance.stub(:set_up_new_file_handler)
+    RecordExtractor.any_instance.stub(:do_for_all_records).and_yield([1, 2])
+    RecordComparerRunner.any_instance.stub(:new_list)
+    RecordComparerRunner.any_instance.stub(:compare_records) { %w(MRN NAME DOB VISIT# DATE) }   
+    HL7CSV.stub(:make_spreadsheet_from_array) do |file, results|
+      File.open(file, 'w+') { |f| f.puts results }
+    end  
+    
     @type = :lab
     @runner = RecordComparerRunner.new(@type)
   end
@@ -13,8 +21,8 @@ describe RecordComparerRunner do
     let(:runner) { @runner }
   end
   
-  it "has a list of files to compare" do
-    expect(@runner.files).to be_a Array
+  it "has a way to pull records out of files" do
+    expect(@runner.extractor).to be_a RecordExtractor
   end
   
   it "runs the comparison" do
@@ -32,7 +40,6 @@ describe RecordComparerRunner do
     end
     
     it "updates the results" do
-      @runner.stub(:compare_records) { [1, 2, 3, 4, 5] }
       @runner.run
       expect(@runner.results).not_to be_nil
     end
