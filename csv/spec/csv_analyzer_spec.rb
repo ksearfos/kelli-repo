@@ -16,11 +16,14 @@ describe CSVAnalyzer do
     expect(@analyzer.getCSVHeaderRow).to eq ["something","something else","another something","HAS SOMETHING","HAS ANOTHER","HAS A THIRD","HAS FOURTH"]
   end
 
-  it "counts columns to ignore" do
-    @analyzer.countIgnoredColumns(/^HAS/)
+  it "counts columns" do
+    expect(@analyzer.countColumns(/^HAS/)).to eq 4
+    expect(@analyzer.countColumns(/^HAS SOMETHING$/)).to eq 1
+  end
+
+  it "can set ignored columns" do
+    @analyzer.ignored_column_count = @analyzer.countColumns(/^HAS/)
     expect(@analyzer.ignored_column_count).to eq 4
-    @analyzer.countIgnoredColumns(/^HAS SOMETHING$/)
-    expect(@analyzer.ignored_column_count).to eq 1
   end
   
 end

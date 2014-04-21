@@ -20,10 +20,10 @@ class CSVAnalyzer
   end
   
   # regex param matches columns we ARE evaluating.
-  def countIgnoredColumns(regex, row=self.getCSVHeaderRow)
+  def countColumns(regex, row=self.getCSVHeaderRow)
     data_col_count = 0
     row.each { |col| data_col_count += 1 if col =~ regex }
-    @ignored_column_count = data_col_count
+    data_col_count
   end
 
   # Add csv file contents from a directory to @csv_data, 
