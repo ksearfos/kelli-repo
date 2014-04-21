@@ -18,20 +18,18 @@ class CSVAnalyzer
     @ignored_column_count = 0
     @data_columns = 0
   end
-
-  # Get a count of the columns we are NOT evaluating,
+  
   # regex param matches columns we ARE evaluating.
-  def countIgnoredColumns(row, regex)
+  def countColumns(regex, row=self.getCSVHeaderRow)
     data_col_count = 0
-    row.each { |col| data_col_count += 1 unless col =~ regex }
+    row.each { |col| data_col_count += 1 if col =~ regex }
     data_col_count
   end
 
   # Add csv file contents from a directory to @csv_data, 
   # dir_name is relative to csv root folder by default.
   def addToCSVDataFromDir(dir_name)
-    Dir.chdir(dir_name)
-    Dir.glob("*.csv") do |csv_file|
+    Dir.glob("#{dir_name}/*.csv") do |csv_file|
       csv_file_contents = CSV.read(csv_file)
       @csv_data += csv_file_contents
     end
@@ -42,18 +40,21 @@ class CSVAnalyzer
     csv_data_array[HEADER_ROW]
   end
 
-  def setOutputHeader(header)
-    @csv_output.insert(0, header)
+  def setOutputHeader(header, overwrite=false)
+    if overwrite
+      @csv_output[0] = header
+    else
+      @csv_output.insert(0, header)
+    end
   end
 
   def parseCSVData(header, search_term, precision)
     @csv_data.each do |row|
       matches = 0.0
-      result_columns = (result.size - @data_columns)
       unless row == header
-        row[@data_colums..-1].each { |col| matches += 1 if col == search_term }
+        row[@ignored_column_count..-1].each { |col| matches += 1 if col == search_term }
       end
-      @csv_output << row if (matches / result_columns) >= precision
+      @csv_output << row if (matches / @data_columns) >= precision
     end
   end
 
