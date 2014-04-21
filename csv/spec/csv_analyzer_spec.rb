@@ -26,5 +26,11 @@ describe CSVAnalyzer do
     @analyzer.ignored_column_count = @analyzer.countColumns(/^HAS/)
     expect(@analyzer.ignored_column_count).to eq 4
   end
+
+  it "sets the header row for output data" do
+    expect(@analyzer.csv_output).to be_empty
+    @analyzer.setOutputHeader(["one","two","buckle","my","shoe"])
+    expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
+  end
   
 end
