@@ -33,6 +33,13 @@ describe CSVAnalyzer do
     expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
   end
 
+  it "does not overwrite the current header row by default" do
+    @analyzer.csv_output[0] = %w(1 2 3 PASSED PASSED PASSED PASSED)
+    @analyzer.setOutputHeader(%w(first second third HAS\ ONE HAS\ TWO HAS\ THREE))
+    expect(@analyzer.csv_output.size).to eq 2
+    expect(@analyzer.getCSVHeaderRow(@analyzer.csv_output)).to eq ["first", "second", "third", "HAS ONE", "HAS TWO", "HAS THREE"]
+  end
+
   it "overwrites the current header if asked to" do
     @analyzer.setOutputHeader(["one","two","buckle","my","shoe"])
     expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
