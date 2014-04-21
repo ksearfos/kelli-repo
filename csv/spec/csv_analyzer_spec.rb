@@ -5,7 +5,7 @@ describe CSVAnalyzer do
 
   before(:each) do
     @analyzer = CSVAnalyzer.new
-    @analyzer.addToCSVDataFromDir("./csv_sample_dir")
+    @analyzer.addToCSVDataFromDir("./csv_sample_dir/input")
   end
 
   it "adds data from a CSV file" do
@@ -46,6 +46,13 @@ describe CSVAnalyzer do
     @analyzer.setOutputHeader(["three","four","shut","the","door"], true)
     expect(@analyzer.csv_output.size).to eq 1
     expect(@analyzer.csv_output[0]).to eq ["three","four","shut","the","door"]
+  end
+
+  it "adds desired rows to csv_output" do
+    header = @analyzer.getCSVHeaderRow
+    @analyzer.data_columns = @analyzer.countColumns(/^HAS/)
+    @analyzer.parseCSVData(header, "FAILED", 0.5)
+    expect(@analyzer.csv_output.size).to eq 2
   end
   
 end

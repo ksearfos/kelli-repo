@@ -51,11 +51,10 @@ class CSVAnalyzer
   def parseCSVData(header, search_term, precision)
     @csv_data.each do |row|
       matches = 0.0
-      result_columns = (result.size - @data_columns)
       unless row == header
-        row[@data_colums..-1].each { |col| matches += 1 if col == search_term }
+        row[@ignored_column_count..-1].each { |col| matches += 1 if col == search_term }
       end
-      @csv_output << row if (matches / result_columns) >= precision
+      @csv_output << row if (matches / @data_columns) >= precision
     end
   end
 
