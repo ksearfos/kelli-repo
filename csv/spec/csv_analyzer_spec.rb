@@ -3,7 +3,7 @@ require 'csv_analyzer'
 
 describe CSVAnalyzer do
 
-  before(:all) do
+  before(:each) do
     @analyzer = CSVAnalyzer.new
     @analyzer.addToCSVDataFromDir("./csv_sample_dir")
   end
@@ -22,6 +22,7 @@ describe CSVAnalyzer do
   end
 
   it "can set ignored columns" do
+    expect(@analyzer.ignored_column_count).to eq 0
     @analyzer.ignored_column_count = @analyzer.countColumns(/^HAS/)
     expect(@analyzer.ignored_column_count).to eq 4
   end
