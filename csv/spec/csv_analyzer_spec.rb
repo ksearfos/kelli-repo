@@ -13,11 +13,12 @@ describe CSVAnalyzer do
   end
 
   it "gets a header row from a CSV file" do
-    expect(@analyzer.getCSVHeaderRow).to eq ["something","something else","another something","HAS SOMETHING","HAS ANOTHER","HAS A THIRD"]
+    expect(@analyzer.getCSVHeaderRow).to eq ["something","something else","another something","HAS SOMETHING","HAS ANOTHER","HAS A THIRD","HAS FOURTH"]
   end
 
   it "counts columns to ignore" do
-    expect(@analyzer.countIgnoredColumns(/HAS/)).to eq 3
+    expect(@analyzer.countIgnoredColumns(/^HAS/)).to eq 4
+    expect(@analyzer.countIgnoredColumns(/^HAS SOMETHING$/)).to eq 1
   end
   
 end
