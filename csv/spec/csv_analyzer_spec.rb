@@ -17,8 +17,10 @@ describe CSVAnalyzer do
   end
 
   it "counts columns to ignore" do
-    expect(@analyzer.countIgnoredColumns(/^HAS/)).to eq 4
-    expect(@analyzer.countIgnoredColumns(/^HAS SOMETHING$/)).to eq 1
+    @analyzer.countIgnoredColumns(/^HAS/)
+    expect(@analyzer.ignored_column_count).to eq 4
+    @analyzer.countIgnoredColumns(/^HAS SOMETHING$/)
+    expect(@analyzer.ignored_column_count).to eq 1
   end
   
 end
