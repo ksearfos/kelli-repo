@@ -62,6 +62,7 @@ class CSVAnalyzer
   # with the same name.
   def exportCSV(file_name)
     CSV.open(file_name, "wb", {:force_quotes => false}) do |csv|
+      puts "writing csv file"
       @csv_output.each { |row| csv << row }
     end
   end

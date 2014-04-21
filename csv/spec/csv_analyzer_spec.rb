@@ -54,5 +54,16 @@ describe CSVAnalyzer do
     @analyzer.parseCSVData(header, "FAILED", 0.5)
     expect(@analyzer.csv_output.size).to eq 2
   end
+
+  it "exports data to a csv file" do
+    FileUtils.mkdir('./csv_sample_dir/output')
+    expect(Dir['./csv_sample_dir/output/*']).to be_empty
+    header = @analyzer.getCSVHeaderRow
+    @analyzer.data_columns = @analyzer.countColumns(/^HAS/)
+    @analyzer.parseCSVData(header, "FAILED", 0.5)
+    @analyzer.exportCSV('./csv_sample_dir/output/spec_out.csv')
+    expect(Dir['./csv_sample_dir/output/*.csv'].size).to eq 1
+    FileUtils.rm_rf('./csv_sample_dir/output')
+  end
   
 end
