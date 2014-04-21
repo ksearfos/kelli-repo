@@ -18,10 +18,8 @@ class CSVAnalyzer
     @ignored_column_count = 0
     @data_columns = 0
   end
-
-  # Get a count of the columns we are NOT evaluating,
   # regex param matches columns we ARE evaluating.
-  def countIgnoredColumns(row, regex)
+  def countIgnoredColumns(regex, row=self.getCSVHeaderRow)
     data_col_count = 0
     row.each { |col| data_col_count += 1 unless col =~ regex }
     data_col_count
