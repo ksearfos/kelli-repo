@@ -32,5 +32,13 @@ describe CSVAnalyzer do
     @analyzer.setOutputHeader(["one","two","buckle","my","shoe"])
     expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
   end
+
+  it "overwrites the current header if asked to" do
+    @analyzer.setOutputHeader(["one","two","buckle","my","shoe"])
+    expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
+    @analyzer.setOutputHeader(["three","four","shut","the","door"], true)
+    expect(@analyzer.csv_output.size).to eq 1
+    expect(@analyzer.csv_output[0]).to eq ["three","four","shut","the","door"]
+  end
   
 end

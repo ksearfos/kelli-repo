@@ -40,8 +40,12 @@ class CSVAnalyzer
     csv_data_array[HEADER_ROW]
   end
 
-  def setOutputHeader(header)
-    @csv_output.insert(0, header)
+  def setOutputHeader(header, overwrite=false)
+    if overwrite
+      @csv_output[0] = header
+    else
+      @csv_output.insert(0, header)
+    end
   end
 
   def parseCSVData(header, search_term, precision)
