@@ -3,10 +3,17 @@ require 'csv_analyzer'
 
 describe CSVAnalyzer do
 
-  it "gets data from a CSV file" do
-    analyzer = CSVAnalyzer.new
-    analyzer.addToCSVDataFromDir("./csv_sample_dir")
-    expect(analyzer.csv_data).not_to be_empty
+  before(:all) do
+    @analyzer = CSVAnalyzer.new
+    @analyzer.addToCSVDataFromDir("./csv_sample_dir")
+  end
+
+  it "adds data from a CSV file" do
+    expect(@analyzer.csv_data).not_to be_empty
+  end
+
+  it "gets a header row from a CSV file" do
+    expect(@analyzer.getCSVHeaderRow).to eq ["something","something else","another something","HAS SOMETHING","HAS ANOTHER","HAS A THIRD"]
   end
   
 end
