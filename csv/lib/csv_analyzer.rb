@@ -2,13 +2,14 @@
 # and parses it to analyze its contents.
 #
 # Author:: Tim Morgan (mailto:tmorgan@manifestcorp.com)
-require "csv"
+require 'csv'
 
 # This class provides methods necessary to parse throgh and analyze 
 # comma separated values files.
 class CSVAnalyzer
-  HEADER_ROW = 0 # The first row of a csv file contains header information
-
+  
+  HEADER_ROW = 0
+  
   attr_reader :csv_data, :csv_output
   attr_accessor :ignored_column_count, :data_columns
 
@@ -20,7 +21,7 @@ class CSVAnalyzer
   end
   
   # regex param matches columns we ARE evaluating.
-  def countColumns(regex, row=self.getCSVHeaderRow)
+  def count_columns(regex, row=self.get_header_row)
     data_col_count = 0
     row.each { |col| data_col_count += 1 if col =~ regex }
     data_col_count
@@ -28,27 +29,26 @@ class CSVAnalyzer
 
   # Add csv file contents from a directory to @csv_data, 
   # dir_name is relative to csv root folder by default.
-  def addToCSVDataFromDir(dir_name)
+  def add_to_csv_data_from_dir(dir_name)
     Dir.glob("#{dir_name}/*.csv") do |csv_file|
-      csv_file_contents = CSV.read(csv_file)
-      @csv_data += csv_file_contents
+      @csv_data += CSV.read(csv_file)
     end
   end
 
   # Get the header row from a csv data array.
-  def getCSVHeaderRow(csv_data_array=@csv_data)
-    csv_data_array[HEADER_ROW]
+  def get_header_row(csv_data_array=@csv_data)
+    csv_data_array.first
   end
 
-  def setOutputHeader(header, overwrite=false)
+  def set_output_header(header, overwrite=false)
     if overwrite
-      @csv_output[0] = header
+      @csv_output[HEADER_ROW] = header
     else
       @csv_output.insert(0, header)
     end
   end
 
-  def parseCSVData(header, search_term, precision)
+  def parse_csv_data(header, search_term, precision)
     @csv_data.each do |row|
       matches = 0.0
       unless row == header
@@ -60,10 +60,11 @@ class CSVAnalyzer
 
   # Write @csv_output to a file, overwrites any existing file
   # with the same name.
-  def exportCSV(file_name)
+  def export_csv(file_name)
     CSV.open(file_name, "wb", {:force_quotes => false}) do |csv|
       @csv_output.each { |row| csv << row }
     end
   end
 
 end
+
