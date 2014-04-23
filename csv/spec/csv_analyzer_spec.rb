@@ -5,10 +5,10 @@ describe CSVAnalyzer do
 
   before(:each) do
     @analyzer = CSVAnalyzer.new
-    @analyzer.add_to_csv_data_from_dir("./csv_sample_dir/input")
+    @analyzer.add_rows_to_csv_data_from_dir("./csv_sample_dir/input")
   end
 
-  it "adds data from a CSV file" do
+  it "adds data from a directory of CSV files" do
     expect(@analyzer.csv_data).not_to be_empty
   end
 
@@ -29,21 +29,20 @@ describe CSVAnalyzer do
 
   it "sets the header row for output data" do
     expect(@analyzer.csv_output).to be_empty
-    @analyzer.set_output_header(["one","two","buckle","my","shoe"])
+    @analyzer.insert_output_header(["one","two","buckle","my","shoe"])
     expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
   end
 
-  it "does not overwrite the current header row by default" do
+  it "inserts a header row without deleting existing rows" do
     @analyzer.csv_output[0] = %w(1 2 3 PASSED PASSED PASSED PASSED)
-    @analyzer.set_output_header(%w(first second third HAS\ ONE HAS\ TWO HAS\ THREE))
+    @analyzer.insert_output_header(%w(first second third HAS\ ONE HAS\ TWO HAS\ THREE))
     expect(@analyzer.csv_output.size).to eq 2
     expect(@analyzer.get_header_row(@analyzer.csv_output)).to eq ["first", "second", "third", "HAS ONE", "HAS TWO", "HAS THREE"]
   end
 
   it "overwrites the current header if asked to" do
-    @analyzer.set_output_header(["one","two","buckle","my","shoe"])
-    expect(@analyzer.csv_output[0]).to eq ["one","two","buckle","my","shoe"]
-    @analyzer.set_output_header(["three","four","shut","the","door"], true)
+    @analyzer.insert_output_header(["one","two","buckle","my","shoe"])
+    @analyzer.overwrite_output_header(["three","four","shut","the","door"])
     expect(@analyzer.csv_output.size).to eq 1
     expect(@analyzer.csv_output[0]).to eq ["three","four","shut","the","door"]
   end

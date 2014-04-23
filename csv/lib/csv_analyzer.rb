@@ -29,7 +29,7 @@ class CSVAnalyzer
 
   # Add csv file contents from a directory to @csv_data, 
   # dir_name is relative to csv root folder by default.
-  def add_to_csv_data_from_dir(dir_name)
+  def add_rows_to_csv_data_from_dir(dir_name)
     Dir.glob("#{dir_name}/*.csv") do |csv_file|
       @csv_data += CSV.read(csv_file)
     end
