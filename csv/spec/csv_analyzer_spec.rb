@@ -12,6 +12,12 @@ describe CSVAnalyzer do
     expect(@analyzer.csv_data).not_to be_empty
   end
 
+  it "adds data from a single CSV file" do
+    other_analyzer = CSVAnalyzer.new
+    other_analyzer.add_rows_to_csv_data_from_file("./csv_sample_dir/input/sample.csv")
+    expect(other_analyzer.csv_data).not_to be_empty
+  end
+
   it "gets a header row from a CSV file" do
     expect(@analyzer.get_header_row).to eq ["something","something else","another something","HAS SOMETHING","HAS ANOTHER","HAS A THIRD","HAS FOURTH"]
   end

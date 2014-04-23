@@ -29,10 +29,14 @@ class CSVAnalyzer
 
   # Add csv file contents from a directory to @csv_data, 
   # dir_name is relative to csv root folder by default.
-  def add_rows_to_csv_data_from_dir(dir_name)
-    Dir.glob("#{dir_name}/*.csv") do |csv_file|
+  def add_rows_to_csv_data_from_dir(dir)
+    Dir.glob("#{dir}/*.csv") do |csv_file|
       @csv_data += CSV.read(csv_file)
     end
+  end
+
+  def add_rows_to_csv_data_from_file(file)
+    @csv_data += CSV.read(file)
   end
 
   # Get the header row from a csv data array.
