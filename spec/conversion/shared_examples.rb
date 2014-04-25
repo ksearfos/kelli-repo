@@ -9,6 +9,26 @@ shared_examples "every record" do
       @failed = pass?( messages, logic )
       @failed.should be_empty
     end
+
+    it "has the correct PID indicator for the registering hospital" do
+      logic = Proc.new{ |msg| 
+        msh = msg.header
+        hospital = msh[3]
+        accn = msg[:PID].field(:account_number).first
+        if hospital == "GMH"
+          accn =~ /^(A|V)\d+/
+        elsif hospital == "DMH"
+          accn =~ /^B\d+/
+        elsif hospital == "DH"
+          accn =~ /^D\d+/
+        elsif hospital == "MGH"
+          accn =~ /^MG\d+/
+        elsif hospital == "RMH" || hospital == "GMC"
+          accn =~ /^\d+/
+      }
+      @failed = pass?( messages, logic )
+      @failed.should be_empty
+    end
   
     it "has a real name", :pattern => "JR/SR ends with a period" do
       logic = Proc.new{ |msg|
