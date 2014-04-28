@@ -21,10 +21,9 @@ class CSVAnalyzer
   end
   
   # regex param matches columns we ARE evaluating.
-  def count_columns(regex, row=self.get_header_row)
-    data_col_count = 0
-    row.each { |col| data_col_count += 1 if col =~ regex }
-    data_col_count
+  def count_columns(regex)
+    row = get_header_row
+    row.count{ |col| col =~ regex }
   end
 
   # Add csv file contents from a directory to @csv_data, 
