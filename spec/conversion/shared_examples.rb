@@ -16,13 +16,13 @@ shared_examples "every record" do
         hospital = msh[3]
         accn = msg[:PID].field(:account_number).first
         if hospital == "GMH"
-          accn =~ /^(A|V)?\d+/
+          accn =~ /^(A|V)\d+/
         elsif hospital == "DMH"
-          accn =~ /^B?\d+/
+          accn =~ /^B\d+/
         elsif hospital == "DH"
-          accn =~ /^D?\d+$/
+          accn =~ /^D\d+$/
         elsif hospital == "MGH"
-          accn =~ /^(MG)?\d+/
+          accn =~ /^MG\d+/
         elsif hospital == "RMH" || hospital == "GMC"
           accn =~ /^\d+/
       }
