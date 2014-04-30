@@ -73,6 +73,7 @@ class CSVAnalyzer
 
 end
 
+# A menu for using the CSV Analyzer
 analyzer = CSVAnalyzer.new
 
 say("\nCSV Analyzer Menu")
