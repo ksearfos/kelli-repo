@@ -65,7 +65,8 @@ describe CSVAnalyzer do
     expect(Dir['./csv_sample_dir/output/*']).to be_empty
     header = @analyzer.get_header_row
     @analyzer.data_columns = @analyzer.count_columns(/^HAS/)
-    @analyzer.parse_csv_data(header, "FAILED", 0.5)
+    output = @analyzer.parse_csv_data(header, "FAILED", 0.5)
+    expect(output).to_not be_nil
     @analyzer.export_csv('./csv_sample_dir/output/spec_out.csv')
     expect(Dir['./csv_sample_dir/output/*.csv'].size).to eq 1
     FileUtils.rm_rf('./csv_sample_dir/output')

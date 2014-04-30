@@ -59,6 +59,7 @@ class CSVAnalyzer
       end
       @csv_output << row if (matches / @data_columns) >= precision
     end
+    @csv_output
   end
 
   # Write @csv_output to a file, overwrites any existing file
