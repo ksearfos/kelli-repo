@@ -3,6 +3,7 @@
 #
 # Author:: Tim Morgan (mailto:tmorgan@manifestcorp.com)
 require 'csv'
+require 'highline/import'
 
 # This class provides methods necessary to parse throgh and analyze 
 # comma separated values files.
@@ -70,5 +71,36 @@ class CSVAnalyzer
     end
   end
 
+end
+
+analyzer = CSVAnalyzer.new
+
+say("\nCSV Analyzer Menu")
+loop do
+  choose do |menu|
+      
+    menu.prompt = "Choose a task to perform..."
+
+    menu.choice "Add rows from directory" do
+      dir = ask("Enter a directory:") do |resp|
+        resp.whitespace = :strip_and_collapse
+      end
+      say("Loading data from #{dir}...\n\n")
+      analyzer.add_rows_to_csv_data_from_dir dir
+    end
+      
+    menu.choice "Add rows from file" do
+      file = ask("Enter a file:") do |resp|
+        resp.whitespace = :strip_and_collapse
+      end
+      say("Loading data from #{file}...\n\n")
+      analyzer.add_rows_to_csv_data_from_file file
+    end
+      
+    menu.choices("Parse data", "Export data") do say("Not yet implemented...\n\n") end
+    
+    menu.choice "Quit" do exit end
+      
+  end
 end
 
