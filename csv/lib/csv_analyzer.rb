@@ -1,5 +1,5 @@
-# This program takes a comma separated values file, or set of files,
-# and parses it to analyze its contents.
+# Take a comma separated values file, or set of files,
+# and parse to analyze contents.
 #
 # Author:: Tim Morgan (mailto:tmorgan@manifestcorp.com)
 require 'csv'
