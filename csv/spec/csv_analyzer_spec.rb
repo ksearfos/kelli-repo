@@ -28,9 +28,9 @@ describe CSVAnalyzer do
   end
 
   it "can set ignored columns" do
-    expect(@analyzer.ignored_column_count).to eq 0
-    @analyzer.ignored_column_count = @analyzer.count_columns(/^HAS/)
-    expect(@analyzer.ignored_column_count).to eq 4
+    expect(@analyzer.ignored_columns).to eq 0
+    @analyzer.ignored_columns = @analyzer.count_columns(/^HAS/)
+    expect(@analyzer.ignored_columns).to eq 4
   end
 
   it "sets the header row for output data" do
@@ -65,6 +65,7 @@ describe CSVAnalyzer do
     expect(Dir['./csv_sample_dir/output/*']).to be_empty
     header = @analyzer.get_header_row
     @analyzer.data_columns = @analyzer.count_columns(/^HAS/)
+    @analyzer.ignored_columns = @analyzer.count_columns(/^'(HAS)/)
     output = @analyzer.parse_csv_data(header, "FAILED", 0.5)
     expect(output).to_not be_nil
     @analyzer.export_csv('./csv_sample_dir/output/spec_out.csv')
