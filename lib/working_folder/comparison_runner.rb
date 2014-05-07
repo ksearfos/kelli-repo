@@ -22,7 +22,7 @@ class ComparisonRunner
     file_handler = get_records(@infile, MAX_RECS)   
     
     if file_handler.nil?   # will be nil if file was empty
-      remove_files( [@infile] )   # remove even if we are testing! it's empty!!
+      remove_files([@infile])
     else        
       begin
         $logger.info "Found #{file_handler.size} record(s)\n" 
