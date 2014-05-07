@@ -1,5 +1,5 @@
 require 'CSV'
-require 'lib/hl7/HL7'
+require 'hl7/HL7'
 
 # really just exists to add methodology to treat HL7 objects
 # as excel-writable

@@ -1,9 +1,9 @@
-require 'lib/hl7/Methods'
-require 'lib/hl7/FileHandler'
-require 'lib/hl7/Message'
-require 'lib/hl7/Segment'
-require 'lib/hl7/TypedSegment'
-require 'lib/hl7/Field'
+require 'hl7/Methods'
+require 'hl7/FileHandler'
+require 'hl7/Message'
+require 'hl7/Segment'
+require 'hl7/TypedSegment'
+require 'hl7/Field'
 
 module HL7
  

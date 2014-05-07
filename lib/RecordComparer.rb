@@ -1,4 +1,4 @@
-require 'lib/OHmodule/OhioHealthUtilities'
+require 'OHmodule/OhioHealthUtilities'
 
 class RecordComparer
   include OhioHealthUtilities

@@ -1,5 +1,5 @@
-require 'lib/extended_base_classes'
-require 'lib/hl7/HL7'
+require 'extended_base_classes'
+require 'hl7/HL7'
 
 module OhioHealthUtilities
   

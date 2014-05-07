@@ -1,5 +1,5 @@
-require 'lib/OHmodule/OhioHealthUtilities'
-require 'lib/RecordComparer'
+require 'OHmodule/OhioHealthUtilities'
+require 'RecordComparer'
 
 # this class is very very similar to the RecordComparer, except that it takes into account the proportions
 # of the SERIES encounters versus non-SERIES among the organiation and tries to give results that also fit
