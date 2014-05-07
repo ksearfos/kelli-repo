@@ -3,37 +3,35 @@ require 'working_folder/test_runner_helper'
 TIMESTAMP = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 MAX_RECS = 1000
 
-def run_comparison(input_directory, input_file_pattern)
-  log_directory = "#{input_directory}/logs"
-  log_file = "#{log_directory}/comparer_parse_file.log"
-  result_file_prefix = "#{log_directory}/#{TIMESTAMP}" 
+def run_comparison(hl7_files, result_directory)
+  # log_directory = "#{input_directory}/logs"
+  # log_file = "#{log_directory}/comparer_parse_file.log"
+  result_file_prefix = "#{result_directory}/#{TIMESTAMP}" 
   my_results = { :number_of_records => 0, :matched_criteria => 0, :subset_size => 0 }
   num_records = 0
-    
-  # create the directory, if needed
-  `mkdir "#{log_directory}"` unless File.directory?(log_directory)
-
-  # set up - create logger and read in records from files
-  $logger = set_up_logger(log_file)
-  $logger.info "Checking #{input_directory} for files..."
-  # find files, store in hl7_files with full pathname
-  hl7_files = Dir.entries(input_directory).select do |f|
-    File.file?("#{input_directory}/#{f}") && f =~ input_file_pattern
-  end
-
-  # if hl7_files.empty?
-    # $logger.info "No new files found.\n"
-  # else
+#     
+  # # create the directory, if needed
+  # `mkdir "#{log_directory}"` unless File.directory?(log_directory)
+# 
+  # # set up - create logger and read in records from files
+  # $logger = set_up_logger(log_file)
+  # $logger.info "Checking #{input_directory} for files..."
+#   
+  # # find files, store in hl7_files with full pathname
+  # hl7_files = Dir.entries(input_directory).select do |f|
+    # File.file?("#{input_directory}/#{f}") && f =~ input_file_pattern
+  # end
+# 
   $logger.info "Found #{hl7_files.size} new file(s)\n"
   
   until hl7_files.empty?   # I am hoping that doing it this way will clear up memory as we go along
-    fname = hl7_files.shift
-    file = "#{input_directory}/#{fname}"
-    outfile = log_directory + "/results_#{fname}"
+    file = hl7_files.shift
+    # file = "#{input_directory}/#{fname}"
+    outfile = result_directory + "/" + File.basename(file)
     tmp = result_file_prefix + "temp_results"
     file_handler = nil    # reset
     
-    file_handler = get_records( file, MAX_RECS )   
+    file_handler = get_records(file, MAX_RECS)   
     if file_handler.nil?   # will be nil if file was empty
       remove_files( [file] )   # remove even if we are testing! it's empty!!
     else        
