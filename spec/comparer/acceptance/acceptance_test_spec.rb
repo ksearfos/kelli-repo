@@ -29,8 +29,8 @@ describe "parse file" do
     it_behaves_like "properly-working comparer" do
       let(:results) { run(:lab, @input_dir) }
       let(:number_of_records) {1005}
-      let(:matched_criteria) {496}   # of 103
-      let(:subset_size) {261}
+      let(:matched_criteria) {190}   # of 231
+      let(:subset_size) {110}
     end
   end
 end

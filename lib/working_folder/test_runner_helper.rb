@@ -18,12 +18,12 @@ end
 
 def get_records( file, max = false ) 
   if File.zero?(file)   # empty
-    $logger.error "File is empty"
+    #$logger.error "File is empty"
     nil
   else
-    $logger.info "Opening #{file}"
+    #$logger.info "Opening #{file}"
     handler = HL7::FileHandler.new( file, max )
-    $logger.info "File read. Parsing out records..."
+    #$logger.info "File read. Parsing out records..."
     handler
   end
 end
