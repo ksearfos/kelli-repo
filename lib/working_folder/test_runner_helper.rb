@@ -3,18 +3,18 @@
 require 'working_folder/run_record_comparer'
 
 # set up and prettify the $logger
-def set_up_logger( file )
-  # $stdout = File.new( file, "w" )
-  logger = Logger.new( file )
-  
-  logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
-  logger.formatter = Proc.new{ |severity,datetime,prog,msg|
-    str = "#{datetime} #{severity}: #{msg}\n"
-    str
-  }
-  
-  logger
-end
+# def set_up_logger( file )
+  # # $stdout = File.new( file, "w" )
+  # logger = Logger.new( file )
+#   
+  # logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
+  # logger.formatter = Proc.new{ |severity,datetime,prog,msg|
+    # str = "#{datetime} #{severity}: #{msg}\n"
+    # str
+  # }
+#   
+  # logger
+# end
 
 def get_records( file, max = false ) 
   if File.zero?(file)   # empty
