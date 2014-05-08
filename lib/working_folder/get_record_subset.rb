@@ -1,31 +1,20 @@
-require 'working_folder/mixins/comparison_runner'
-require 'working_folder/mixins/loggable'
+# require 'working_folder/mixins/comparison_runner'
+# require 'working_folder/mixins/loggable'
+require 'working_folder/subset_finder'
 
-include Loggable
-
-# TIMESTAMP = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
+# include Loggable
 
 def run(type, input_directory)
-  ComparisonResult.reset
-  make_logger(input_directory)
-  $logger = @logger
-  $logger.info "Checking #{input_directory} for files..."
-  files = get_files(input_directory, /^#{type}_\w+/) 
-  ComparisonRunner.set_up(files, "#{input_directory}/results")
-  ComparisonRunner.run_comparison  # returns result hash
+  finder = SubsetFinder.new(type, input_directory)
+  finder.run
+  # ComparisonResult.reset
+  # make_logger(input_directory)
+  # @logger.info "Checking #{input_directory} for files..."
+  # files = get_files(input_directory, /^#{type}_\w+/) 
+  # ComparisonRunner.set_up(files, "#{input_directory}/results")
+  # ComparisonRunner.run_comparison  # returns result hash
 end
-
-# def make_logger(input_directory)
-  # log_directory = "#{input_directory}/logs"
-  # log_file = "#{log_directory}/#{TIMESTAMP}_comparer_parse_file.log"
-#   
-  # # create the directory, if needed
-  # `mkdir "#{log_directory}"` unless File.directory?(log_directory) 
-#   
-  # # create the logger
-  # $logger = set_up_logger(log_file) 
-# end
-
+=begin
 def get_files(directory, pattern)
   hl7_files = []
   
@@ -37,3 +26,4 @@ def get_files(directory, pattern)
   
   hl7_files
 end
+=end

@@ -1,4 +1,4 @@
-#!/bin/env ruby
+require 'fileutils'
 
 # adds all directories in the project to $LOAD_PATH
 def update_loadpath
@@ -19,4 +19,21 @@ def find_all_directories( parent_directory, recursive=true )
   }
   
   subdirectories
+end
+
+def clear_directory(directory)
+  remove_directory(directory) if File.directory?(directory)
+  create_directory(directory)  
+end
+
+def remove_directory(dir_path)
+  FileUtils.rm_r dir_path
+end
+  
+def create_directory(dir_path)
+  FileUtils.mkdir dir_path
+end
+  
+def reroute_stdout(file)
+  $stdout = File.new(file, "w")
 end

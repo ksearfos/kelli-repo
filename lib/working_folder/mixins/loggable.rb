@@ -1,5 +1,5 @@
+require 'utility_methods'
 require 'logger'
-require 'fileutils'
 
 module Loggable
   TIMESTAMP = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
@@ -29,32 +29,18 @@ module Loggable
   private
   
   def set_up_logger(write_stdout_to_log_file = false)
-    File.directory?(@log_directory) ? clear_directory : create_directory
-    reroute_stdout if write_stdout_to_log_file
+    clear_directory(@log_directory)
+    reroute_stdout(@log_file) if write_stdout_to_log_file
     @logger = Logger.new(@log_file)
     format_logger
-  end
-
-  def reroute_stdout
-    $stdout = File.new(@log_file, "w")
   end
 
   def format_logger
     @logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
     @logger.formatter = Proc.new do |severity,datetime,prog,msg|
-      str = "#{datetime} #{severity}: #{msg}"
+      str = "#{datetime} #{severity}: #{msg}\n"
       str
     end
-  end
-  
-  def clear_directory
-    FileUtils.rm_r @log_directory
-    create_directory
-    # Dir.foreach(@log_directory) { |file| File.delete("#{@log_directory}/#{file}") }
-  end
-  
-  def create_directory
-    `mkdir "#{@log_directory}"`
   end
   
   def write_as_parent(message)
