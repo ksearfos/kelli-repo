@@ -27,9 +27,13 @@ module ComparisonResult
   end
   
   def self.reset
-    @record_count = 0
-    @criteria_count = 0
-    @subset_record_counts = []
-    @matched_criteria_counts = []
+    set_counts(0, 0, [], [])
+  end
+  
+  def self.set_counts(records, criteria, subsets, matched)
+    @record_count = records
+    @criteria_count = criteria
+    @subset_record_counts = subsets
+    @matched_criteria_counts = matched  
   end
 end
