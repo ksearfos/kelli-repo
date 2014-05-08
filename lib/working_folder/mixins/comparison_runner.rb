@@ -1,17 +1,20 @@
 require 'working_folder/comparison_runner_class'
 require 'working_folder/mixins/comparison_result'
+require 'working_folder/mixins/hl7_file_reader'
 
 module ComparisonRunner
+  include HL7FileReader
   extend ComparisonResult
   
-  def self.set_up(hl7_files, result_directory)
-    @hl7_files = hl7_files
-    @result_directory = result_directory
+  def set_up_comparison_runner #(type, directory)  #(hl7_files, result_directory)
+    # specify_hl7_file_requirements(directory, type)
+    # @hl7_files = hl7_files
+    @result_directory = "#{@hl7_directory}/results"
     @temp_file = "#{@result_directory}/temp_results"
   end
   
-  def self.run
-    $logger.info "Found #{@hl7_files.size} new file(s)\n"  
+  def run_comparison
+    $logger.info "Found #{@hl7_files.size} new file(s)"  
     until @hl7_files.empty?   # I am hoping that doing it this way will clear up memory as we go along
       infile = @hl7_files.shift
       outfile = "#{@result_directory}/#{File.basename(infile)}"
@@ -23,13 +26,13 @@ module ComparisonRunner
     $logger.close
   end
 
-  def self.compare_file(infile)
+  def compare_file(infile)
     runner = ComparisonRunnerObject.new(infile, @temp_file)
     runner.compare
     ComparisonResult.record_count += runner.record_count 
   end
 
-  def self.compare_file_results(outfile)
+  def compare_file_results(outfile)
     runner = ComparisonRunnerObject.new(@temp_file, outfile)
     runner.compare       
     remove_files([@temp_file]) 
