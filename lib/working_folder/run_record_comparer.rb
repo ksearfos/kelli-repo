@@ -5,7 +5,7 @@ require 'HL7CSV'
 require 'logger'
 require 'working_folder/mixins/comparison_result'
   
-def run_record_comparer( output_file, messages, final, org_sensitive, set_size = 1 )
+def run_record_comparer(output_file, messages, final, org_sensitive, set_size = 1)
   type = messages[0].type 
     
   additional_fields = { sending_facility:"msh3" }   
@@ -19,8 +19,6 @@ def run_record_comparer( output_file, messages, final, org_sensitive, set_size =
   ComparisonResult.subset_record_counts << comparer.chosen.size
   ComparisonResult.matched_criteria_counts << comparer.matched.size
   ComparisonResult.criteria_count = comparer.unmatched.size + comparer.matched.size
-  # subset = comparer.chosen.size
-  # criteria = comparer.matched.size
   
   if final
     log_final_results( comparer, $logger )
@@ -31,7 +29,6 @@ def run_record_comparer( output_file, messages, final, org_sensitive, set_size =
   end
   debug(comparer)
   OhioHealthUtilities.reset( type )
-  # [criteria, subset]
 end
 
 def add_dynamic_fields_for_type( messages, message_type )

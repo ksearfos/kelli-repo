@@ -1,5 +1,4 @@
 require 'working_folder/test_runner_helper'
-require 'working_folder/mixins/comparison_result'
 
 class ComparisonRunner
   MAX_RECS = 1000
@@ -13,7 +12,6 @@ class ComparisonRunner
   
   def compare
     old_compare
-    # [@criteria, @subset]
   end
   
   private
@@ -31,9 +29,7 @@ class ComparisonRunner
         $logger.info "Comparing records..."    
         
         @record_count += file_handler.records.size
-        # ComparisonResult.record_count += number_of_records
-        run_record_comparer(@outfile, file_handler.records, false, false)
-        # @criteria, @subset = run_record_comparer( @outfile, file_handler.records, false, false )        
+        run_record_comparer(@outfile, file_handler.records, false, false)    
         file_handler.next
       end until file_handler.records.empty?
     end 
