@@ -1,5 +1,7 @@
-require_relative 'comparer_parse_file'
-require 'working_folder/mixins/comparison_result'
+require 'working_folder/comparer_parse_file'
+# require 'working_folder/mixins/comparison_result'
+
+include ComparisonRunner
 
 TIMESTAMP = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 

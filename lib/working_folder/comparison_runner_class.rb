@@ -1,6 +1,6 @@
 require 'working_folder/test_runner_helper'
 
-class ComparisonRunner
+class ComparisonRunnerObject
   MAX_RECS = 1000
   attr_reader :infile, :outfile , :record_count 
   
