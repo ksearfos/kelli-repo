@@ -1,6 +1,6 @@
 shared_examples "properly-working comparer" do
   it "finds all records from all files" do
-    expect(results[:number_of_records]).to eq(number_of_records)
+    expect(results[:record_count]).to eq(number_of_records)
   end
   
   it "finds a small subset of records" do

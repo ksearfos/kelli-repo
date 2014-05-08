@@ -1,8 +1,9 @@
 require 'working_folder/test_runner_helper'
+require 'working_folder/mixins/comparison_result'
 
 class ComparisonRunner
   MAX_RECS = 1000
-  attr_reader :infile, :outfile, :record_count 
+  attr_reader :infile, :outfile , :record_count 
   
   def initialize(infile, outfile)
     @infile = infile
@@ -12,7 +13,7 @@ class ComparisonRunner
   
   def compare
     old_compare
-    [@criteria, @subset]
+    # [@criteria, @subset]
   end
   
   private
@@ -25,11 +26,14 @@ class ComparisonRunner
       remove_files([@infile])
     else        
       begin
-        $logger.info "Found #{file_handler.size} record(s)\n" 
+        number_of_records = file_handler.size
+        $logger.info "Found #{number_of_records} record(s)\n" 
         $logger.info "Comparing records..."    
         
         @record_count += file_handler.records.size
-        @criteria, @subset = run_record_comparer( @outfile, file_handler.records, false, false )        
+        # ComparisonResult.record_count += number_of_records
+        run_record_comparer(@outfile, file_handler.records, false, false)
+        # @criteria, @subset = run_record_comparer( @outfile, file_handler.records, false, false )        
         file_handler.next
       end until file_handler.records.empty?
     end 
