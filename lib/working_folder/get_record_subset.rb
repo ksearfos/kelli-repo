@@ -1,7 +1,4 @@
 require 'working_folder/comparer_parse_file'
-# require 'working_folder/mixins/comparison_result'
-
-include ComparisonRunner
 
 TIMESTAMP = Time.now.strftime "%H%M_%m-%d-%Y"      # HHMM_MM-DD-YYYY
 
@@ -10,9 +7,9 @@ def run(type, input_directory)
   make_logger(input_directory)
   
   $logger.info "Checking #{input_directory} for files..."
-  files = get_files(input_directory, /^#{type}_\w+/)
-  
-  run_comparison(files, "#{input_directory}/results")  # returns result hash
+  files = get_files(input_directory, /^#{type}_\w+/) 
+  ComparisonRunner.set_up(files, "#{input_directory}/results")
+  ComparisonRunner.run_comparison  # returns result hash
 end
 
 def make_logger(input_directory)
