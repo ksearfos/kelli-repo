@@ -10,7 +10,7 @@ module ComparisonRunner
     @temp_file = "#{@result_directory}/temp_results"
   end
   
-  def self.run_comparison
+  def self.run
     $logger.info "Found #{@hl7_files.size} new file(s)\n"  
     until @hl7_files.empty?   # I am hoping that doing it this way will clear up memory as we go along
       infile = @hl7_files.shift
@@ -21,7 +21,6 @@ module ComparisonRunner
 
     $logger.info "Exiting..."
     $logger.close
-    ComparisonResult.to_hash
   end
 
   def self.compare_file(infile)

@@ -7,8 +7,7 @@ module Loggable
   def class_name
     clazz = self.class.name
     clazz.gsub!(/([A-Z])/, '_\1')
-    clazz.downcase!
-    "comparer_parse_file"   # TEST
+    "run#{clazz.downcase}"
   end
       
   def make_logger(parent_directory)
@@ -38,13 +37,13 @@ module Loggable
   def format_logger
     @logger.datetime_format = "%H:%M:%S.%L"   # HH:MM:SS
     @logger.formatter = Proc.new do |severity,datetime,prog,msg|
-      str = "#{datetime} #{severity}: #{msg}\n"
+      str = "\n#{datetime} #{severity}: #{msg}"
       str
     end
   end
   
   def write_as_parent(message)
-    @logger.info "\n#{message}"
+    @logger.info "#{message}"
   end
   
   def write_as_child(message)

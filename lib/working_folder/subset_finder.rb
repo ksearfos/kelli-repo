@@ -13,23 +13,33 @@ class SubsetFinder
   end
   
   def run
-    # ComparisonResult.reset
-    # make_logger(input_directory)
-  log "Checking #{@input_directory} for files..."
-  files = get_files(@input_directory, /^#{@message_type}_\w+/) 
-  ComparisonRunner.set_up(files, "#{@input_directory}/results")
-  ComparisonRunner.run_comparison  # returns result hash
-end
+    # log "Checking #{@input_directory} for files..."
+    # files = get_input_files  #(@input_directory, /^#{@message_type}_\w+/) 
+    ComparisonRunner.set_up(input_files, "#{@input_directory}/results")
+    ComparisonRunner.run
+  end
 
-def get_files(directory, pattern)
-  hl7_files = []
+  def result
+    ComparisonResult.to_hash
+  end
+
+  private
   
-  # find files, store in hl7_files with full pathname
-  Dir.entries(directory).select do |filename|
-    fullname = "#{directory}/#{filename}"
-    hl7_files << fullname if File.file?(fullname) && filename =~ pattern
+  def input_files #(directory, pattern)
+    log "Checking #{@input_directory} for files..."
+    # hl7_files = []
+  
+    # find files, store in hl7_files with full pathname
+    hl7_files = Dir.entries(@input_directory).select { |file| is_correct_type?(file) } 
+      # fullname = "#{@input_directory}/#{filename}"
+      # hl7_files << fullname if File.file?(fullname) && filename.include?(@message_type)
+    # end
+  
+    hl7_files.map { |filename| File.join(@input_directory, filename) }
   end
   
-  hl7_files
-end
+  def is_correct_type?(filename)
+    fullname = "#{@input_directory}/#{filename}"
+    File.file?(fullname) && filename =~ /^#{@message_type}_\w+/
+  end
 end
