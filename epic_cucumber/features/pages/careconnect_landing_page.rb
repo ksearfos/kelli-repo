@@ -4,6 +4,6 @@ class CareConnectLandingPage
   def initialize(browser)
     @browser = browser
     @username = @browser.span(:id => "username")
-    @epic_link = @browser.link(:title => "Hyperspace 2014 Base- SUP")
+    @epic_link = @browser.link(:title => "Hyperspace 2014 - CNV")
   end
 end
