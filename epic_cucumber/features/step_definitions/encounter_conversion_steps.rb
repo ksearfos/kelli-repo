@@ -1,4 +1,3 @@
-
 Given(/^an encounter exists in ORB$/) do
   # Get conversion data from ORB
 end
