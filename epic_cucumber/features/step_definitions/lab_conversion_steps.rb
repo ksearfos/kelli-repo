@@ -2,7 +2,7 @@ Given(/^a lab report exists in ORB$/) do
   # Get conversion data from ORB
 end
 
-When(/^I look for it in Epic$/) do
+When(/^I look for the lab report in Epic$/) do
   # Find lab report in Epic
 end
 

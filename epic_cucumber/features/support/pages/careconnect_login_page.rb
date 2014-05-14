@@ -1,4 +1,6 @@
 class CareConnectLoginPage
+  include PageObject
+  
   attr_accessor :user_name, :password, :log_on_button
 
   URL = "http://ccweb"

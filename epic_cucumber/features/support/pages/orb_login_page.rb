@@ -1,4 +1,6 @@
-class ORBLoginPage
+class OrbLoginPage
+  include PageObject
+  
   attr_accessor :user_name, :password, :log_on_button
 
   URL = "http://orb3.ds.ohnet/Physician/Login.aspx"
@@ -18,7 +20,7 @@ class ORBLoginPage
     @username.set username
     @password.set password
     @log_on_button.click
-    orb_landing_page = ORBLandingPage.new(@browser)
+    orb_landing_page = OrbLandingPage.new(@browser)
     orb_landing_page
   end
 end

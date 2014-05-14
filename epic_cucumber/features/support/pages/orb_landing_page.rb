@@ -1,4 +1,5 @@
-class ORBLandingPage
+class OrbLandingPage
+  include PageObject
   
   URL = "http://orb3.ds.ohnet/Physician/Pages/Home.aspx"
   

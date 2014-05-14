@@ -1,4 +1,6 @@
 class CareConnectLandingPage
+  include PageObject
+  
   attr_accessor :username, :epic_link
 
   def initialize(browser)

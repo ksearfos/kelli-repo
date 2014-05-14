@@ -2,7 +2,7 @@ Given(/^an encounter exists in ORB$/) do
   # Get conversion data from ORB
 end
 
-When(/^I look for it in Epic$/) do
+When(/^I look for the encounter in Epic$/) do
   # Find encounter in Epic
 end
 

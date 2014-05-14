@@ -4,5 +4,5 @@ Feature: Lab Conversion
 
   Scenario: Lab report converted to new GUI
     Given a lab report exists in ORB
-    When I look for it in Epic
+    When I look for the lab report in Epic
     Then I see the lab report in Epic
