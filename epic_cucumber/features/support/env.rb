@@ -1,4 +1,16 @@
+require 'io/console'
+require 'rautomation'
+
 TEST_DATA_DIR = "./features/test_data"
+
+# Enter credentials to log in
+print "OPID:   "
+$stdout.flush
+username = gets.chomp
+print "Password:   "
+$stdout.flush
+password = STDIN.noecho(&:gets).chomp
+print "\n" # Move console output off password line
  
 if ENV["HEADLESS"] then
   require "celerity"
@@ -13,30 +25,23 @@ else
 end
  
 Before do
+  @username = username
+  @password = password
   @browser = browser
   # Navigate to the CareConnect web page
   @ccweb_login_page = CareConnectLoginPage.new(@browser)
   @ccweb_login_page.visit
-
-  # Enter credentials to log in
-  print "OPID:   "
-  $stdout.flush
-  @username = gets.chomp
-  print "Password:   "
-  $stdout.flush
-  @password = STDIN.noecho(&:gets).chomp
-  print "\n" # Move console output off password line
-
+  
   # Log in and open Epic
   @ccweb_landing_page = @ccweb_login_page.login_with @username, @password
   @ccweb_landing_page.epic_link.click
   sleep 15
   window = RAutomation::Window.new(:title => /Hyperspace/i, :adapter => :ms_uia)
-  window.exists?.should be_true
+  window.exists?.should be_true # Quit if Epic does not open
   window.send_keys @username
   window.move_mouse 400, 375
   window.click_mouse
-  @password.scan(/./).each do |c|
+  @password.scan(/./).each do |c| # Handle some special characters
     c = :add if c == "+"
     window.send_keys c
   end
