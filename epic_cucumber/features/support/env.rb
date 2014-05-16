@@ -34,7 +34,7 @@ Before do
   @epic_browser = epic_browser
   @window = RAutomation::Window.new(:title => /Hyperspace/i, :adapter => :ms_uia)
   
-  if $sys_login
+  if $sys_login # Only login to the systems before the first feature runs
     # Navigate to ORB
     orb_login_page = OrbLoginPage.new(@orb_browser)
     orb_login_page.visit
